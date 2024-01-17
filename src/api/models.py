@@ -25,42 +25,41 @@ class Users(db.Model):
                 'is_active': self.is_active}
             
 # Many to Many
-Association_table = Table(
-    #NOMBRE DE LA TABLA
-    "association_table",
-    #necesario
-    Base.metadata,
+Association_table = db.Table("Association_table", db.metadata,
     #Columna ("nombre", ForeignKey(a donde se conecta), primary_key=True) --> SIEMPRE A LA PRIMARY KEY, ASI QUE AL ID
-    Column("user_id", ForeignKey("users.id"), primary_key=True),
-    Column("patient_id", ForeignKey("patients_id"), primary_key=True),
-    Column("pharmacy_id", ForeignKey("pharmacies.id"), primary_key=True),
-    Column("medicine_id", ForeignKey("medicines.id"), primary_key=True)
+    db.Column("user_id", db.ForeignKey("users.id"), primary_key=True),
+    db.Column("patient_id", db.ForeignKey("patients.id"), primary_key=True),
+    db.Column("pharmacy_id", db.ForeignKey("pharmacies.id"), primary_key=True),
+    db.Column("medicine_id", db.ForeignKey("medicines.id"), primary_key=True)
 )
 
 class Patients(db.Model):
     __tablename__ = "patients"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True) # One to One
+    name = db.Column(db.String(50), nullable=False)
+    # One to One
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id')) 
     users = db.relationship(Users)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
 
     def __repr__(self):
-        return f'<Patient {self.username}>'
+        return f'<Patient {self.name}>'
 
     def serialize(self):
         return {'id': self.id,
-                'username': self.username}
+                'name': self.name}
 
 class Pharmacies(db.Model):
     __tablename__ = "pharmacies"
     id = db.Column(db.Integer, primary_key=True)
     pharmacy_name = db.Column(db.String(50), nullable=False)
-    SOE_pharmacy_number = db.Column(db.String(20), unique=False)
+    SOE_pharmacy_number = db.Column(db.String(20), unique=True)
     address = db.Column(db.String(150), nullable=False)
     phone = db.Column(db.String, nullable=False)
     working_hours = db.Column(db.String())
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True) # One to One
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id')) # One to One
     users = db.relationship(Users)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
 
     def __repr__(self):
         return f'<Pharmacy {self.pharmacy_name}>'
@@ -78,6 +77,7 @@ class Medicines(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(50), nullable=False)
     API_id = db.Column(db.Integer)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
 
     def __repr__(self):
         return f'<Medicine {self.medicine_name}>'
@@ -94,15 +94,17 @@ class Orders(db.Model):
     requested_date = db.Column(db.DateTime, default=datetime.utcnow)
     validity_date = db.Column(db.DateTime) # Máximo 24/48h
     order_status = db.Column(db.String(50))
-    
+    # One To Many
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     patient = db.relationship(Patients, backref='orders') 
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
     pharmacy = db.relationship(Pharmacies, backref='orders')
-    
     # Many to Many 
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
-    medicine = db.relationship(Medicines, backref='orders')
+    # medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
+    # medicine = db.relationship(Medicines, backref='orders')
+    patient_rel = db.relationship('Patients', secondary=Association_table, backref='Orders')
+    medicine_rel = db.relationship('Medicines', secondary=Association_table, backref='Orders')
+    parhamacy_rel = db.relationship('Pharmacies', secondary=Association_table, backref='Orders')
 
     def __repr__(self):
         return f'<Orders {self.order_status}>'
@@ -117,13 +119,13 @@ class Orders(db.Model):
 class Availability(db.Model):
     __tablename__ = "availability"
     id = db.Column(db.Integer, primary_key=True)
-    avilability_status = db.Column(db.String(50), nullable=False)
+    availability_status = db.Column(db.String(50), nullable=False)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
     pharmacy = db.relationship(Pharmacies, backref='availability')
     
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.id')) 
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
     medicine = db.relationship(Medicines, backref='availability')
 
     def __repr__(self):
