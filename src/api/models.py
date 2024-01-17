@@ -11,6 +11,7 @@ class Users(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
+    is_pharmacy = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self):
         return f'<User {self.email}>'
@@ -22,13 +23,25 @@ class Users(db.Model):
         return {'id': self.id,
                 'email': self.email,
                 'is_active': self.is_active}
+            
+# Many to Many
+Association_table = Table(
+    #NOMBRE DE LA TABLA
+    "association_table",
+    #necesario
+    Base.metadata,
+    #Columna ("nombre", ForeignKey(a donde se conecta), primary_key=True) --> SIEMPRE A LA PRIMARY KEY, ASI QUE AL ID
+    Column("user_id", ForeignKey("users.id"), primary_key=True),
+    Column("patient_id", ForeignKey("patients_id"), primary_key=True),
+    Column("pharmacy_id", ForeignKey("pharmacies.id"), primary_key=True),
+    Column("medicine_id", ForeignKey("medicines.id"), primary_key=True)
+)
 
 class Patients(db.Model):
     __tablename__ = "patients"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True) # One to One
     users = db.relationship(Users)
 
     def __repr__(self):
@@ -45,10 +58,8 @@ class Pharmacies(db.Model):
     SOE_pharmacy_number = db.Column(db.String(20), unique=False)
     address = db.Column(db.String(150), nullable=False)
     phone = db.Column(db.String, nullable=False)
-    opening_hours = db.Column(db.DateTime)
-    closing_hours = db.Column(db.DateTime)
-    
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True)
+    working_hours = db.Column(db.String())
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), unique=True) # One to One
     users = db.relationship(Users)
 
     def __repr__(self):
@@ -59,14 +70,14 @@ class Pharmacies(db.Model):
                 'pharmacy_name': self.pharmacy_name,
                 'address': self.address,
                 'phone': self.phone,
-                'opening_hours': self.opening_hours,
-                'closing_hours': self.closing_hours
+                'working_hours': self.working_hours
                 }
 
 class Medicines(db.Model):
     __tablename__ = "medicines"
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(50), nullable=False)
+    API_id = db.Column(db.Integer)
 
     def __repr__(self):
         return f'<Medicine {self.medicine_name}>'
@@ -86,10 +97,10 @@ class Orders(db.Model):
     
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     patient = db.relationship(Patients, backref='orders') 
-    
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
     pharmacy = db.relationship(Pharmacies, backref='orders')
-
+    
+    # Many to Many 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
     medicine = db.relationship(Medicines, backref='orders')
 
