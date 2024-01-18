@@ -41,6 +41,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });  // Reset the global store
 			},
 			getMedicines: async (value) => {
+				// Clear previous search results
+				setStore({ medicines: [] });
+
 				const url = `${process.env.API_URL}/medicamentos?nombre=`+ value;
 				const options = {
 					method: "GET"
@@ -49,10 +52,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (response.ok) {
 					const data = await response.json ();
 					console.log(data);
-					setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
+					setStore({ medicines: data.resultados }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 					//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));
 					//JSON.stringify is needed when we save in localStorage so it can read what's inside our data.results
-					localStorage.setItem("medicines", JSON.stringify(data.results));
+					localStorage.setItem("medicines", JSON.stringify(data.resultados));
+					console.log(store.medicines)
 				} else {
 					console.log ("Error:", response.status, response.statusText);
 				}
