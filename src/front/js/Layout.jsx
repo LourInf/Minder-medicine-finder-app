@@ -5,11 +5,13 @@ import injectContext from "./store/appContext";
 import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import { Single } from "./pages/Single.jsx";
+import { LandingPage } from "./pages/LandingPage.jsx";
 // Import components
 import ScrollToTop from "./component/ScrollToTop.jsx";
 import { BackendURL } from "./component/BackendURL.jsx";
 import { Navbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
+import { SearchBar } from "./component/SearchBar.jsx";
 
 
 // Create your first component
@@ -25,6 +27,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
+                    <Route element={<LandingPage />} path="/landing" />
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />

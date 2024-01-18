@@ -135,13 +135,3 @@ class Availability(db.Model):
         return {'id': self.id,
                 'availability_status': self.availability_status,
                 'updated_date': self.updated_date}
-
-
-
-
-
-
-
-
-
-
