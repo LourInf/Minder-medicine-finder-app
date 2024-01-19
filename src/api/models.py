@@ -80,7 +80,7 @@ class Pharmacies(db.Model):
 class Medicines(db.Model):
     __tablename__ = "medicines"
     id = db.Column(db.Integer, primary_key=True)
-    medicine_name = db.Column(db.String(50), nullable=False)
+    medicine_name = db.Column(db.String(250), nullable=False)
     API_id = db.Column(db.Integer)
     orders = db.relationship('Orders', secondary=Association_table, back_populates='medicine')
 
