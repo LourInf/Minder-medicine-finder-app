@@ -30,7 +30,8 @@ Association_table = db.Table("Association_table", db.metadata,
     db.Column("user_id", db.ForeignKey("users.id"), primary_key=True),
     db.Column("patient_id", db.ForeignKey("patients.id"), primary_key=True),
     db.Column("pharmacy_id", db.ForeignKey("pharmacies.id"), primary_key=True),
-    db.Column("medicine_id", db.ForeignKey("medicines.id"), primary_key=True)
+    db.Column("medicine_id", db.ForeignKey("medicines.id"), primary_key=True),
+    db.Column("order_id", db.ForeignKey("orders.id"), primary_key=True)
 )
 
 class Patients(db.Model):
@@ -40,7 +41,10 @@ class Patients(db.Model):
     # One to One
     users_id = db.Column(db.Integer, db.ForeignKey('users.id')) 
     users = db.relationship(Users)
-    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
+    orders = db.relationship('Orders', secondary=Association_table, back_populates='patient',
+                             primaryjoin="Patients.id == Association_table.c.patient_id",
+                             secondaryjoin="Orders.id == Association_table.c.order_id")
+
 
     def __repr__(self):
         return f'<Patient {self.name}>'
@@ -57,9 +61,10 @@ class Pharmacies(db.Model):
     address = db.Column(db.String(150), nullable=False)
     phone = db.Column(db.String, nullable=False)
     working_hours = db.Column(db.String())
-    users_id = db.Column(db.Integer, db.ForeignKey('users.id')) # One to One
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     users = db.relationship(Users)
-    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
+    orders = db.relationship('Orders', secondary=Association_table, back_populates='pharmacy')
+
 
     def __repr__(self):
         return f'<Pharmacy {self.pharmacy_name}>'
@@ -77,7 +82,7 @@ class Medicines(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(50), nullable=False)
     API_id = db.Column(db.Integer)
-    order_id = db.Column(db.Integer, db.ForeignKey('orders.id')) 
+    orders = db.relationship('Orders', secondary=Association_table, back_populates='medicine')
 
     def __repr__(self):
         return f'<Medicine {self.medicine_name}>'
@@ -95,16 +100,33 @@ class Orders(db.Model):
     validity_date = db.Column(db.DateTime) # Máximo 24/48h
     order_status = db.Column(db.String(50))
     # One To Many
-    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
-    patient = db.relationship(Patients, backref='orders') 
-    pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
-    pharmacy = db.relationship(Pharmacies, backref='orders')
+    # patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
+    # patient = db.relationship(Patients, backref='orders') 
+    # pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
+    # pharmacy = db.relationship(Pharmacies, backref='orders')
     # Many to Many 
     # medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
     # medicine = db.relationship(Medicines, backref='orders')
-    patient_rel = db.relationship('Patients', secondary=Association_table, backref='Orders')
-    medicine_rel = db.relationship('Medicines', secondary=Association_table, backref='Orders')
-    parhamacy_rel = db.relationship('Pharmacies', secondary=Association_table, backref='Orders')
+    # patient_rel = db.relationship('Patients', secondary=Association_table, backref='Orders')
+    # medicine_rel = db.relationship('Medicines', secondary=Association_table, backref='Orders')
+    # parhamacy_rel = db.relationship('Pharmacies', secondary=Association_table, backref='Orders')
+
+    patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
+    patient = db.relationship(Patients, back_populates='orders', primaryjoin="Patients.id == Orders.patient_id")
+    pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
+    pharmacy = db.relationship(Pharmacies, back_populates='orders')
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
+    medicine = db.relationship(Medicines, back_populates='orders')
+    patient_rel = db.relationship('Patients', secondary=Association_table, back_populates='orders',
+                                  primaryjoin="Orders.id == Association_table.c.order_id",
+                                  secondaryjoin="Patients.id == Association_table.c.patient_id")
+    medicine_rel = db.relationship('Medicines', secondary=Association_table, back_populates='orders',
+                                   primaryjoin="Orders.id == Association_table.c.order_id",
+                                   secondaryjoin="Medicines.id == Association_table.c.medicine_id")
+    pharmacy_rel = db.relationship('Pharmacies', secondary=Association_table, back_populates='orders',
+                                   primaryjoin="Orders.id == Association_table.c.order_id",
+                                   secondaryjoin="Pharmacies.id == Association_table.c.pharmacy_id")
+
 
     def __repr__(self):
         return f'<Orders {self.order_status}>'
@@ -135,13 +157,3 @@ class Availability(db.Model):
         return {'id': self.id,
                 'availability_status': self.availability_status,
                 'updated_date': self.updated_date}
-
-
-
-
-
-
-
-
-
-
