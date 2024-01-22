@@ -101,7 +101,7 @@ def search_medicines():
 
 
 # Endpoint to create a new order
-@api.route('/order', methods=['POST'])
+@api.route('/orders', methods=['POST'])
 def create_order():
     response_body = {}
     data = request.json
@@ -127,4 +127,51 @@ def create_order():
     response_body['message'] = 'Reserva creada'
     response_body ['order'] = new_order.serialize()
     return response_body, 201
+
+# Endpoint to get details of a specific order
+@api.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
+def handle_specific_order(order_id):
+    if request.method == 'GET':
+        response_body = {}
+        results = {}
+		# Fetch the first result of the query as primary key:
+        order = db.session.execute(select(Orders).where(Orders.id == order_id)).scalars().first()
+        if not order:
+            response_body['message'] = 'Esta reserva no existe'
+            return response_body, 404
+		# Serialize and return the retrieved order
+        results['order'] = order.serialize()     
+        response_body['message'] = "Reserva encontrada"
+        response_body['results'] = results
+        return response_body, 200
+
+    if request.method == 'PUT':
+        response_body = {}
+        results = {}
+        # Update order attributes with data from the request. 2 options: 
+        data = request.json
+        order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
+        if not order:
+            response_body['message'] = 'Esta reserva no existe'
+            return response_body, 404
+        # User can only modify these 2 attributes:
+        order.order_quantity = data.get('order_quantity', order.order_quantity)
+        order.order_status = data.get('order_status', order.order_status)
+        db.session.commit()
+        results['order'] = order.serialize()     
+        response_body['message'] = "La reserva se ha actualizado exitosamente"
+        response_body['results'] = results
+        return response_body, 200
+    
+    if request.method == 'DELETE':
+        response_body = {}
+        # Delete the order and commit the change
+        order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
+        if not order:
+            response_body['message'] = 'Esta reserva no existe'
+            return response_body, 404
+        db.session.delete(order)
+        db.session.commit()    
+        response_body['message'] = "La reserva se ha cancelado"
+        return response_body, 200
 
