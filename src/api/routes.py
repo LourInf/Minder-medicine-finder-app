@@ -9,6 +9,7 @@ import requests
 import os
 import math
 from sqlalchemy import select, or_
+from datetime import datetime, timedelta
 
 
 
@@ -97,3 +98,33 @@ def search_medicines():
 
     response_body['results'] = results
     return jsonify(response_body), 200
+
+
+# Endpoint to create a new order
+@api.route('/order', methods=['POST'])
+def create_order():
+    response_body = {}
+    data = request.json
+    # here we write the logic to save the new order registry in our DB:
+    patient_id = 2  # HARDCODED FOR NOW-->CHANGE! the user needs to be authenticated and the session has a patient_id
+    pharmacy_id = 1 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected pharmacy from user session or database
+    medicine_id = 748 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected medicine from user session or database
+    requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
+    validity_date = requested_date + timedelta(hours=24)   # Set validity_date to 24 hours after requested_date
+    order_status = 'pending' # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
+    new_order= Orders(
+            patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data 
+            pharmacy_id=pharmacy_id,  
+            medicine_id=medicine_id,  
+            order_quantity=data.get('order_quantity', 1), # Default quantity to 1 if not provided
+            requested_date=requested_date,
+            validity_date=validity_date, 
+            order_status=order_status)
+    # Add the new instance to the session and commit to the database
+    db.session.add(new_order)
+    db.session.commit()
+    # Serialize and return the created order
+    response_body['message'] = 'Reserva creada'
+    response_body ['order'] = new_order.serialize()
+    return response_body, 201
+
