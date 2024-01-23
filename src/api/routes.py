@@ -236,20 +236,40 @@ def get_pharmacies():
     return response_body, 200
 
 # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy
-@api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT', 'DELETE'])
+@api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT'])
 def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
     if request.method == 'GET':
         response_body = {}
         results = {}
 		# Fetch the availability record for the specified pharmacy and medicine
-        medicine_available = db.session.execute(select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
+        medicine_available = db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
         if not medicine_available:
             response_body['message'] = 'Esta disponibilidad no existe'
             return response_body, 404
 		# Serialize and return the retrieved medicine_available
         results['medicine_available'] = medicine_available.serialize()     
-        response_body['message'] = "Disponibilidad de esta medicina encontrada"
+        response_body['message'] = "Disponibilidad de esta medicina seleccionada"
+        response_body['results'] = results
+        return jsonify(response_body), 200
+    
+    if request.method == 'PUT':
+        response_body = {}
+        results = {}
+        # Update availability record for the specified pharmacy and medicine attributes with data from the request
+        data = request.json
+        availability= db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
+        if not availability:
+            response_body['message'] = 'Disponibilidad inexistente'
+            return response_body, 404
+        # User can only modify this 1 attribute:
+        availability.availability_status = data.get('availability_status', availability.availability_status)
+        db.session.commit()
+        results['availability_status'] = availability.serialize()     
+        response_body['message'] = "La disponibilidad de este medicamento se ha actualizado exitosamente"
         response_body['results'] = results
         return response_body, 200
+    
+    # if request.method == 'DELETE': NO
+    # Instead of deleting, the pharmacy should change status to obsolete for example.
 
-    #NEXT: Check again Get in postman, PUT, DELETE
+  
