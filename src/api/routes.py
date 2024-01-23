@@ -1,14 +1,14 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from flask import Flask, request, jsonify, Blueprint
-from api.models import db, Users, Medicines, Orders
+from flask import Flask, request, jsonify, Blueprint, session
+from api.models import db, Users, Medicines, Orders, Availability, Pharmacies
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import requests
 import os
 import math
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, and_
 from datetime import datetime, timedelta
 
 
@@ -52,7 +52,6 @@ def refresh_medicines():
 
                 # Check if the medicine already exists in the database based on either the medicine_name or the API_id:
                 existing_medicine = db.session.execute(select(Medicines).where(or_(Medicines.medicine_name == medicine_name, Medicines.API_id == api_id))).scalars().first()
-                # same as: existing_medicine = Medicines.query.filter((Medicines.medicine_name == medicine_name) | (Medicines.API_id == api_id)).first()
                 
                 if not existing_medicine:
                 # Add new medicine to the database
@@ -110,11 +109,11 @@ def create_order():
     pharmacy_id = 1 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected pharmacy from user session or database
     medicine_id = 748 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected medicine from user session or database
     requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
-    validity_date = requested_date + timedelta(hours=24)   # Set validity_date to 24 hours after requested_date
+    validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
     order_status = 'pending' # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
     new_order= Orders(
             patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data 
-            pharmacy_id=pharmacy_id,  
+            pharmacy_id=pharmacy_id,  # CHANGE?? MAKE IT A LIST OF PHARMACIES IN CASE WE WANT TO ASK DIFFERENT PHARMACIES
             medicine_id=medicine_id,  
             order_quantity=data.get('order_quantity', 1), # Default quantity to 1 if not provided
             requested_date=requested_date,
@@ -175,3 +174,82 @@ def handle_specific_order(order_id):
         response_body['message'] = "La reserva se ha cancelado"
         return response_body, 200
 
+# Endpoint to get info on availability
+@api.route('/availability', methods=['GET','POST'])
+def handle_availability():
+    if request.method == 'GET':
+        response_body = {}
+        results = {}
+    #     availability_records = Availability.query.all()
+    # if availability_records:
+    #     # Serialize the records if available
+    #     serialized_records = [record.serialize() for record in availability_records]
+    #     results['availability'] = serialized_records
+    #     response_body['message'] = 'Availability List'
+    #     response_body['results'] = results
+    # else:
+    #     # No records found
+    #     response_body['message'] = 'No availability records found.'
+    # return jsonify(response_body), 200
+        
+        availability = db.session.execute(select(Availability)).scalars().all() # DOESN'T WORK (the old way, commented one, works. CHECK WHY)
+        if availability:
+            results ['availability'] = [row.serialize() for row in availability]
+            response_body['message'] = 'Availability List'
+            return response_body, 200
+        else:
+        # No records found
+            response_body['message'] = 'No hay informacion de disponibilidad.'
+            return jsonify(response_body), 200
+
+    if request.method == 'POST':
+        response_body = {}
+        data = request.json
+        # here we write the logic to save a new availability registry in our DB:
+        # Retrieve the pharmacy_id and medicine_id from the session
+        pharmacy_id = 1 # HARDCODED FOR NOW-->CHANGE!: session.get('pharmacy_id')
+        medicine_id = 748 # HARDCODED FOR NOW-->CHANGE!: session.get('medicine_id')
+        # Check if both pharmacy_id and medicine_id are present
+        if not pharmacy_id or not medicine_id:
+            return jsonify({'message': 'Se requieren el ID de la farmacia y el ID del medicamento de la sesión.'}), 400
+        # Create a new Availability entry
+        availability = Availability(pharmacy_id=pharmacy_id,
+                medicine_id=medicine_id,
+                availability_status=data.get('availability_status'),
+                updated_date=datetime.utcnow())
+        db.session.add(availability)
+        db.session.commit()
+        # Serialize and return the created resource
+        response_body['message'] = 'Disponibilidad creada'
+        response_body ['availability'] = availability.serialize()
+        return response_body, 201
+
+# Enpoint to get affiliated pharmacies
+@api.route('/pharmacies', methods=['GET'])
+def get_pharmacies():
+    response_body = {}
+    results = {}
+    pharmacies = db.session.execute(db.select(Pharmacies)).scalars().all()
+    results['pharmacies'] = [row.serialize() for row in pharmacies]
+    response_body['message'] = 'Lista de farmacias afiliadas'
+    response_body['results'] = results   
+    return response_body, 200
+
+# Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy
+@api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT', 'DELETE'])
+def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
+    if request.method == 'GET':
+        response_body = {}
+        results = {}
+		# Fetch the availability record for the specified pharmacy and medicine
+        medicine_available = db.session.execute(select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
+        if not medicine_available:
+            response_body['message'] = 'Esta disponibilidad no existe'
+            return response_body, 404
+		# Serialize and return the retrieved medicine_available
+        results['medicine_available'] = medicine_available.serialize()     
+        response_body['message'] = "Disponibilidad de esta medicina encontrada"
+        response_body['results'] = results
+        return response_body, 200
+
+    #NEXT: Check again Get in postman, PUT, DELETE
