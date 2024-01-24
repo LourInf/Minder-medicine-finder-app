@@ -34,24 +34,24 @@ export const SearchBar = () =>{
         <div className="container">
             <form className="input-wrapper input-group mb-3" onSubmit={(e)=> e.preventDefault()}>
             <input type="text" className="input-field form-control" placeholder="Busca tu medicamento..." aria-label="Barra Busqueda medicamento"
-            value={input} onChange ={(e) =>handleInputChange(e.target.value)} onkeyDown={(e) => handleKeyDown(e)}/>
+            value={input} onChange ={(e) =>handleInputChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}/>
             <div className="input-group-append">
                 <button className="btn-search btn btn-outline-secondary" type="button" onClick={() => actions.getMedicines(input)}><FontAwesomeIcon icon={faSearch} /></button>
             </div>
             </form>
             
-            <div className="search-results-list">
+            <div className  ="search-results-list">
                 {selectedItem ? (
                     // Render only the selected item
                     <div className="search-result-item" onClick={() => handleItemClick(null)}>
-                        <p>{selectedItem.nombre}</p>
+                        <p>{selectedItem.medicine_name}</p>
                     </div>
                 ) : (
                     // Render the list of items
                     <ul>
                         {store.medicines.map((item, index) => (
                             <div key={index} className="search-result-item" onClick={() => handleItemClick(item)}>
-                                <p>{item.nombre}</p>
+                                <p>{item.medicine_name}</p>
                             </div>
                         ))}
                     </ul>

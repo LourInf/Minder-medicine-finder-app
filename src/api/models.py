@@ -87,7 +87,7 @@ class Medicines(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(250), nullable=False)
     API_id = db.Column(db.String)
-    has_psum = db.Column(db.Boolean(), nullable=False)        # NEW (problemas de desabastecimiento) - nullable=False??
+    # has_psum = db.Column(db.Boolean(), nullable=False)        # NEW (problemas de desabastecimiento) - nullable=False??
     orders = db.relationship('Orders', secondary=Association_table, back_populates='medicine')
 
     def __repr__(self):
