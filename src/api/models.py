@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from enum import Enum
 
 
 db = SQLAlchemy()
@@ -15,8 +16,6 @@ class Users(db.Model):
 
     def __repr__(self):
         return f'<User {self.email}>'
-
-    # return '<User %r>' % self.email ????
 
     def serialize(self):
         # Do not serialize the password, its a security breach
@@ -56,9 +55,15 @@ class Patients(db.Model):
 class Pharmacies(db.Model):
     __tablename__ = "pharmacies"
     id = db.Column(db.Integer, primary_key=True)
-    pharmacy_name = db.Column(db.String(50), nullable=False)
-    SOE_pharmacy_number = db.Column(db.String(20), unique=True)
-    address = db.Column(db.String(150), nullable=False)
+    pharmacy_name = db.Column(db.String(200), nullable=False)
+    SOE_pharmacy_number = db.Column(db.String(20), unique=True, nullable=False)
+    address = db.Column(db.String(150), nullable=False)          # REMOVE
+    # street_address = db.Column(db.String(200), nullable=False) # NEW - Are these enough/needed for geoloc?? 
+    # city = db.Column(db.String(100), nullable=False)           # NEW
+    # postal_code = db.Column(db.String(20), nullable=False)     # NEW
+    # latitude = db.Column(db.Float)                             # NEW
+    # longitude = db.Column(db.Float)                            # NEW
+    # is_24h = db.Column(db.Boolean(), unique=False)             # NEW - Pharmacy can mark if it's a 24h pharmacy
     phone = db.Column(db.String, nullable=False)
     working_hours = db.Column(db.String())
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -82,6 +87,7 @@ class Medicines(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(250), nullable=False)
     API_id = db.Column(db.String)
+    has_psum = db.Column(db.Boolean(), nullable=False)        # NEW (problemas de desabastecimiento) - nullable=False??
     orders = db.relationship('Orders', secondary=Association_table, back_populates='medicine')
 
     def __repr__(self):
@@ -98,7 +104,8 @@ class Orders(db.Model):
     order_quantity = db.Column(db.Integer)
     requested_date = db.Column(db.DateTime, default=datetime.utcnow)
     validity_date = db.Column(db.DateTime) # Máximo 24/48h
-    order_status = db.Column(db.String(50))
+    order_status = db.Column(db.String(50))                                     # REMOVE
+    # order_status = db.Column(SQLAlchemyEnum(OrderStatus))                     # NEW - CHANGE TO ENUM?
     # One To Many
     # patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     # patient = db.relationship(Patients, backref='orders') 
@@ -138,10 +145,18 @@ class Orders(db.Model):
                 'requested_date': self.requested_date,
                 'validity_date': self.validity_date}
 
+# class OrderStatus(Enum):                                                       # NEW
+#     PENDING = "Pendiente"                                                      # NEW
+#     ACCEPTED = "Aceptada"                                                      # NEW
+#     REJECTED = "Rechazada"                                                     # NEW
+#     COMPLETED = "Completada"                                                   # NEW
+
+
 class Availability(db.Model):
     __tablename__ = "availability"
     id = db.Column(db.Integer, primary_key=True)
-    availability_status = db.Column(db.String(50), nullable=False)
+    availability_status = db.Column(db.String(50), nullable=False)                        # REMOVE              
+    # availability_status = db.Column(SQLAlchemyEnum(AvailabilityStatus), nullable=False) # NEW- CHANGE TO ENUM
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
@@ -157,3 +172,7 @@ class Availability(db.Model):
         return {'id': self.id,
                 'availability_status': self.availability_status,
                 'updated_date': self.updated_date}
+
+# class AvailabilityStatus(Enum):                                          # NEW
+#     AVAILABLE = "Disponible"                                             # NEW
+#     NNOT_AVAILABLE = "No disponible"                                     # NEW
