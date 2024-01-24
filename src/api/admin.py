@@ -10,6 +10,7 @@ def setup_admin(app):
 
     
     # Add your models here, for example this is how we add a the User model to the admin
+
     admin.add_view(ModelView(Users, db.session))
     admin.add_view(ModelView(Orders, db.session))
     admin.add_view(ModelView(Patients, db.session))
