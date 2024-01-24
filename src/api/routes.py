@@ -30,32 +30,32 @@ def refresh_medicines():
     base_url = os.getenv('API_URL')
 
     # Send a GET request to the external API to get total items and page size:
-    total_filas = 0
-    tamanio_pagina = 0
-    total_paginas = 0
+    # total_filas = 0
+    # tamanio_pagina = 0
+    # total_paginas = 0
 
     response = requests.get(f"{base_url}/medicamentos?*")
     if response.status_code == 200:
         data = response.json() 
-        total_filas = data['totalFilas']
-        tamanio_pagina = data['tamanioPagina']
-        total_paginas = math.ceil(total_filas / tamanio_pagina)
-        pagina = 1
+        # total_filas = data['totalFilas']
+        # tamanio_pagina = data['tamanioPagina']
+        # total_paginas = math.ceil(total_filas / tamanio_pagina)
+        pagina = 990
 
-        while pagina <= total_paginas:
+        while pagina <= 1000:
             response = requests.get(f"{base_url}/medicamentos?pagina={pagina}")
             data = response.json()  
-        
             for item in data.get('resultados', []):
                 medicine_name = item.get('nombre')
                 api_id = item.get('nregistro')
+                has_psum = item.get('psum')
 
                 # Check if the medicine already exists in the database based on either the medicine_name or the API_id:
                 existing_medicine = db.session.execute(select(Medicines).where(or_(Medicines.medicine_name == medicine_name, Medicines.API_id == api_id))).scalars().first()
                 
                 if not existing_medicine:
                 # Add new medicine to the database
-                    new_medicine = Medicines(medicine_name=medicine_name, API_id=api_id)
+                    new_medicine = Medicines(medicine_name=medicine_name, API_id=api_id, has_psum=has_psum)
                     db.session.add(new_medicine)
             
             db.session.commit()

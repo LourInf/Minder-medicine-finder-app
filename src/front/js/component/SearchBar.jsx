@@ -44,14 +44,14 @@ export const SearchBar = () =>{
                 {selectedItem ? (
                     // Render only the selected item
                     <div className="search-result-item" onClick={() => handleItemClick(null)}>
-                        <p>{selectedItem.medicine_name}</p>
+                        <p>{selectedItem.medicine_name} - {item.API_id}</p>
                     </div>
                 ) : (
                     // Render the list of items
                     <ul>
                         {store.medicines.map((item, index) => (
                             <div key={index} className="search-result-item" onClick={() => handleItemClick(item)}>
-                                <p>{item.medicine_name}</p>
+                                <p>{item.medicine_name} - {item.API_id} </p>
                             </div>
                         ))}
                     </ul>

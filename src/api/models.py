@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from enum import Enum
+from sqlalchemy import Column, Integer, Enum as SQLAlchemyEnum
 
 
 db = SQLAlchemy()
@@ -57,13 +58,10 @@ class Pharmacies(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pharmacy_name = db.Column(db.String(200), nullable=False)
     SOE_pharmacy_number = db.Column(db.String(20), unique=True, nullable=False)
-    address = db.Column(db.String(150), nullable=False)          # REMOVE
-    # street_address = db.Column(db.String(200), nullable=False) # NEW - Are these enough/needed for geoloc?? 
-    # city = db.Column(db.String(100), nullable=False)           # NEW
-    # postal_code = db.Column(db.String(20), nullable=False)     # NEW
-    # latitude = db.Column(db.Float)                             # NEW
-    # longitude = db.Column(db.Float)                            # NEW
-    # is_24h = db.Column(db.Boolean(), unique=False)             # NEW - Pharmacy can mark if it's a 24h pharmacy
+    address = db.Column(db.String(150), nullable=False)               
+    latitude = db.Column(db.Float)                             
+    longitude = db.Column(db.Float)                            
+    is_24h = db.Column(db.Boolean(), unique=False)             
     phone = db.Column(db.String, nullable=False)
     working_hours = db.Column(db.String())
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -86,8 +84,8 @@ class Medicines(db.Model):
     __tablename__ = "medicines"
     id = db.Column(db.Integer, primary_key=True)
     medicine_name = db.Column(db.String(250), nullable=False)
-    API_id = db.Column(db.String)
-    # has_psum = db.Column(db.Boolean(), nullable=False)        # NEW (problemas de desabastecimiento) - nullable=False??
+    API_id = db.Column(db.String)  # nregistro
+    has_psum = db.Column(db.Boolean())        
     orders = db.relationship('Orders', secondary=Association_table, back_populates='medicine')
 
     def __repr__(self):
@@ -97,15 +95,19 @@ class Medicines(db.Model):
         return {'id': self.id,
                 'medicine_name': self.medicine_name}
 
+class OrderStatus(Enum):                                                       
+    PENDING = "Pendiente"                                                     
+    ACCEPTED = "Aceptada"                                                     
+    REJECTED = "Rechazada"                                                   
+    COMPLETED = "Recogida"  
 
 class Orders(db.Model):
     __tablename__ = "orders"
     id = db.Column(db.Integer, primary_key=True)
     order_quantity = db.Column(db.Integer)
     requested_date = db.Column(db.DateTime, default=datetime.utcnow)
-    validity_date = db.Column(db.DateTime) # Máximo 24/48h
-    order_status = db.Column(db.String(50))                                     # REMOVE
-    # order_status = db.Column(SQLAlchemyEnum(OrderStatus))                     # NEW - CHANGE TO ENUM?
+    validity_date = db.Column(db.DateTime) # Máximo 24/48h                                 
+    order_status = db.Column(SQLAlchemyEnum(OrderStatus))                     
     # One To Many
     # patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     # patient = db.relationship(Patients, backref='orders') 
@@ -143,20 +145,17 @@ class Orders(db.Model):
                 'order_status': self.order_status,
                 'order_quantity': self.order_quantity,
                 'requested_date': self.requested_date,
-                'validity_date': self.validity_date}
+                'validity_date': self.validity_date}                                                 
 
-# class OrderStatus(Enum):                                                       # NEW
-#     PENDING = "Pendiente"                                                      # NEW
-#     ACCEPTED = "Aceptada"                                                      # NEW
-#     REJECTED = "Rechazada"                                                     # NEW
-#     COMPLETED = "Completada"                                                   # NEW
+class AvailabilityStatus(Enum):                                          
+    AVAILABLE = "Disponible"                                             
+    NOT_AVAILABLE = "No disponible"                                    
 
 
 class Availability(db.Model):
     __tablename__ = "availability"
-    id = db.Column(db.Integer, primary_key=True)
-    availability_status = db.Column(db.String(50), nullable=False)                        # REMOVE              
-    # availability_status = db.Column(SQLAlchemyEnum(AvailabilityStatus), nullable=False) # NEW- CHANGE TO ENUM
+    id = db.Column(db.Integer, primary_key=True)                              
+    availability_status = db.Column(SQLAlchemyEnum(AvailabilityStatus), nullable=False)
     updated_date = db.Column(db.DateTime, default=datetime.utcnow)
     
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
@@ -172,7 +171,3 @@ class Availability(db.Model):
         return {'id': self.id,
                 'availability_status': self.availability_status,
                 'updated_date': self.updated_date}
-
-# class AvailabilityStatus(Enum):                                          # NEW
-#     AVAILABLE = "Disponible"                                             # NEW
-#     NNOT_AVAILABLE = "No disponible"                                     # NEW
