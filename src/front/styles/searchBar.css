@@ -24,13 +24,14 @@
   .search-form-input:focus {
     box-shadow: 0 0px 0px rgba(0,0,0,0.1); 
     border-bottom: 1px solid #dee2e6;
+    
 }
   .search-form-button {
     border: none;
     font-size: 2rem;
     margin-top: 0.8rem;
   }
-   
+
   .vertical-line {
     border-right: 2px solid #dee2e6;
     height: 95%;
@@ -40,4 +41,20 @@
   border-top: 2px solid #dee2e6;
   width: 100%;
   margin: 0.5rem 0; 
+}
+
+.btn-clear-selection {
+  border: none;
+  background: transparent;
+}
+
+.btn-clear-selection:hover {
+  border: none;
+  background: transparent;
+  color: red;
+  font-size: larger;
+}
+
+.input-group .form-control {
+  padding-right: 2.5rem; /* to adjust the input padding to make space for the x' */
 }

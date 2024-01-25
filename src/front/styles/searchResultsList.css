@@ -1,5 +1,6 @@
 .search-results-list {
     position: absolute;
+    z-index: 1050; /* Needed to add to fix issue that search input was visible on sm size screens*/
     width: 47%; /* to match the input field */
     max-height: 300px; /* how many results do we want to show in dropdown? CHANGE IF NEEDED */
     overflow-y: auto;

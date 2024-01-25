@@ -2,26 +2,25 @@ import React,  { useContext, useState }  from "react"; //1. Import hook useConte
 import { Context } from "../store/appContext.js"; //2. Import Context
 import "../../styles/searchResultsList.css"
 
-export const SearchResultsList = () =>{
+export const SearchResultsList = ({onItemClick}) =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
-    const [selectedItem, setSelectedItem] = useState(null);
+    // const [selectedItem, setSelectedItem] = useState(null);
       
    
-    const handleItemClick = (item) => {
-        // Set the selected item when clicked
-        setSelectedItem(item);
-    };
+    // const handleItemClick = (item) => {
+    //     // Set the selected item when clicked
+    //     setSelectedItem(item);
+    // };
     
     return(           
             <div className  ="search-results-list">
-                 {!selectedItem && store.medicines.length > 0 && (
+                 {store.medicines.length > 0 && (
                 <div className="list-group">
                     {store.medicines.map((item, index) => (
                         <button
                             key={index}
                             className="list-group-item list-group-item-action"
-                            onClick={() => handleItemClick(item)}
-                        >
+                            onClick={() => onItemClick(item)}>
                             {item.medicine_name}
                         </button>
                     ))}

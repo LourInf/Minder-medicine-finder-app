@@ -1,7 +1,7 @@
 import React,  { useContext, useState }  from "react"; //1. Import hook useContext
 import { Context } from "../store/appContext.js"; //2. Import Context
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import "../../styles/searchBar.css"
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { SearchResultsList } from "./SearchResultsList.jsx";
@@ -10,6 +10,7 @@ export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
+    
       
     const handleInputChange = (value) => {
         setInput(value);
@@ -27,9 +28,20 @@ export const SearchBar = () =>{
     };
    
     const handleItemClick = (item) => {
+        // Set the input to the item's name or identifier
+        setInput(item.medicine_name);
         // Set the selected item when clicked
         setSelectedItem(item);
+        // Optionally close the search results list or perform other actions
+        actions.getMedicines("");
     };
+
+    // clear selected item
+    const clearSelection = () => {
+      setInput('');
+      setSelectedItem(null); // Reset selected item
+  };
+
     
     return(
             <Container className="search-form-container">
@@ -44,8 +56,13 @@ export const SearchBar = () =>{
                       aria-describedby="medicamento"
                       value={input} onChange ={(e) =>handleInputChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}
                     />
+                    {input && (
+                      <Button variant="outline-secondary" className="btn-clear-selection" onClick={clearSelection}>
+                        <FontAwesomeIcon icon={faTimes} />
+                      </Button>
+                    )}
                   </InputGroup>
-                  <SearchResultsList/>
+                  <SearchResultsList onItemClick={handleItemClick} />
                 </Col>
                 <Col sm={12} md={1}>
                   <div className="vertical-line d-none d-md-block"></div>
