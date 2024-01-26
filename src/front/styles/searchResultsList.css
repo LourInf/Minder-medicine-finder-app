@@ -1,0 +1,29 @@
+.search-results-list {
+    position: absolute;
+    z-index: 1050; /* Needed to add to fix issue that search input was visible on sm size screens*/
+    width: 47%; /* to match the input field */
+    max-height: 300px; /* how many results do we want to show in dropdown? CHANGE IF NEEDED */
+    overflow-y: auto;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+    border-radius: 0.9rem;
+}
+
+.list-group-item {
+    cursor: pointer;
+    border: none;
+    text-transform:lowercase;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;    
+   }
+
+/* Hiding the scrollbar for Webkit browsers */
+.search-results-list::-webkit-scrollbar {
+    display: none; 
+}
+
+/* Hiding the scrollbar for Firefox */
+.search-results-list {
+    scrollbar-width: none;
+}

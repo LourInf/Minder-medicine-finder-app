@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Context } from "../store/appContext";
+import React,  { useContext, useState }  from "react"; //1. Import hook useContext
+import { Context } from "../store/appContext.js" //2.Import Context
 import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
 

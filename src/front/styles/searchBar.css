@@ -1,0 +1,61 @@
+.search-form-container {
+  position: absolute;
+  top: 50%;
+  left: 50%; 
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .search-form-label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    color: black;
+    padding-left: 0.7rem;
+  }
+  
+  .search-form-input {
+    border: none;
+  }
+  
+  .search-form-input:focus {
+    box-shadow: 0 0px 0px rgba(0,0,0,0.1); 
+    border-bottom: 1px solid #dee2e6;
+    
+}
+  .search-form-button {
+    border: none;
+    font-size: 2rem;
+    margin-top: 0.8rem;
+  }
+
+  .vertical-line {
+    border-right: 2px solid #dee2e6;
+    height: 95%;
+}
+
+.horizontal-line {
+  border-top: 2px solid #dee2e6;
+  width: 100%;
+  margin: 0.5rem 0; 
+}
+
+.btn-clear-selection {
+  border: none;
+  background: transparent;
+  color: #dee2e6;
+}
+
+.btn-clear-selection:hover {
+  border: none;
+  background: transparent;
+  color: red;
+  font-size: larger;
+}
+
+.input-group .form-control {
+  padding-right: 2.5rem; /* to adjust the input padding to make space for the x' */
+}

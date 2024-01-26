@@ -1,0 +1,47 @@
+.card-container{
+    max-width: 30rem;
+    margin: 0 1rem 1rem 3rem;
+}
+
+.card-container.contact{
+    border: none;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+   
+}
+
+.card-group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+.address-item{
+    display: flex;
+    padding-left: 0;
+    
+}
+
+.working-hours-item{
+    display: flex;
+    padding-right: 0;
+
+}
+
+.distance-item{
+    margin: 0 0 0 3rem;
+}
+
+.card-wrapper{
+    display:flex;
+}
+
+.btn-reserve-online{
+    margin-right: 2rem;
+}
+
+.card-link {
+    text-decoration: none;
+    color:black
+  }
