@@ -84,3 +84,11 @@ __pycache__/
 migrations/
 Pipfile/
 Pipfile.lock
+
+package.json
+package-lock.json
+
+
+src/api/admin.py
+src/api/models.py
+
