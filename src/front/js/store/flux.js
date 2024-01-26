@@ -14,7 +14,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			medicines: []
+			medicines: [],
+			selectedMedicine: null,
+			//selectedLocation: null,
+			//pharmacyResults:[]
 		},
 		actions: {
 			exampleFunction: () => {
@@ -68,6 +71,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error:", response.status, response.statusText);
 				}
 			},
+			getSelectedMedicine: (medicine) => {
+				setStore({ selectedMedicine: medicine });
+				},
 		
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));

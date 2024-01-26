@@ -30,21 +30,21 @@ def refresh_medicines():
     base_url = os.getenv('API_URL')
 
     # Send a GET request to the external API to get total items and page size:
-    # total_filas = 0
-    # tamanio_pagina = 0
-    # total_paginas = 0
+    total_filas = 0
+    tamanio_pagina = 0
+    total_paginas = 0
 
     response = requests.get(f"{base_url}/medicamentos?*")
     if response.status_code == 200:
-        data = response.json() 
-        # total_filas = data['totalFilas']
-        # tamanio_pagina = data['tamanioPagina']
-        # total_paginas = math.ceil(total_filas / tamanio_pagina)
-        pagina = 990
+        data = response.json()
+        total_filas = data['totalFilas']
+        tamanio_pagina = data['tamanioPagina']
+        total_paginas = math.ceil(total_filas / tamanio_pagina)
+        pagina = 1
 
-        while pagina <= 1000:
+        while pagina <= total_paginas:
             response = requests.get(f"{base_url}/medicamentos?pagina={pagina}")
-            data = response.json()  
+            data = response.json()
             for item in data.get('resultados', []):
                 medicine_name = item.get('nombre')
                 api_id = item.get('nregistro')
@@ -52,28 +52,28 @@ def refresh_medicines():
 
                 # Check if the medicine already exists in the database based on either the medicine_name or the API_id:
                 existing_medicine = db.session.execute(select(Medicines).where(or_(Medicines.medicine_name == medicine_name, Medicines.API_id == api_id))).scalars().first()
-                
+
                 if not existing_medicine:
                 # Add new medicine to the database
                     new_medicine = Medicines(medicine_name=medicine_name, API_id=api_id, has_psum=has_psum)
                     db.session.add(new_medicine)
-            
+
             db.session.commit()
             pagina = pagina+1
     else:
         print("Error al recuperar los datos")
-    
+
     response_body['message'] = 'Los medicamentos se han añadido correctamente a la base de datos'
     return jsonify(response_body), 200
 
-# Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)
-@api.route('/refresh-medicines', methods=['DELETE'])
-def delete_medicines():
-    response_body = {}
-    db.session.query(Medicines).delete()
-    db.session.commit()
-    response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
-    return jsonify(response_body), 200
+# # Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)
+# @api.route('/refresh-medicines', methods=['DELETE'])
+# def delete_medicines():
+#     response_body = {}
+#     db.session.query(Medicines).delete()
+#     db.session.commit()
+#     response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
+#     return jsonify(response_body), 200
 
 
 # Enpoint to search medicines by name from our db
@@ -84,7 +84,7 @@ def search_medicines():
     search_name = request.args.get('name', '')  # Get search query from URL parameters (get the value associated with query param "name"; if param "name" is not found or it is empty, assign an empty string)
     if search_name:
         medicines = db.session.execute(select(Medicines).where(Medicines.medicine_name.ilike(f'%{search_name}%'))).scalars().all()
-    else: 
+    else:
         medicines = []
     # Serialize the data and set it in the results dictionary
     medicines_list = [medicine.serialize() for medicine in medicines]
@@ -95,6 +95,26 @@ def search_medicines():
     else:
         response_body['message'] = 'No se ha encontrado ese medicamento'
 
+    response_body['results'] = results
+    return jsonify(response_body), 200
+
+# Enpoint to get a list of medicines with active distrib problems:
+@api.route('/medicines-psum', methods=['GET'])
+def get_medicines_psum():
+    response_body = {}
+    results = {}
+    medicines_psum = db.session.execute(select(Medicines).where(Medicines.has_psum == True)).scalars().all()
+     # Serialize the data
+    medicines_list = [{'id': medicine.id, 'medicine_name': medicine.medicine_name} for medicine in medicines_psum]
+    results['medicines'] = medicines_list
+
+    # Count the total number of medicines with psum true
+    total_medicines_psum = len(medicines_psum)
+    results['total_medicines_psum'] = total_medicines_psum
+    if medicines_psum:
+        response_body['message'] = f'Medicamentos con problemas de suministro encontrados: {total_medicines_psum}.'
+    else:
+        response_body['message'] = 'No se encontraron medicamentos con problemas de suministro.'
     response_body['results'] = results
     return jsonify(response_body), 200
 
@@ -112,12 +132,12 @@ def create_order():
     validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
     order_status = 'pending' # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
     new_order= Orders(
-            patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data 
+            patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data
             pharmacy_id=pharmacy_id,  # CHANGE?? MAKE IT A LIST OF PHARMACIES IN CASE WE WANT TO ASK DIFFERENT PHARMACIES
-            medicine_id=medicine_id,  
+            medicine_id=medicine_id,
             order_quantity=data.get('order_quantity', 1), # Default quantity to 1 if not provided
             requested_date=requested_date,
-            validity_date=validity_date, 
+            validity_date=validity_date,
             order_status=order_status)
     # Add the new instance to the session and commit to the database
     db.session.add(new_order)
@@ -139,7 +159,7 @@ def handle_specific_order(order_id):
             response_body['message'] = 'Esta reserva no existe'
             return response_body, 404
 		# Serialize and return the retrieved order
-        results['order'] = order.serialize()     
+        results['order'] = order.serialize()
         response_body['message'] = "Reserva encontrada"
         response_body['results'] = results
         return response_body, 200
@@ -147,7 +167,7 @@ def handle_specific_order(order_id):
     if request.method == 'PUT':
         response_body = {}
         results = {}
-        # Update order attributes with data from the request. 2 options: 
+        # Update order attributes with data from the request. 2 options:
         data = request.json
         order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
         if not order:
@@ -157,11 +177,11 @@ def handle_specific_order(order_id):
         order.order_quantity = data.get('order_quantity', order.order_quantity)
         order.order_status = data.get('order_status', order.order_status)
         db.session.commit()
-        results['order'] = order.serialize()     
+        results['order'] = order.serialize()
         response_body['message'] = "La reserva se ha actualizado exitosamente"
         response_body['results'] = results
         return response_body, 200
-    
+
     if request.method == 'DELETE':
         response_body = {}
         # Delete the order and commit the change
@@ -170,7 +190,7 @@ def handle_specific_order(order_id):
             response_body['message'] = 'Esta reserva no existe'
             return response_body, 404
         db.session.delete(order)
-        db.session.commit()    
+        db.session.commit()
         response_body['message'] = "La reserva se ha cancelado"
         return response_body, 200
 
@@ -191,7 +211,7 @@ def handle_availability():
     #     # No records found
     #     response_body['message'] = 'No availability records found.'
     # return jsonify(response_body), 200
-        
+
         availability = db.session.execute(select(Availability)).scalars().all() # DOESN'T WORK (the old way, commented one, works. CHECK WHY)
         if availability:
             results ['availability'] = [row.serialize() for row in availability]
@@ -224,7 +244,7 @@ def handle_availability():
         response_body ['availability'] = availability.serialize()
         return response_body, 201
 
-# Enpoint to get affiliated pharmacies
+# Endpoint to get affiliated pharmacies
 @api.route('/pharmacies', methods=['GET'])
 def get_pharmacies():
     response_body = {}
@@ -232,7 +252,7 @@ def get_pharmacies():
     pharmacies = db.session.execute(db.select(Pharmacies)).scalars().all()
     results['pharmacies'] = [row.serialize() for row in pharmacies]
     response_body['message'] = 'Lista de farmacias afiliadas'
-    response_body['results'] = results   
+    response_body['results'] = results
     return response_body, 200
 
 # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy
@@ -247,11 +267,11 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
             response_body['message'] = 'Esta disponibilidad no existe'
             return response_body, 404
 		# Serialize and return the retrieved medicine_available
-        results['medicine_available'] = medicine_available.serialize()     
+        results['medicine_available'] = medicine_available.serialize()
         response_body['message'] = "Disponibilidad de esta medicina seleccionada"
         response_body['results'] = results
         return jsonify(response_body), 200
-    
+
     if request.method == 'PUT':
         response_body = {}
         results = {}
@@ -264,12 +284,11 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
         # User can only modify this 1 attribute:
         availability.availability_status = data.get('availability_status', availability.availability_status)
         db.session.commit()
-        results['availability_status'] = availability.serialize()     
+        results['availability_status'] = availability.serialize()
         response_body['message'] = "La disponibilidad de este medicamento se ha actualizado exitosamente"
         response_body['results'] = results
         return response_body, 200
-    
+
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
 
-  

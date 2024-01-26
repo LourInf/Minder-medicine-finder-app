@@ -13,7 +13,6 @@ export const LandingPage = () => {
 		<Container className="text-center mt-5">
 			<h1>Busca medicamentos cerca de ti</h1>
 			<SearchBar />
-			
     	</Container>
 	);
 };

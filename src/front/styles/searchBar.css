@@ -46,6 +46,7 @@
 .btn-clear-selection {
   border: none;
   background: transparent;
+  color: #dee2e6;
 }
 
 .btn-clear-selection:hover {

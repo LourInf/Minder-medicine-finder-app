@@ -5,42 +5,52 @@ import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
 import "../../styles/searchBar.css"
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { SearchResultsList } from "./SearchResultsList.jsx";
+import { useNavigate } from 'react-router-dom'
 
 export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
+    const navigate = useNavigate();
     
       
     const handleInputChange = (value) => {
         setInput(value);
         actions.getMedicines(value);
-        // Reset selected item when input changes
-        setSelectedItem(null);
+        setSelectedItem(null);   // Reset selected item
     };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             actions.getMedicines(input);
-            // Reset selected item when Enter key is pressed
-            setSelectedItem(null);
+            setSelectedItem(null); 
         }
     };
    
     const handleItemClick = (item) => {
-        // Set the input to the item's name or identifier
         setInput(item.medicine_name);
-        // Set the selected item when clicked
         setSelectedItem(item);
-        // Optionally close the search results list or perform other actions
         actions.getMedicines("");
+        // For Results: we update the store with the selected medicine
+        actions.getSelectedMedicine(item.medicine_name);
+        // save selected medicine in session storage
+        sessionStorage.setItem('selectedMedicine', JSON.stringify(item));
     };
 
     // clear selected item
     const clearSelection = () => {
       setInput('');
-      setSelectedItem(null); // Reset selected item
+      setSelectedItem(null);
   };
+
+  const handleSearchResults = () => {
+    if (selectedItem && selectedItem.id) {
+        navigate(`/results?medicineId=${selectedItem.id}`);   // QUESTION: is it ok to use useNavigate with query parameters for this? (like /results?medicineId=100&locationId=200) or should I use useParams and a route path like /results/medicine/:medicineId/location/:locationId?
+        
+      } else {
+        console.log("No ha seleccionado ningun medicamento");
+    }
+}
 
     
     return(
@@ -57,9 +67,9 @@ export const SearchBar = () =>{
                       value={input} onChange ={(e) =>handleInputChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}
                     />
                     {input && (
-                      <Button variant="outline-secondary" className="btn-clear-selection" onClick={clearSelection}>
+                      <button className="btn-clear-selection" onClick={clearSelection}>
                         <FontAwesomeIcon icon={faTimes} />
-                      </Button>
+                      </button>
                     )}
                   </InputGroup>
                   <SearchResultsList onItemClick={handleItemClick} />
@@ -73,14 +83,14 @@ export const SearchBar = () =>{
                   <InputGroup className="mb-3">
                     <Form.Control
                       className="search-form-input"
-                      placeholder="Ciudad, Dirección o Farmacia "
+                      placeholder=" Dirección, Ciudad o Código Postal "
                       aria-label="localizacion"
                       aria-describedby="localizacion"
                     />
                   </InputGroup>
                 </Col>
                 <Col sm={12} md={1}>
-                <Button variant="outline-secondary" className="search-form-button" type="button" onClick={() => actions.getMedicines(input)}>
+                <Button variant="outline-secondary" className="search-form-button" type="button" onClick={handleSearchResults}>
                 <FontAwesomeIcon icon={faSearch} />
                 </Button>
                 </Col>
