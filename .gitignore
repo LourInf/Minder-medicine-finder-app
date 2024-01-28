@@ -87,5 +87,5 @@ migrations
 package.json
 package-lock.json
 
-./src/api/admin.py
-./src/api/models.py
+src/api/admin.py
+src/api/models.py
