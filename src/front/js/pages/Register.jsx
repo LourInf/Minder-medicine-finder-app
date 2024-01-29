@@ -76,6 +76,14 @@ export const Register = () => {
                         onChange={(e) => setIs_pharmacy(e.target.checked)} checked={is_pharmacy}/>
                     <label className="form-label" htmlFor="registerForm3">Is pharmcy?</label>
                 </div>
+
+                {is_pharmacy && (
+                    <div>
+                        
+                    </div>
+                )}
+
+
                 <div>
                     <button id="send" type="submit" className="btn btn-primary btn-block mb-4">
                         Sign up
