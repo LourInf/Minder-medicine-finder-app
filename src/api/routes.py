@@ -11,6 +11,7 @@ import math
 from sqlalchemy import select, or_, and_
 from datetime import datetime, timedelta
 
+from flask_jwt_extended import create_access_token
 
 
 api = Blueprint('api', __name__)
@@ -391,4 +392,52 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
 
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
+
+
+
+@api.route('/login', methods=['POST'])
+def login_user():
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    
+    user = Users.query.filter_by(email=email, password=password).first()
+    # if user is None:
+    if user is None:
+        return jsonify({"message":"User not found"}), 404
+    
+
+    if user.is_pharmacy is True:
+        token = create_access_token(identity = user.id , additional_claims = {"role":"pharmacy"})
+    elif user.is_pharmacy is False:
+        token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
+    else:
+        return jsonify({"message":"This user is not correctly created"}), 503
+    # token = create_access_token(identity = user.id , additional_claims = {"role":"admin"})
+    
+    # token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
+    return jsonify({"message":"Login Successful","token":token}) , 200
+
+
+
+
+@api.route('signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    if 'email' not in data or 'password' not in data:
+        return jsonify({"error": "Where are my requirements?"})
+    
+    if data["is_pharmacy"] is True or data["is_pharmacy"] is False:
+        new_user = Users(email=data['email'], password=data['password'], is_pharmacy=data["is_pharmacy"], is_active=True) 
+    else:
+        return jsonify({"message":"You need to be a pharmacy or user. Get out."}), 403
+    
+    # new_user = Users(email=data['email'], password=data['password'], is_pharmacy=data["is_pharmacy"], is_active=True)
+
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"message": "User added successfully"}), 201
+
+
+
+
 

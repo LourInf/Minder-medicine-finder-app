@@ -80,3 +80,12 @@ database.database
 database.db
 diagram.png
 __pycache__/
+
+
+
+migrations
+package.json
+package-lock.json
+
+src/api/admin.py
+src/api/models.py

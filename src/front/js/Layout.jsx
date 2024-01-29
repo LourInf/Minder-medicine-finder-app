@@ -17,6 +17,8 @@ import { PharmacyProfile } from "./component/PharmacyProfile.jsx";
 import { Availability } from "./component/Availability.jsx";
 import { Reservations } from "./component/Reservations.jsx";
 import { Maps } from "./component/Maps.jsx"
+import { Login } from "./pages/Login.jsx";
+import { Register } from "./pages/Register.jsx";
 
 
 // Create your first component
@@ -35,6 +37,8 @@ const Layout = () => {
                     <Route element={<LandingPage />} path="/landing" />
                         <Route element={<Home />} path="/" />
                         <Route element={<Results />} path="/results" />
+                        <Route element={<Login />} path="/login" />
+                        <Route element={<Register />} path="/register" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Maps />} path="/maps" />

@@ -20,11 +20,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			medicinesPsum: [],
 			totalMedicinesPsum: 0,
 			
+			
+			isLoggedIn: false
+
+
 		},
 		actions: {
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");  // Use getActions to call a function within a fuction
-			},
+
 			getMessage: async () => {
 				try {
 					// Fetching data from the backend
@@ -160,6 +162,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 		console.log ("Error:", response.status, response.statusText);
 			// 	}
 			// },
+			
+			login: (token) => {
+				setStore({isLoggedIn: true});
+				localStorage.setItem("token", token);
+			},
+
+			logout: () => {
+				setStore({isLoggedIn: false});
+				localStorage.removeItem("token");
+			},
+
+			
+			isLogged : () => {
+				if(localStorage.getItem("token")){
+					setStore({isLogged: true})
+				}
+			}
+
 		}
 	};
 };
