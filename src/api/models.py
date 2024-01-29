@@ -22,7 +22,8 @@ class Users(db.Model):
         # Do not serialize the password, its a security breach
         return {'id': self.id,
                 'email': self.email,
-                'is_active': self.is_active}
+                'is_active': self.is_active,
+                'is_pharmacy': self.is_pharmacy}
             
 # Many to Many
 Association_table = db.Table("Association_table", db.metadata,
@@ -77,9 +78,11 @@ class Pharmacies(db.Model):
                 'pharmacy_name': self.pharmacy_name,
                 'address': self.address,
                 'phone': self.phone,
+                'working_hours': self.working_hours,
+                'SOE_pharmacy_number': self.SOE_pharmacy_number,
                 'latitude': self.latitude,
                 'longitude': self.longitude,
-                'working_hours': self.working_hours
+                'is_24h':self.is_24h
                 }
 
 class Medicines(db.Model):
@@ -95,7 +98,10 @@ class Medicines(db.Model):
 
     def serialize(self):
         return {'id': self.id,
-                'medicine_name': self.medicine_name}
+                'medicine_name': self.medicine_name,
+                'has_psum': self.has_psum,
+                'API_id': self.API_id
+        }
 
 class OrderStatus(Enum):                                                       
     PENDING = "Pendiente"                                                     
@@ -110,6 +116,18 @@ class Orders(db.Model):
     requested_date = db.Column(db.DateTime, default=datetime.utcnow)
     validity_date = db.Column(db.DateTime) # Máximo 24/48h                                 
     order_status = db.Column(SQLAlchemyEnum(OrderStatus))                     
+    # One To Many
+    # patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
+    # patient = db.relationship(Patients, backref='orders') 
+    # pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
+    # pharmacy = db.relationship(Pharmacies, backref='orders')
+    # Many to Many 
+    # medicine_id = db.Column(db.Integer, db.ForeignKey('medicines.id')) 
+    # medicine = db.relationship(Medicines, backref='orders')
+    # patient_rel = db.relationship('Patients', secondary=Association_table, backref='Orders')
+    # medicine_rel = db.relationship('Medicines', secondary=Association_table, backref='Orders')
+    # parhamacy_rel = db.relationship('Pharmacies', secondary=Association_table, backref='Orders')
+
     patient_id = db.Column(db.Integer, db.ForeignKey('patients.id'))
     patient = db.relationship(Patients, back_populates='orders', primaryjoin="Patients.id == Orders.patient_id")
     pharmacy_id = db.Column(db.Integer, db.ForeignKey('pharmacies.id')) 
