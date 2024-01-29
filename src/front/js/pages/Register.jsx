@@ -78,8 +78,11 @@ export const Register = () => {
                 </div>
 
                 {is_pharmacy && (
-                    <div>
-                        
+                    <div className="form-outline mb-4">
+                        <select id="pharmacies" className="form-control">
+                            <option>Pharma de Móstoles</option>
+                            <option>Pharma de Dña manolita</option>
+                        </select>
                     </div>
                 )}
 
