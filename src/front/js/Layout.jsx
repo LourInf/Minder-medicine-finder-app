@@ -16,6 +16,7 @@ import { Footer } from "./component/Footer.jsx";
 import { PharmacyProfile } from "./component/PharmacyProfile.jsx";
 import { Availability } from "./component/Availability.jsx";
 import { Reservations } from "./component/Reservations.jsx";
+import { Maps } from "./component/Maps.jsx"
 
 
 // Create your first component
@@ -36,6 +37,7 @@ const Layout = () => {
                         <Route element={<Results />} path="/results" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Single />} path="/single/:theid" />
+                        <Route element={<Maps />} path="/maps" />
                          {/* React Router Outlet: 1.Define the parent route for the pharmacy area */}
                          <Route path="/pharmacy" element={<PharmacyDashboard />}> 
                              {/* 2.Define the nested routes for the different sections within the pharmacy area */}

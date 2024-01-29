@@ -2,24 +2,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
+			// demo: [
+			// 	{
+			// 		title: "FIRST",
+			// 		background: "white",
+			// 		initial: "white"
+			// 	},
+			// 	{
+			// 		title: "SECOND",
+			// 		background: "white",
+			// 		initial: "white"
+			// 	}
+			// ],
+			pharmacies: [],
 			medicines: [],
 			selectedMedicine: null,
 			medicinesPsum: [],
 			totalMedicinesPsum: 0,
-			//selectedLocation: null,
-			//pharmacyResults:[]
+			
 		},
 		actions: {
 			exampleFunction: () => {
@@ -45,6 +45,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				setStore({ demo: demo });  // Reset the global store
 			},
+
+			getPharmacies: async (city) => {
+				// 1. Definir la URL que está en el env. Parámetro city. 
+				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${city}`;
+				// 2. Options - únicamente GET del listado de Farmacias
+				const options = {
+					method: 'GET'
+				};
+				// 3. Response
+				const response = await fetch(url_maps, options);
+				// 4. Verificar response (console log)
+				if (response.ok) {
+					// 5. If = ok; Tratamiento del OK - definimos el data
+					const data = await response.json();
+					// Grabar los datos en el store y en local Storage
+					setStore({ "pharmacies": data.results })
+					localStorage.setItem('pharmacies', JSON.stringify(data.results))
+					console.log(data),
+						console.log(data.results) // para ver qué trae
+
+				} else {
+					console.log('Error:', "No encuentra Farmacias Cercanas")
+				}
+			},
+
+			getPharmaciesDetails: async (pharmacy_id) => {
+				// 1. Definir la URL que está en el env. Parámetro city. 
+				const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details`;
+				// 2. Options - Usar POST
+				const options = {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					// Para que la API funciona necesitamos el ID por lo tanto es lo que hay que enviar en el body
+					body: JSON.stringify({ pharmacy_id: pharmacy_id }),
+				}
+				// 3. Response
+				const response = await fetch(url_pharmacy_details, options);
+				// 4. Verificar response (console log)
+				if (response.ok) {
+					// 5. If = ok; Tratamiento del OK - definimos el data
+					const data = await response.json();
+					return data;
+					} else {
+						console.log('Error', "No encuentra el ID de la Farmacia")
+						return null;
+					}
+			},
+
 			getMedicines: async (value) => {
 				// Clear previous search results
 				setStore({ medicines: [] });
@@ -98,6 +148,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						});
 					}
 				},
+	
 			
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));
