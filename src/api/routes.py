@@ -163,6 +163,18 @@ def refresh_medicines():
 #     response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
 #     return jsonify(response_body), 200
 
+# Enpoint to get all medicines from our db
+@api.route('/medicines', methods=['GET'])
+def get_all_medicines():
+    response_body = {}
+    results = {}
+    medicines = db.session.execute(select(Medicines)).scalars().all()
+    # Serialize the data and set it in the results dictionary
+    medicines_list = [medicine.serialize() for medicine in medicines]
+    results['medicines'] = medicines_list
+    response_body['results'] = results
+    return jsonify(response_body), 200
+
 
 # Enpoint to search medicines by name from our db
 @api.route('/medicines/search', methods=['GET'])

@@ -11,9 +11,19 @@ export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
+    const [city, setCity] = useState("");
     const navigate = useNavigate();
     
-      
+    const handlePharmacies = () => {
+      actions.getPharmacies(city);
+    };
+  
+    const handleKeyPress = (e) => {
+      if (e.key== 'Enter') {
+        handlePharmacies();
+      }
+    };
+
     const handleInputChange = (value) => {
         setInput(value);
         actions.getMedicines(value);
@@ -86,6 +96,9 @@ export const SearchBar = () =>{
                       placeholder=" Dirección, Ciudad o Código Postal "
                       aria-label="localizacion"
                       aria-describedby="localizacion"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)} 
+                      onKeyDown={handleKeyPress}
                     />
                   </InputGroup>
                 </Col>
