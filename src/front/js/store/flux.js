@@ -16,6 +16,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 			medicines: [],
 			selectedMedicine: null,
+			medicinesPsum: [],
+			totalMedicinesPsum: 0,
 			//selectedLocation: null,
 			//pharmacyResults:[]
 		},
@@ -74,7 +76,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getSelectedMedicine: (medicine) => {
 				setStore({ selectedMedicine: medicine });
 				},
-		
+			
+			getMedicinesPsum: async () => {
+				const url = `${process.env.BACKEND_URL}/api/medicines-psum`;
+				const options = {
+					method: "GET"
+				};
+				const response = await fetch(url, options);
+					if (response.ok) {
+						const data = await response.json();
+						console.log(data);
+						setStore({
+							medicinesPsum: data.results.medicines,
+							totalMedicinesPsum: data.results.total_medicines_psum,
+						});
+					} else {
+						console.log("Medicamento no encontrado");
+						setStore({
+							medicinesPsum: [],
+							totalMedicinesPsum: 0,
+						});
+					}
+				},
+			
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));
 			// 		//JSON.stringify is needed when we save in localStorage so it can read what's inside our data.results
