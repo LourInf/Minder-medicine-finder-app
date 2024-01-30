@@ -1,20 +1,28 @@
+
 .search-form-container {
-  position: absolute;
+ /* position: absolute;
   top: 50%;
   left: 50%; 
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); */
+  display: flex;
+  flex-direction: column;
+  align-items: space-between; 
   background-color: white;
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  }
+  margin-bottom: 300px;
+  margin-top: 100px;
+   }
   
+ 
   .search-form-label {
     display: block;
     text-align: left;
     font-weight: bold;
     color: black;
     padding-left: 0.7rem;
+
   }
   
   .search-form-input {

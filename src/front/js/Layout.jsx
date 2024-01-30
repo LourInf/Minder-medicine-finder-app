@@ -18,6 +18,7 @@ import { Reservations } from "./component/Reservations.jsx";
 import { Maps } from "./component/Maps.jsx"
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
+import { SearchBar } from "./component/SearchBar.jsx";
 
 
 // Create your first component

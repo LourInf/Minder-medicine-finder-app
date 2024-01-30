@@ -10,7 +10,7 @@ export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<Container className="text-center mt-5">
+		<Container className="text-center mt-5 main-content-container">
 			<h1>Busca medicamentos cerca de ti</h1>
 			<SearchBar />
     	</Container>

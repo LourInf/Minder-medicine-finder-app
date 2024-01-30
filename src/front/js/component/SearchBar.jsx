@@ -64,6 +64,7 @@ export const SearchBar = () =>{
 
     
     return(
+            <div className="search-component">
             <Container className="search-form-container">
               <Row className="" >
                 <Col className="" sm={12} md={5}>
@@ -109,5 +110,6 @@ export const SearchBar = () =>{
                 </Col>
               </Row> 
             </Container>
+            </div>
     );
 };
