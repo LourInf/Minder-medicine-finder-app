@@ -155,7 +155,7 @@ def refresh_medicines():
     response_body['message'] = 'Los medicamentos se han añadido correctamente a la base de datos'
     return jsonify(response_body), 200
 
-# # Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)
+# # Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)   --> FOR DEBUGGING ONLY <--
 # @api.route('/refresh-medicines', methods=['DELETE'])
 # def delete_medicines():
 #     response_body = {}
@@ -164,20 +164,20 @@ def refresh_medicines():
 #     response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
 #     return jsonify(response_body), 200
 
-# Enpoint to get all medicines from our db
-@api.route('/medicines', methods=['GET'])
-def get_all_medicines():
-    response_body = {}
-    results = {}
-    medicines = db.session.execute(select(Medicines)).scalars().all()
-    # Serialize the data and set it in the results dictionary
-    medicines_list = [medicine.serialize() for medicine in medicines]
-    results['medicines'] = medicines_list
-    response_body['results'] = results
-    return jsonify(response_body), 200
+# # Enpoint to get all medicines from our db  --> FOR DEBUGGING ONLY <--
+# @api.route('/medicines', methods=['GET'])
+# def get_all_medicines():
+#     response_body = {}
+#     results = {}
+#     medicines = db.session.execute(select(Medicines)).scalars().all()
+#     # Serialize the data and set it in the results dictionary
+#     medicines_list = [medicine.serialize() for medicine in medicines]
+#     results['medicines'] = medicines_list
+#     response_body['results'] = results
+#     return jsonify(response_body), 200
 
 
-# Enpoint to search medicines by name from our db
+# Enpoint to search medicines by name from our db (=> actions: getMedicines)
 @api.route('/medicines/search', methods=['GET'])
 def search_medicines():
     response_body = {}
@@ -199,7 +199,7 @@ def search_medicines():
     response_body['results'] = results
     return jsonify(response_body), 200
 
-# Enpoint to get a list of medicines with active distrib problems:
+# Enpoint to get a list of medicines with active distrib problems: (=> actions: getMedicinesPsum)
 @api.route('/medicines-psum', methods=['GET'])
 def get_medicines_psum():
     response_body = {}
@@ -394,13 +394,14 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
     # Instead of deleting, the pharmacy should change status to obsolete for example.
 
 
-
 @api.route('/login', methods=['POST'])
 def login_user():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     
     user = Users.query.filter_by(email=email, password=password).first()
+    pharmacy_id = 2
+    
     # if user is None:
     if user is None:
         return jsonify({"message":"User not found"}), 404
@@ -415,7 +416,7 @@ def login_user():
     # token = create_access_token(identity = user.id , additional_claims = {"role":"admin"})
     
     # token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
-    return jsonify({"message":"Login Successful","token":token}) , 200
+    return jsonify({"message":"Login Successful","token":token, "pharmacy_id": pharmacy_id}) , 200
 
 
 
@@ -436,8 +437,3 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
     return jsonify({"message": "User added successfully"}), 201
-
-
-
-
-

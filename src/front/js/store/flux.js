@@ -131,8 +131,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				},
 			
-			updateMedicineAvaiability: async (medicineId, availability) => {
-				const store = getStore;
+			updateMedicineAvailability : async (medicineId, availability) => {
+				const store = getStore();
 				// Update local store
 				const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {
 					if (medicine.id === medicineId) {
@@ -142,11 +142,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				setStore({ medicinesPsum: updatedMedicinesPsum });
 				
-				const url = `${process.env.BACKEND_URL}/api/update-medicine-availability`;
+				const url = `${process.env.BACKEND_URL}/api/pharmacies/${pharmacy_id}/medicines/${medicineId}/availability`;
+				const token = localStorage.getItem('token');
 				const options = {
-					method: "POST",
+					method: "PUT",
 					headers: {
-						'Content-Type': 'application/json'
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
 					},
 					body: JSON.stringify({ medicineId, availability })
 				};
@@ -154,8 +156,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.ok) {
 						const data = await response.json();
 						console.log(data);
+						 // Success notification
+						 alert("La disponibilidad se ha modificado correctamente!");
 					} else {
-						console.log("Error al editar la disponibilidad del medicamento");
+						const errorData = await response.json();
+						const errorMessage = errorData.message || "Error al editar la disponibilidad del medicamento. Por favor, pruebe de nuevo";
+						console.error(errorMessage);
+						// Error notification
+						alert(errorMessage);
 					}
 				},
 			

@@ -25,6 +25,10 @@ export const Availability = () => {
       ...medicineAvailability,
       [medicineId]: isChecked,
     });
+    
+    // Call action to update availability in the backend
+    actions.updateMedicineAvailability(medicineId, isChecked);
+
   };
 
   useEffect(() => {

@@ -30,6 +30,7 @@ export const NavigationBar = () => {
 				<Nav.Link as={Link} to="/">Home</Nav.Link>
 				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patients">Pacientes</Nav.Link>
+				<Nav.Link as={Link} to="/maps">Maps</Nav.Link>
 				{/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
 				  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
 				  <NavDropdown.Item href="#action/3.2">
