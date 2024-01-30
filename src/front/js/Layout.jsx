@@ -3,8 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import injectContext from "./store/appContext";
 // Imports pages or views
 import { Home } from "./pages/Home.jsx";
-import { Demo } from "./pages/Demo.jsx";
-import { Single } from "./pages/Single.jsx";
 import { Results } from "./pages/Results.jsx";
 import { PharmacyDashboard } from "./pages/PharmacyDashboard.jsx"; // Main pharmacy area component
 // Import components
@@ -18,7 +16,6 @@ import { Reservations } from "./component/Reservations.jsx";
 import { Maps } from "./component/Maps.jsx"
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
-import { SearchBar } from "./component/SearchBar.jsx";
 
 
 // Create your first component
@@ -38,8 +35,6 @@ const Layout = () => {
                         <Route element={<Results />} path="/results" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
-                        <Route element={<Demo />} path="/demo" />
-                        <Route element={<Single />} path="/single/:theid" />
                         <Route element={<Maps />} path="/maps" />
                          {/* React Router Outlet: 1.Define the parent route for the pharmacy area */}
                          <Route path="/pharmacy" element={<PharmacyDashboard />}> 

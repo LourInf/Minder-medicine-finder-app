@@ -1,52 +1,31 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			message: null,
-			// demo: [
-			// 	{
-			// 		title: "FIRST",
-			// 		background: "white",
-			// 		initial: "white"
-			// 	},
-			// 	{
-			// 		title: "SECOND",
-			// 		background: "white",
-			// 		initial: "white"
-			// 	}
-			// ],
+			isLoggedIn: false,
 			pharmacies: [],
 			medicines: [],
 			selectedMedicine: null,
 			medicinesPsum: [],
-			totalMedicinesPsum: 0,
-
-			
-			
-			isLoggedIn: false
-
+			totalMedicinesPsum: 0
 
 		},
+		
 		actions: {
-
-			getMessage: async () => {
-				try {
-					// Fetching data from the backend
-					const response = await fetch(process.env.BACKEND_URL + "/api/hello")
-					const data = await response.json()
-					setStore({message: data.message})
-					return data;  // Don't forget to return something, that is how the async resolves
-				} catch(error) {
-					console.log("Error loading message from backend", error)
-				}
+			login: (token) => {
+				setStore({isLoggedIn: true});
+				localStorage.setItem("token", token);
 			},
-			changeColor: (index, color) => {
-				const store = getStore();  // Get the store
-				// We have to loop the entire demo array to look for the respective index and change its color
-				const demo = store.demo.map((element, i) => {
-					if (i === index) element.background = color;
-					return element;
-				});
-				setStore({ demo: demo });  // Reset the global store
+
+			logout: () => {
+				setStore({isLoggedIn: false});
+				localStorage.removeItem("token");
+			},
+
+			
+			isLogged : () => {
+				if(localStorage.getItem("token")){
+					setStore({isLogged: true})
+				}
 			},
 
 			getPharmacies: async (city) => {
@@ -191,23 +170,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 	}
 			// },
 			
-			login: (token) => {
-				setStore({isLoggedIn: true});
-				localStorage.setItem("token", token);
-			},
-
-			logout: () => {
-				setStore({isLoggedIn: false});
-				localStorage.removeItem("token");
-			},
-
-			
-			isLogged : () => {
-				if(localStorage.getItem("token")){
-					setStore({isLogged: true})
-				}
-			}
-
 		}
 	};
 };
