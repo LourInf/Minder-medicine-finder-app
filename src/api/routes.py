@@ -39,7 +39,7 @@ def login_user():
     # token = create_access_token(identity = user.id , additional_claims = {"role":"admin"})
     
     # token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
-    return jsonify({"message":"Login Successful","token":token}) , 200
+    return jsonify({"message":"Login Successful","token":token, "role":user.is_pharmacy}) , 200
 
 
 
