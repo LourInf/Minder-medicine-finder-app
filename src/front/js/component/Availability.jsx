@@ -7,13 +7,25 @@ import Pagination from 'react-bootstrap/Pagination';
 export const Availability = () => {
   const { store, actions } = useContext(Context);
 
+  // useState to track filters
   const [medicineNameFilter, setMedicineNameFilter] = useState("");
   const [problemTypeFilter, setProblemTypeFilter] = useState("");
-  const [availabilityFilter, setAvailabilityFilter] = useState("all"); // "all" means no filter
+  const [availabilityFilter, setAvailabilityFilter] = useState("all"); // "all" => no filter
 
+  // useState to track pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
+
+  // useState to track medicines' availability
+  const [medicineAvailability, setMedicineAvailability] = useState({});
+
+  const updateMedicineAvailability = (medicineId, isChecked) => {
+    setMedicineAvailability({
+      ...medicineAvailability,
+      [medicineId]: isChecked,
+    });
+  };
 
   useEffect(() => {
     setTotalPages(Math.ceil(store.medicinesPsum.length / itemsPerPage));
@@ -90,7 +102,7 @@ export const Availability = () => {
                 <td>{medicine.medicine_name}</td>
                 <td>fetch descripcion problema</td> {/* You should fetch and display the actual problem description here */}
                 <td>
-                  <input type="checkbox" />
+                  <input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)} />
                 </td>
               </tr>
             ))}

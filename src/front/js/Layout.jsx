@@ -5,13 +5,12 @@ import injectContext from "./store/appContext";
 import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import { Single } from "./pages/Single.jsx";
-import { LandingPage } from "./pages/LandingPage.jsx";
 import { Results } from "./pages/Results.jsx";
 import { PharmacyDashboard } from "./pages/PharmacyDashboard.jsx"; // Main pharmacy area component
 // Import components
 import ScrollToTop from "./component/ScrollToTop.jsx";
 import { BackendURL } from "./component/BackendURL.jsx";
-import { Navbar } from "./component/Navbar.jsx";
+import { NavigationBar } from "./component/NavigationBar.jsx";
 import { Footer } from "./component/Footer.jsx";
 import { PharmacyProfile } from "./component/PharmacyProfile.jsx";
 import { Availability } from "./component/Availability.jsx";
@@ -32,9 +31,8 @@ const Layout = () => {
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
-                    <Navbar />
+                    <NavigationBar />
                     <Routes>
-                    <Route element={<LandingPage />} path="/landing" />
                         <Route element={<Home />} path="/" />
                         <Route element={<Results />} path="/results" />
                         <Route element={<Login />} path="/login" />

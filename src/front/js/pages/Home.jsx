@@ -1,27 +1,18 @@
 import React,  { useContext, useState }  from "react"; //1. Import hook useContext
 import { Context } from "../store/appContext.js" //2.Import Context
-import rigoImageUrl from "../../img/rigo-baby.jpg";
 import "../../styles/home.css";
+import { SearchBar } from ".././component/SearchBar.jsx";
+import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
+
 
 
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
-		<div className="text-center mt-5">
-			<h1>Hello Rigo!!</h1>
-			<p>
-				<img src={rigoImageUrl} />
-			</p>
-			<div className="alert alert-info">
-				{store.message || "Loading message from the backend (make sure your python backend is running)..."}
-			</div>
-			<p>
-				This boilerplate comes with lots of documentation:{" "}
-				<a href="https://start.4geeksacademy.com/starters/react-flask">
-					Read documentation
-				</a>
-			</p>
-		</div>
+		<Container className="text-center mt-5">
+			<h1>Busca medicamentos cerca de ti</h1>
+			<SearchBar />
+    	</Container>
 	);
 };

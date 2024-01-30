@@ -19,6 +19,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			selectedMedicine: null,
 			medicinesPsum: [],
 			totalMedicinesPsum: 0,
+
 			
 			
 			isLoggedIn: false
@@ -150,7 +151,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 						});
 					}
 				},
-	
+			
+			updateMedicineAvaiability: async (medicineId, availability) => {
+				const store = getStore;
+				// Update local store
+				const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {
+					if (medicine.id === medicineId) {
+						return { ...medicine, is_available: availability };
+					}
+					return medicine;
+				});
+				setStore({ medicinesPsum: updatedMedicinesPsum });
+				
+				const url = `${process.env.BACKEND_URL}/api/update-medicine-availability`;
+				const options = {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ medicineId, availability })
+				};
+				const response = await fetch(url, options);
+					if (response.ok) {
+						const data = await response.json();
+						console.log(data);
+					} else {
+						console.log("Error al editar la disponibilidad del medicamento");
+					}
+				},
 			
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));
