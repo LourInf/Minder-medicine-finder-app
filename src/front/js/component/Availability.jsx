@@ -92,23 +92,17 @@ export const Availability = () => {
 
         <Table striped bordered hover>
           <thead>
-            <tr>
-              <th>#</th>
+            <tr><th>#</th>
               <th>Medicamento</th>
               <th>Problema activo</th>
-              <th>Disponibilidad</th>
-            </tr>
+              <th>Disponibilidad</th></tr>
           </thead>
-          <tbody>
-            {filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((medicine, index) => (
-              <tr key={medicine.id}>
-                <td>{indexOfFirstItem + index + 1}</td>
+          <tbody>{filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((medicine, index) => (<tr key={medicine.id}><td>{indexOfFirstItem + index + 1}</td>
                 <td>{medicine.medicine_name}</td>
                 <td>fetch descripcion problema</td> {/* You should fetch and display the actual problem description here */}
                 <td>
-                  <input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)} />
-                </td>
-              </tr>
+                  <input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/>
+                </td></tr>
             ))}
           </tbody>
         </Table>

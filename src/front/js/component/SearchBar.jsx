@@ -53,13 +53,18 @@ export const SearchBar = () =>{
       setSelectedItem(null);
   };
 
-  const handleSearchResults = () => {
-    if (selectedItem && selectedItem.id) {
-        navigate(`/results?medicineId=${selectedItem.id}`);   // QUESTION: is it ok to use useNavigate with query parameters for this? (like /results?medicineId=100&locationId=200) or should I use useParams and a route path like /results/medicine/:medicineId/location/:locationId?
-        
-      } else {
-        console.log("No ha seleccionado ningun medicamento");
-    }
+  const handleCityClick = (city) => {
+    //tbd
+    };
+
+
+    const handleSearchResults = () => {
+      if (selectedItem && selectedItem.id) {
+          navigate(`/results?medicineId=${selectedItem.id}`);   // QUESTION: is it ok to use useNavigate with query parameters for this? (like /results?medicineId=100&locationId=200) or should I use useParams and a route path like /results/medicine/:medicineId/location/:locationId?
+          
+        } else {
+          console.log("No ha seleccionado ningun medicamento");
+      }
 }
 
     
@@ -83,7 +88,10 @@ export const SearchBar = () =>{
                       </button>
                     )}
                   </InputGroup>
-                  <SearchResultsList onItemClick={handleItemClick} />
+                  <SearchResultsList 
+                    items={store.medicines} 
+                    displayItem="medicine_name" 
+                    onItemClick={handleItemClick} />
                 </Col>
                 <Col sm={12} md={1}>
                   <div className="vertical-line d-none d-md-block"></div>
@@ -99,9 +107,12 @@ export const SearchBar = () =>{
                       aria-describedby="localizacion"
                       value={city}
                       onChange={(e) => setCity(e.target.value)} 
-                      onKeyDown={handleKeyPress}
-                    />
+                      onKeyDown={handleKeyPress}/>
                   </InputGroup>
+                  {/* <SearchResultsList 
+                    items={store.cities} 
+                    displayItem="city_name" 
+                    onItemClick={handleCityClick} /> */}
                 </Col>
                 <Col sm={12} md={1}>
                 <Button variant="outline-secondary" className="search-form-button" type="button" onClick={handleSearchResults}>

@@ -5,6 +5,7 @@ import injectContext from "./store/appContext";
 import { Home } from "./pages/Home.jsx";
 import { Results } from "./pages/Results.jsx";
 import { PharmacyDashboard } from "./pages/PharmacyDashboard.jsx"; // Main pharmacy area component
+import { PatientDashboard } from "./pages/PatientDashboard.jsx"; // Main patient area component
 // Import components
 import ScrollToTop from "./component/ScrollToTop.jsx";
 import { BackendURL } from "./component/BackendURL.jsx";
@@ -13,6 +14,8 @@ import { Footer } from "./component/Footer.jsx";
 import { PharmacyProfile } from "./component/PharmacyProfile.jsx";
 import { Availability } from "./component/Availability.jsx";
 import { Reservations } from "./component/Reservations.jsx";
+import { PatientProfile } from "./component/PatientProfile.jsx";
+import { Orders } from "./component/Orders.jsx";
 import { Maps } from "./component/Maps.jsx"
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
@@ -36,13 +39,19 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
                         <Route element={<Maps />} path="/maps" />
-                         {/* React Router Outlet: 1.Define the parent route for the pharmacy area */}
+                         {/* React Router Outlet: 1.Define the parent route for the pharmacy dashboard */}
                          <Route path="/pharmacy" element={<PharmacyDashboard />}> 
-                             {/* 2.Define the nested routes for the different sections within the pharmacy area */}
+                             {/* 2.Define the nested routes for the different sections within the pharmacy dashboard */}
                             <Route index element={<Availability />} /> {/* 3. Set the default section to render with index route: Navigating to /pharmacy will by default render Availability component */}
                             <Route path="availability" element={<Availability />} />
                             <Route path="reservations" element={<Reservations />} />
-                            <Route path="profile" element={<PharmacyProfile />} />
+                            <Route path="pharmacy-profile" element={<PharmacyProfile />} />
+                        </Route>
+                         {/* React Router Outle for Patient dashboard */}
+                         <Route path="/patient" element={<PatientDashboard />}> 
+                            <Route index element={<Orders />} />
+                            <Route path="orders" element={<Orders />} />
+                            <Route path="patient-profile" element={<PatientProfile />} />
                         </Route>
                         <Route element={<h1>Not found!</h1>} path="*"/>
                     </Routes>
