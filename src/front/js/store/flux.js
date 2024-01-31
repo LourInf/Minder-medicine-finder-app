@@ -3,10 +3,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 			isLoggedIn: false,
 			pharmacies: [],
-			medicines: [],
-			selectedMedicine: null,
-			medicinesPsum: [],
-			totalMedicinesPsum: 0
+			medicines: [],			 // saves the medicines so that user can search for them
+			selectedMedicine: null,  // saves the selected medicine chosen by the patient when searching
+			medicinesPsum: [],		// saves all the medicines which have distrib.problems
+			totalMedicinesPsum: 0, // saves the total number of medicines which have distrib.problems
+			lastCreatedOrder: null //saves the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 
 		},
 		
@@ -150,7 +151,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${token}`
 					},
-					body: JSON.stringify({ medicineId, availability })
+					body: JSON.stringify({ medicine_id: medicineId, availability })
 				};
 				const response = await fetch(url, options);
 					if (response.ok) {
@@ -161,6 +162,39 @@ const getState = ({ getStore, getActions, setStore }) => {
 					} else {
 						const errorData = await response.json();
 						const errorMessage = errorData.message || "Error al editar la disponibilidad del medicamento. Por favor, pruebe de nuevo";
+						console.error(errorMessage);
+						// Error notification
+						alert(errorMessage);
+					}
+				},
+
+			createOrderReservation: async (medicineId, pharmacyId) => {
+				const url = `${process.env.BACKEND_URL}/api/orders/`;
+				const token = localStorage.getItem('token');
+				const options = {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`
+					},
+					body: JSON.stringify({ 
+						medicine_id: medicineId,
+						pharmacy_id: pharmacyId,
+						order_quantity: 1, //hardcoded -always 1??
+						requested_date: new Date().toISOString().split('T')[0]  // format YYYY-MM-DD
+					})
+				};
+				const response = await fetch(url, options);
+					if (response.ok) {
+						const data = await response.json();
+						console.log(data);
+						 // Success notification
+						 alert("La reserva se ha llevado a cabo correctamente!");
+						// Save the order details in the store
+						setStore({ lastCreatedOrder: data.order });
+					} else {
+						const errorData = await response.json();
+						const errorMessage = errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo";
 						console.error(errorMessage);
 						// Error notification
 						alert(errorMessage);

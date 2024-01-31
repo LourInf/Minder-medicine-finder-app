@@ -103,7 +103,7 @@ class Medicines(db.Model):
                 'API_id': self.API_id
         }
 
-class OrderStatus(Enum):                                                       
+class OrderStatus(str,Enum):                                                       
     PENDING = "Pendiente"                                                     
     ACCEPTED = "Aceptada"                                                     
     REJECTED = "Rechazada"                                                   
@@ -155,7 +155,7 @@ class Orders(db.Model):
                 'requested_date': self.requested_date,
                 'validity_date': self.validity_date}                                                 
 
-class AvailabilityStatus(Enum):                                          
+class AvailabilityStatus(str,Enum):                                          
     AVAILABLE = "Disponible"                                             
     NOT_AVAILABLE = "No disponible"                                    
 

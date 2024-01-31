@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, Blueprint, session
-from api.models import db, Users, Medicines, Orders, Availability, Pharmacies, Patients
+from api.models import db, Users, Medicines, Orders, Availability, Pharmacies, Patients, OrderStatus
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 import requests
@@ -224,6 +224,8 @@ def get_medicines_psum():
 @api.route('/orders', methods=['POST'])
 def create_order():
     response_body = {}
+    print(OrderStatus)
+    print(OrderStatus.PENDING)
     data = request.json
     # here we write the logic to save the new order registry in our DB:
     patient_id = 2  # HARDCODED FOR NOW-->CHANGE! the user needs to be authenticated and the session has a patient_id
@@ -231,10 +233,10 @@ def create_order():
     medicine_id = 748 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected medicine from user session or database
     requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
     validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
-    order_status = 'pending' # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
+    order_status = OrderStatus.PENDING # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
     new_order= Orders(
             patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data
-            pharmacy_id=pharmacy_id,  # CHANGE?? MAKE IT A LIST OF PHARMACIES IN CASE WE WANT TO ASK DIFFERENT PHARMACIES
+            pharmacy_id=pharmacy_id, 
             medicine_id=medicine_id,
             order_quantity=data.get('order_quantity', 1), # Default quantity to 1 if not provided
             requested_date=requested_date,
