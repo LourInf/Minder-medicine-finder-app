@@ -10,34 +10,26 @@ import { useNavigate } from 'react-router-dom'
 export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState("");
     const [city, setCity] = useState("");
+    const [selectedCity, setSelectedCity] = useState("");
     const navigate = useNavigate();
     
-    const handlePharmacies = () => {
-      actions.getPharmacies(city);
-    };
-  
-    const handleKeyPress = (e) => {
-      if (e.key== 'Enter') {
-        handlePharmacies();
-      }
-    };
 
-    const handleInputChange = (value) => {
+    const handleMedicineChange = (value) => {
         setInput(value);
         actions.getMedicines(value);
-        setSelectedItem(null);   // Reset selected item
+        setSelectedItem("");   // Reset selected item
     };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             actions.getMedicines(input);
-            setSelectedItem(null); 
+            setSelectedItem(""); 
         }
     };
    
-    const handleItemClick = (item) => {
+    const handleMedicineSelect = (item) => {
         setInput(item.medicine_name);
         setSelectedItem(item);
         actions.getMedicines("");
@@ -47,16 +39,41 @@ export const SearchBar = () =>{
         sessionStorage.setItem('selectedMedicine', JSON.stringify(item));
     };
 
-    // clear selected item
-    const clearSelection = () => {
-      setInput('');
-      setSelectedItem(null);
+    const clearSelectionMedicine = () => {
+      setInput("");
+      setSelectedItem("");
   };
 
-  const handleCityClick = (city) => {
-    //tbd
+    const handleCityChange = (value) => {
+      setCity(value);
+      actions.getSearchCities(value) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
+      setSelectedCity(""); 
     };
 
+
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter') {
+        actions.getSearchCities(city) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
+        setSelectedCity(""); 
+      }
+    };
+
+  const handleCitySelect = (city) => {
+    setCity(city.city_name); 
+    setSelectedCity(city);   
+    actions.getSelectedCity(city);
+    // For Results: we update the store with the selected city
+    actions.getSelectedCity(city.city_name);
+    // save selected medicine in session storage
+    sessionStorage.setItem('selectedCity', JSON.stringify(city));
+    actions.clearCities(); 
+  };
+
+
+  const clearSelectionCity = () => {
+    setCity("");
+    setSelectedCity("");
+  };
 
     const handleSearchResults = () => {
       if (selectedItem && selectedItem.id) {
@@ -65,8 +82,7 @@ export const SearchBar = () =>{
         } else {
           console.log("No ha seleccionado ningun medicamento");
       }
-}
-
+    }
     
     return(
             <div className="search-component">
@@ -80,10 +96,10 @@ export const SearchBar = () =>{
                       placeholder="Busca tu medicamento"
                       aria-label="medicamento"
                       aria-describedby="medicamento"
-                      value={input} onChange ={(e) =>handleInputChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}
+                      value={input} onChange ={(e) =>handleMedicineChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}
                     />
                     {input && (
-                      <button className="btn-clear-selection" onClick={clearSelection}>
+                      <button className="btn-clear-selection" onClick={clearSelectionMedicine}>
                         <FontAwesomeIcon icon={faTimes} />
                       </button>
                     )}
@@ -91,7 +107,7 @@ export const SearchBar = () =>{
                   <SearchResultsList 
                     items={store.medicines} 
                     displayItem="medicine_name" 
-                    onItemClick={handleItemClick} />
+                    onItemClick={handleMedicineSelect} />
                 </Col>
                 <Col sm={12} md={1}>
                   <div className="vertical-line d-none d-md-block"></div>
@@ -106,13 +122,18 @@ export const SearchBar = () =>{
                       aria-label="localizacion"
                       aria-describedby="localizacion"
                       value={city}
-                      onChange={(e) => setCity(e.target.value)} 
+                      onChange={(e) => handleCityChange(e.target.value)} 
                       onKeyDown={handleKeyPress}/>
+                      {city && (
+                      <button className="btn-clear-selection" onClick={clearSelectionCity}>
+                        <FontAwesomeIcon icon={faTimes} />
+                      </button>
+                    )}
                   </InputGroup>
-                  {/* <SearchResultsList 
+                  <SearchResultsList 
                     items={store.cities} 
-                    displayItem="city_name" 
-                    onItemClick={handleCityClick} /> */}
+                    displayItem="city_name" // CHANGE?? CHECK when implementing real API call (now in Flux getSearchCities I called it city_name)
+                    onItemClick={handleCitySelect} />
                 </Col>
                 <Col sm={12} md={1}>
                 <Button variant="outline-secondary" className="search-form-button" type="button" onClick={handleSearchResults}>

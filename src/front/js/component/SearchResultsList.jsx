@@ -21,7 +21,7 @@ export const SearchResultsList = ({items, displayItem, onItemClick}) =>{
             )}
          </div>        
             
-        // Removed to make it reusable for medicines and city searches.
+        // Removed to make it reusable for medicines AND city searches.
             //<div className  ="search-results-list">
             //      {store.medicines.length > 0 && (
             //     <div className="list-group">

@@ -1,13 +1,15 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			isLoggedIn: false,
-			pharmacies: [],
-			medicines: [],			 // saves the medicines so that user can search for them
-			selectedMedicine: null,  // saves the selected medicine chosen by the patient when searching
-			medicinesPsum: [],		// saves all the medicines which have distrib.problems
-			totalMedicinesPsum: 0, // saves the total number of medicines which have distrib.problems
-			lastCreatedOrder: null //saves the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
+			isLoggedIn: false,		// indicates if user is logged in
+			pharmacies: [],			//stores a list of pharmacies fetched from Google API
+			medicines: [],			 // stores a list of medicines fetched from our backend
+			selectedMedicine: "",  // stores the selected medicine chosen by the patient when searching
+			cities:[],				// stores a list of cities, used for city search functionality
+			selectedCity: "",		// stores the selected city chosen by the user
+			medicinesPsum: [],		// stores all the medicines which have distrib.problems
+			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
+			lastCreatedOrder: null //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 
 		},
 		
@@ -110,6 +112,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ selectedMedicine: medicine });
 				},
 			
+			//CHANGE!!!! For now only use with Madrid example! ;)
+			getSearchCities: (searchQuery) => {
+				const mockCity = { id: 1, city_name: "Madrid" };
+				// Check if the search query matches "Madrid" (case insensitive)
+				if (mockCity.city_name.toLowerCase().includes(searchQuery.toLowerCase())) {
+					setStore({ cities: [mockCity] }); // If it matches, set the store with the mock city
+				} else {
+					setStore({ cities: [] });
+				}
+			},
+
+			getSelectedCity: (city) => {
+				setStore({ selectedCity: city });
+				},
+			
+			clearCities: () => {
+				setStore({ cities: [] });
+				},
+			
 			getMedicinesPsum: async () => {
 				const url = `${process.env.BACKEND_URL}/api/medicines-psum`;
 				const options = {
@@ -180,7 +201,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					body: JSON.stringify({ 
 						medicine_id: medicineId,
 						pharmacy_id: pharmacyId,
-						order_quantity: 1, //hardcoded -always 1??
+						//order_quantity: 1, //hardcoded -always 1??
 						requested_date: new Date().toISOString().split('T')[0]  // format YYYY-MM-DD
 					})
 				};

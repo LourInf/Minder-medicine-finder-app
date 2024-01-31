@@ -220,12 +220,10 @@ def get_medicines_psum():
     return jsonify(response_body), 200
 
 
-# Endpoint to create a new order
+# Endpoint to create a new order (=> actions: createOrderReservation)
 @api.route('/orders', methods=['POST'])
 def create_order():
     response_body = {}
-    print(OrderStatus)
-    print(OrderStatus.PENDING)
     data = request.json
     # here we write the logic to save the new order registry in our DB:
     patient_id = 2  # HARDCODED FOR NOW-->CHANGE! the user needs to be authenticated and the session has a patient_id

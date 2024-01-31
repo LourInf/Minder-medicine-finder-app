@@ -20,7 +20,7 @@ export const Maps = () => {
     <div className="text-center">
       <h1>Encuentra tu farmacia más cercana</h1>
       <label>Ingrese la ciudad más cercana: </label>
-      <input type="text" id="location" value={city} placeholder="Ejemplo: Madrid" onChange={(e) => setCity(e.target.value)} onKeyPress={handleKeyPress}/>
+      <input type="text" id="location" value={city} placeholder="Ejemplo: Madrid" onChange={(e) => setCity(e.target.value)} onKeyPress={handleKeyPress}/>       
       <button onClick={handlePharmacies}>Buscar Farmacias</button>
       <ul>
         {/* Mostrar Listas de Farmacias luego pasar otra página */}
