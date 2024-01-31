@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			pharmacies: [],
 			pharmacyDetails: [],
+			autocompleteSuggestions: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -67,8 +68,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
- // Extraer Info de las Farmacias desde Api Places Details
 
+			// Extraer Info de las Farmacias desde Api Places Details
             getPharmaciesDetails: async (place_pharmacy_id) => {
                 // 1. Definir la URL + el dato de place_id que necesita google.
                 const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details?${place_pharmacy_id}`; // es OK. Funciona correctamente en Postman
@@ -79,7 +80,7 @@ const getState = ({ getStore, getActions, setStore }) => {
                         'Content-Type': 'application/json'
                     },
                     // Para que la API funciona necesitamos el ID por lo tanto es lo que hay que enviar en el body
-                    body: JSON.stringify({ pharmacy_id: place_pharmacy_id }),
+                    body: JSON.stringify({ place_id: place_pharmacy_id }),
                 }
                 const response = await fetch(url_pharmacy_details, options);
                 if (response.ok) {
@@ -91,6 +92,18 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log('Error', "No encuentra el ID de la Farmacia")
                     	 }
             },
+
+			// Autocompletar:
+			getAutocomplete: async (city) => {
+				const response = await fetch(`${process.env.BACKEND_URL}/api/maps?city=${city}`);
+				if (!response.ok) {
+				  console.error('Error al obtener sugerencias de autocompletar');
+				  return [];
+				}
+				const data = await response.json();
+				setStore({ autocompleteSuggestions: data.suggestions });
+				return data.suggestions
+			  },
 		}
 	};
 };

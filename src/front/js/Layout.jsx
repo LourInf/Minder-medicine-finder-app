@@ -11,6 +11,7 @@ import { BackendURL } from "./component/BackendURL.jsx";
 import { Navbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
 import { Maps } from "./component/Maps.jsx";
+import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -28,6 +29,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Demo />} path="/demo" />
                         <Route element={<Maps />} path="/maps" />
+                        <Route element={<DetailsPharmacyMaps />} path="/detailspharmacymaps/:place_id" component={DetailsPharmacyMaps} />
                         <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} path="*"/>
                     </Routes>
