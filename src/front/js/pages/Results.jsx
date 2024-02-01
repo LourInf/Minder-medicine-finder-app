@@ -42,13 +42,7 @@ export const Results = () => {
             <h2>Section 3: ( farmacias no afiliadas - other pharmacies from google API in the area) Pharmacies in {store.selectedCity}</h2>
             {store.pharmacies && store.pharmacies.length > 0 ? (
                 store.pharmacies.map((pharmacy, index) => (
-                    <div key={index}>
-                        <p><b>{pharmacy.name}</b></p>
-                        {pharmacy.opening_hours && (
-                            <p>{pharmacy.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
-                        )}
-                        <p>{pharmacy.vicinity}</p>
-                    </div>
+                    <CardResults key={index} pharmacy={pharmacy} />
                 ))
             ) : (
                 <p>No pharmacies found in {store.selectedCity}.</p>

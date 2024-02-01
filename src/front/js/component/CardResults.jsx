@@ -19,10 +19,16 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
       <div className="card-wrapper">
         <Card className="card-container details">
           <Card.Body>
-            <Card.Title>{pharmacy?.pharmacy_name}</Card.Title>
+            <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>   {/*we have different name conventions in google API vs our DB, so we need to put both (eg. pharmacy_name in our DB and pharmacy.name in google API)*/}
             <ListGroup className="list-group card-group">
-              <ListGroupItem className="address-item"> C/Constitucion 12, Malaga</ListGroupItem>
-              <ListGroupItem className="working-hours-item"> <span className="icon-clock"><FontAwesomeIcon icon={faClock} /> Working hours</span></ListGroupItem>
+              <ListGroupItem className="address-item">  {pharmacy?.vicinity || pharmacy.address}</ListGroupItem>
+              <ListGroupItem className="working-hours-item">   {pharmacy?.opening_hours || pharmacy?.working_hours ? (
+                                    <span className="icon-clock">
+                                        <FontAwesomeIcon icon={faClock} />
+                                        {pharmacy.opening_hours?.open_now ? "Abierto Ahora" : "Cerrado" }
+                                    </span>
+                                ) : "consultar horario"}
+             </ListGroupItem>
             </ListGroup>
           </Card.Body>
           <Card.Footer>
