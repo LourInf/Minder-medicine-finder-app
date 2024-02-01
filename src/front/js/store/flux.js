@@ -31,9 +31,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			getPharmacies: async (city) => {
+			getPharmacies: async (cityName) => {
 				// 1. Definir la URL que está en el env. Parámetro city. 
-				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${city}`;
+				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${cityName}`;
 				// 2. Options - únicamente GET del listado de Farmacias
 				const options = {
 					method: 'GET'

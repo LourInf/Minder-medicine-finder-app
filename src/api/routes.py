@@ -24,7 +24,7 @@ def handle_hello():
     response_body ['message'] = "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
     return response_body, 200
 
-# The patient will enter the city or location and must receive a list of the closest pharmacies
+# The patient will enter the city or location and must receive a list of the closest pharmacies (=> actions: getPharmacies)
 @api.route('/maps', methods=['GET'])
 def handle_maps():
     api_key = os.environ.get('GOOGLE_API_KEY')

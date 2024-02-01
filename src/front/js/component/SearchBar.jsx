@@ -1,4 +1,4 @@
-import React,  { useContext, useState }  from "react"; //1. Import hook useContext
+import React,  { useContext, useState, useEffect }  from "react"; //1. Import hook useContext
 import { Context } from "../store/appContext.js"; //2. Import Context
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -76,14 +76,25 @@ export const SearchBar = () =>{
   };
 
     const handleSearchResults = () => {
-      if (selectedItem && selectedItem.id) {
-          navigate(`/results?medicineId=${selectedItem.id}`);   // QUESTION: is it ok to use useNavigate with query parameters for this? (like /results?medicineId=100&locationId=200) or should I use useParams and a route path like /results/medicine/:medicineId/location/:locationId?
-          
-        } else {
-          console.log("No ha seleccionado ningun medicamento");
+      const selectedMedicine = JSON.parse(sessionStorage.getItem('selectedMedicine'));
+      const selectedCity = JSON.parse(sessionStorage.getItem('selectedCity'));
+      
+      if (selectedMedicine && selectedMedicine.id && selectedCity && selectedCity.id) {
+      navigate(`/results/${selectedMedicine.id}/${selectedCity.city_name}`);
+      } else {
+      
+      console.log("Debe seleccionar un medicamento y una ciudad.");
       }
-    }
+    };
     
+    //To clean up sessionStorage after navigating to Results page
+    useEffect(() => { 
+      return () => {
+          sessionStorage.removeItem('selectedMedicine');
+          sessionStorage.removeItem('selectedCity');
+      };
+    }, []);
+
     return(
             <div className="search-component">
             <Container className="search-form-container">
