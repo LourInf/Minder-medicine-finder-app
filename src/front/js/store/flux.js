@@ -9,8 +9,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			selectedCity: "",		// stores the selected city chosen by the user
 			medicinesPsum: [],		// stores all the medicines which have distrib.problems
 			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
-			lastCreatedOrder: null //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
-
+			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
+			availablePharmacies:[]
 		},
 		
 		actions: {
@@ -79,6 +79,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 						return null;
 					}
 			},
+
+			
+			
+			
+			getAvailablePharmacies: async (medicineId) => {
+				const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies/available?medicine_id=${medicineId}`);
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data)
+					setStore({ availablePharmacies: data.pharmacies });
+				} else {
+					console.log("Failed to fetch available pharmacies for the selected medicine");
+					setStore({ availablePharmacies: [] });
+				}
+			},
+
+
+
+
 
 			getMedicines: async (value) => {
 				// Clear previous search results

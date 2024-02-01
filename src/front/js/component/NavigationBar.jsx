@@ -12,7 +12,7 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 export const NavigationBar = () => {
 	return (
 		<Navbar expand="lg" className="bg-body-tertiary mt-3 mb-5">
-		  <Container class="d-flex flex-row">
+		  <Container className="d-flex flex-row">
 		  <Link to="/"><Navbar.Brand>
             <img
               alt=""
