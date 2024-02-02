@@ -11,12 +11,58 @@ from flask_jwt_extended import create_access_token
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
 
-
+# Necessary, DO NOT REMOVE!!!!!
 @api.route('/hello', methods=['GET'])
 def handle_hello():
     response_body = {}
     response_body ['message'] = "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
     return response_body, 200
+
+
+
+@api.route('/getPatientById/<int:id>', methods=['GET'])
+def getPatientById(id):
+    try:
+        patient = Patients.query.get(id) 
+        
+        
+        if patient:
+            
+            patient_info = {
+
+                "id": patient.id,
+                "name": patient.name,
+                "email": patient.users.email
+                
+            }
+            
+            return jsonify(patient_info), 200
+        
+        else:
+            return jsonify({"message": "Id patient not found"}), 404
+
+        
+    except Exception as e:
+        print(str(e))
+        return jsonify({"message": "Error during the search of the patient"}),500    
+
+
+@api.route('/getPatient/<string:email>', methods=['GET'])
+def getPatient(email):
+    try:
+        patient = Patients.query.join(Users).filter(Users.email == email).first() 
+        
+        if patient:
+            return jsonify(patient.serialize()), 200
+        
+        else:
+            return jsonify({"message": "Patient not found"}), 404
+
+        
+    except Exception as e:
+        print(str(e))
+        return jsonify({"message": "Error during the search of the patient"}),500    
+
 
 
 @api.route('/login', methods=['POST'])
@@ -31,15 +77,13 @@ def login_user():
     
 
     if user.is_pharmacy is True:
-        token = create_access_token(identity = user.id , additional_claims = {"role":"pharmacy"})
+        token = create_access_token(identity = user.id , additional_claims = {"role": True})
     elif user.is_pharmacy is False:
-        token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
+        token = create_access_token(identity = user.id , additional_claims = {"role": False})
     else:
         return jsonify({"message":"This user is not correctly created"}), 503
-    # token = create_access_token(identity = user.id , additional_claims = {"role":"admin"})
     
-    # token = create_access_token(identity = user.id , additional_claims = {"role":"user"})
-    return jsonify({"message":"Login Successful","token":token, "role":user.is_pharmacy}) , 200
+    return jsonify({"message":"Login Successful", "token":token, "role":user.is_pharmacy, "user_id": user.id}) , 200
 
 
 

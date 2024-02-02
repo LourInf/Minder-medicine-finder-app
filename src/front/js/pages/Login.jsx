@@ -12,7 +12,7 @@ export const Login = () => {
     
 
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, ttl) => {
         e.preventDefault();
         const url = process.env.BACKEND_URL + "/api/login";
         console.log(url);
@@ -30,6 +30,21 @@ export const Login = () => {
         if(response.ok){
             const data = await response.json();
             actions.login(data.token)
+
+            const currentTime = new Date();
+
+
+            const userLogged = {
+                "token": data.token,
+                "user_id": data.user_id,
+                "is_pharmacy": data.is_pharmacy,
+                "expire": currentTime.getTime() + 5000  //  Expiración del token en 5 segundos...
+            };
+
+            localStorage.setItem("userLogged", JSON.stringify(userLogged))
+
+
+
             if(data.role){
                 alert("working on...")
             }else if(data.role == false){
@@ -44,7 +59,6 @@ export const Login = () => {
                     msg.style.display = "none";
                 }, 3000)
             }
-            // localStorage.setItem("token", data.token);
             console.log(data);
         }else{
             const msg = document.querySelector("#errorMessage");
@@ -56,11 +70,26 @@ export const Login = () => {
         }
 
 
+
+        useEffect(() => {
+            const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+            if(userLogged){
+                if(userLogged.expire < new Date().getTime()){
+                    localStorage.removeItem("userLogged");
+                }else{
+                    navigate("/patientHome");
+                }
+            }
+        }, [navigate])
+
+
+
+
     }
 
 
     return (
-        // store.isLoggedIn ? <Navigate to="/dashboard"/>:
+        store.isLoggedIn ? <Navigate to="/patientHome"/>:   //  Nee to be changed in the case of pharmacy
         <div>
 
             <form onSubmit={handleSubmit} className=" form-group col-md-6 py-5 px-md-5">

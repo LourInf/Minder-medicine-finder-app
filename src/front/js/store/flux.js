@@ -2,7 +2,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			
-			isLoggedIn: false
+			isLoggedIn: false,
+			user_id: ""
 
 
 		},
@@ -34,6 +35,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isLogged : () => {
 				if(localStorage.getItem("token")){
 					setStore({isLogged: true})
+					setStore({user_id: localStorage.getItem("user_id")})
+					setStore({is_pharmacy: localStorage.getItem("is_pharmacy")})
+
 				}
 			}
 
