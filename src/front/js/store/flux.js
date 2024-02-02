@@ -11,7 +11,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			medicinesPsum: [],		// stores all the medicines which have distrib.problems
 			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
-			availablePharmacies:[]
+			availablePharmacies:[],
+			user_id: ""
+
+
 		},
 		
 		actions: {
@@ -34,6 +37,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isLogged : () => {
 				if(localStorage.getItem("token")){
 					setStore({isLogged: true})
+					setStore({user_id: localStorage.getItem("user_id")})
+					setStore({is_pharmacy: localStorage.getItem("is_pharmacy")})
+
 				}
 			},
 

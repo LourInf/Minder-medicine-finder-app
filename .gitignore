@@ -89,3 +89,5 @@ package-lock.json
 
 src/api/admin.py
 src/api/models.py
+
+.vscode
