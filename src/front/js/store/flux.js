@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			isLoggedIn: false,		// indicates if user is logged in
+			postLoginAction: null,
 			pharmacies: [],			//stores a list of pharmacies fetched from Google API
 			medicines: [],			 // stores a list of medicines fetched from our backend
 			selectedMedicine: "",  // stores the selected medicine chosen by the patient when searching
@@ -18,6 +19,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({isLoggedIn: true});
 				localStorage.setItem("token", token);
 			},
+
+			// to handle redirection in reservation modal after login
+			setPostLoginAction: (action) => {
+				setStore({ postLoginAction: action });
+			  },
 
 			logout: () => {
 				setStore({isLoggedIn: false});
@@ -80,9 +86,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 			},
 
-			
-			
-			
 			getAvailablePharmacies: async (medicineId) => {
 				const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies/available?medicine_id=${medicineId}`);
 				if (response.ok) {
@@ -94,9 +97,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ availablePharmacies: [] });
 				}
 			},
-
-
-
 
 
 			getMedicines: async (value) => {

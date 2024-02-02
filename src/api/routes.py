@@ -312,7 +312,6 @@ def handle_availability():
             response_body['message'] = 'Availability List'
             return response_body, 200
         else:
-        # No records found
             response_body['message'] = 'No hay informacion de disponibilidad.'
             return jsonify(response_body), 200
 
@@ -338,7 +337,7 @@ def handle_availability():
         response_body ['availability'] = availability.serialize()
         return response_body, 201
 
-# # Endpoint to get affiliated pharmacies
+# # Endpoint to get all affiliated pharmacies (all pharmacies we have in our DB)
 # @api.route('/pharmacies', methods=['GET'])
 # def get_pharmacies():
 #     response_body = {}
@@ -349,68 +348,22 @@ def handle_availability():
 #     response_body['results'] = results
 #     return response_body, 200
 
-# @api.route('/pharmacies', methods=['GET'])
-# def get_pharmacies():
-#     medicine_id = request.args.get('medicine_id', type=int)
-#     response_body = {}
-#     results = {}
 
-#     if medicine_id:
-#         # Query for pharmacies that have the specified medicine available
-#         pharmacies = db.session.query(Pharmacies).join(Availability, Pharmacies.id == Availability.pharmacy_id)\
-#             .filter(Availability.medicine_id == medicine_id, Availability.availability_status == 'Available').all()
-#     else:
-#         # If no medicine_id is provided, return all affiliated pharmacies
-#         pharmacies = db.session.query(Pharmacies).all()
-
-#     results['pharmacies'] = [pharmacy.serialize() for pharmacy in pharmacies]
-#     response_body['message'] = 'Lista de farmacias' + (' con medicina disponible' if medicine_id else ' afiliadas')
-#     response_body['results'] = results
-#     return jsonify(response_body), 200
-
-#DID NOT WORK
-# @api.route('/pharmacies/availability', methods=['GET'])
-# def get_pharmacies_with_medicine():
-#     medicine_id = request.args.get('medicine_id', type=int)
-#     if not medicine_id:
-#         return jsonify({"error": "Medicine ID is required"}), 400
-
-#     # Query for pharmacies that have the specified medicine available
-#     pharmacies_query = db.session.query(Pharmacies).join(Availability).filter(
-#         Availability.medicine_id == medicine_id,
-#         Availability.availability_status == 'Available'
-#     )
-
-#     pharmacies = pharmacies_query.all()
-#     if not pharmacies:
-#         return jsonify({"message": "No pharmacies found with the specified medicine available"}), 404
-
-#     pharmacies_data = [pharmacy.serialize() for pharmacy in pharmacies]
-#     return jsonify({"pharmacies": pharmacies_data}), 200
-
-#NOW TRYING THIS ONE
+# Endpoint to get affiliated pharmacies which have avaiable stock of the selected medicine (=> actions: getAvailablePharmacies)
 @api.route('/pharmacies/available', methods=['GET'])
-def get_available_pharmacies():
+def get_pharmacies_available_medicine():
     medicine_id = request.args.get('medicine_id', type=int)
     if not medicine_id:
-        return jsonify({"error": "Missing medicine_id parameter"}), 400
-
+        return jsonify({"error": "Falta el parametro medicine_id"}), 400
     # Query pharmacies that have the medicine available
-    available_pharmacies_query = db.session.query(Pharmacies).join(
-        Availability, Pharmacies.id == Availability.pharmacy_id
-    ).filter(
-        Availability.medicine_id == medicine_id,
-        Availability.availability_status == AvailabilityStatus.AVAILABLE
-    )
-
+    available_pharmacies_query = db.session.query(Pharmacies).join(Availability, Pharmacies.id == Availability.pharmacy_id).filter(Availability.medicine_id == medicine_id,Availability.availability_status == AvailabilityStatus.AVAILABLE)
     available_pharmacies = available_pharmacies_query.all()
-
     if available_pharmacies:
         pharmacies_data = [pharmacy.serialize() for pharmacy in available_pharmacies]
         return jsonify({"pharmacies": pharmacies_data}), 200
     else:
-        return jsonify({"message": "No pharmacies found with the selected medicine available"}), 404
-    
+        return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento"}), 404
+
 
 # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy
 @api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT'])

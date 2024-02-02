@@ -1,17 +1,38 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
 import { Card, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard } from '@fortawesome/free-solid-svg-icons'
+import { ModalReservation } from './ModalReservation.jsx';
+import { useNavigate } from "react-router-dom";
+
 
 export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => { 
   const { store, actions } = useContext(Context);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
-  const handleReserveOnline = () => {
-    actions.createOrderReservation(medicineId, pharmacyId);
-  };
+    // Check if the user is logged in before showing the modal
+    const handleReserveOnline = () => {
+      if (!store.isLoggedIn) {
+        // Save the post-login action before redirecting
+        actions.setPostLoginAction({ type: 'reserve', medicineId, pharmacyId });
+    
+        // Redirect to login
+        navigate('/login');
+      } else {
+        // User is logged in, show the reservation modal
+        setShowModal(true);
+      }
+    };
+
+
+
+  // const handleReserveOnline = () => {
+  //   actions.createOrderReservation(medicineId, pharmacyId);
+  // };
 
   return (
     <div>
@@ -38,11 +59,13 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
         <Card className="card-container contact">
           <Card.Body>
             <ListGroup className="list-group card-group">
-              <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleReserveOnline}><span className="icon-keyboard"><FontAwesomeIcon icon={faKeyboard} /> Reservar online</span></Button>
+             <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleReserveOnline}><span className="icon-keyboard"><FontAwesomeIcon icon={faKeyboard} /> Reservar online</span></Button>
               <Card.Link href="#"><span className="icon-phone"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</span></Card.Link>
             </ListGroup>
           </Card.Body>
         </Card>
+        {/* Conditional rendering of the ModalReservation based on showModal state */}
+      {showModal && <ModalReservation show={showModal} handleClose={handleReserveOnline} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
       </div>
     </div>
   );
