@@ -4,7 +4,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			pharmacies: [],
 			pharmacyDetails: null,
-			autocompleteSuggestions: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -94,45 +93,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log('Error', "No encuentra el ID de la Farmacia")
                     	 }
             },
-			// getPharmaciesDetails: async (place_pharmacy_id) => {
-			// 	try {
-			// 	  // 1. Definir la URL + el dato de place_id que necesita Google.
-			// 	  const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details?place_id=${place_pharmacy_id}`;
-			// 	  // 2. Options - Usar GET en lugar de POST
-			// 	  const options = {
-			// 		method: 'GET',
-			// 		headers: {
-			// 		  'Content-Type': 'application/json'
-			// 		},
-			// 		// No necesitas enviar el place_id en el cuerpo de la solicitud para una solicitud GET
-			// 	  };
-			// 	  const response = await fetch(url_pharmacy_details, options);
-			  
-			// 	  if (response.ok) {
-			// 		// Tratamiento del IF = Ok. 
-			// 		const data = await response.json();
-			// 		setStore({ "pharmacyDetails": data.results });
-			// 		localStorage.setItem('pharmacyDetails', JSON.stringify(data.results));
-			// 	  } else {
-			// 		console.log('Error', "No encuentra el ID de la Farmacia");
-			// 	  }
-			// 	} catch (error) {
-			// 	  console.error('Error en getPharmaciesDetails:', error);
-			// 	}
-			//   },
-			  
-			
-			// Autocompletar ??:
-			getAutocomplete: async (city) => {
-				const response = await fetch(`${process.env.BACKEND_URL}/api/maps?city=${city}`);
-				if (!response.ok) {
-				  console.error('Error al obtener sugerencias de autocompletar');
-				  return [];
-				}
-				const data = await response.json();
-				setStore({ autocompleteSuggestions: data.suggestions });
-				return data.suggestions
-			  },
 		}
 	};
 };

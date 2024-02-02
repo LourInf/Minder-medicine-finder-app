@@ -2,15 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../store/appContext.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { useParams } from "react-router-dom";
-import { Button } from 'bootstrap';
+
 
 export const Maps = () => {
   const { store, actions } = useContext(Context);
   const [city, setCity] = useState('');
   const [name, setName] = useState('');
   const [noResults, setNoResults] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [autocomplete, setAutocomplete] = useState([]);
   const [pharmacy_fields, setpharmacy_fields] = useState('');
   const params = useParams();
   const navigate = useNavigate()
@@ -21,38 +19,30 @@ export const Maps = () => {
       setNoResults(true);
     } else {
       setNoResults(false);
-      actions.getAutocomplete(city);
       localStorage.setItem('lastSearchbycity', city);
-      await setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
+      setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
       console.log('pharmacyFields:', pharmacy_fields);
       actions.getPharmaciesDetails(pharmacy_fields);
     }
   };
-
-  const handleAutocompleteClick = (suggestion) => {
-    setCity(suggestion);
-    setAutocomplete([]); // Oculta las sugerencias después de seleccionar una
-    handlePharmacies();
-  };
-  
+  // Activar botón "enter"
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (name) {
-        // Lógica para detalles de farmacias
       } else {
         handlePharmacies();
       }
     }
   };
-
+  // Para poder hacer POST a los detalles de la API
   const handleOnClick = (place_id) => {
     actions.getPharmaciesDetails(place_id);
     navigate(`/pharmacies-details/${place_id}`)
   }
 
-  useEffect(() => {
-    actions.getPharmaciesDetails(params.place_id);
-  }, [params.place_id]);
+  // useEffect(() => {
+  //   actions.getPharmaciesDetails(params.place_id);
+  // }, [params.place_id]);
 
 
   return (
@@ -68,18 +58,9 @@ export const Maps = () => {
             placeholder="¿Dónde vives?"
             onChange={(e) => {
               setCity(e.target.value);
-              actions.getAutocomplete(e.target.value);
             }}
             onKeyPress={handleKeyPress}
           />
-          {/* Mostrar las sugerencias de autocompletar */}
-          {autocomplete.length > 0 && (
-            <ul>
-              {autocomplete.map((suggestion, index) => (
-                <li key={index} onClick={() => handleAutocompleteClick(suggestion)}></li>
-              ))}
-            </ul>
-          )}
           <button className="m-1 py-1 btn btn-success" onClick={handlePharmacies}>
             Buscar Farmacias por dirección
           </button>
@@ -99,25 +80,11 @@ export const Maps = () => {
               )}
               <p>Dirección: {item.vicinity}</p>
               <p>Reseñas: {item.rating}</p>
-              {/* <p>place_pharmacy_id: {item.place_id}</p> */}
-              {/* <Link to={`/pharmacies-details/${item.place_id}`} className="btn btn-light">
-                Datos de Contacto
-              </Link> */}
               <button className="btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
             </div>
           ))
         )}
       </div>
-      {/* Mostrar sugerencias de autocompletar */}
-      {autocomplete.length > 0 && (
-        <ul>
-          {autocomplete.map((suggestion, index) => (
-            <li key={index} onClick={() => handleAutocompleteClick(suggestion)}>
-              {suggestion}
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };
