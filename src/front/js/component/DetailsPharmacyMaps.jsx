@@ -1,54 +1,42 @@
-// import React, { useContext, useEffect } from "react";
-// import { useParams } from "react-router";
-// import { Context } from "../store/appContext";
-// import { Link } from "react-router-dom";
-// // ejemplo de star wars
-// export const DetailsPharmacyMaps = () => {
-//     const { store, actions } = useContext(Context);
-//     const params = useParams();
-//     const imgUrl = "https://starwars-visualguide.com/assets/img/characters/";
+import React, { useContext, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 
-//     useEffect(() => {
-//         actions.getCharactersDetail(params.idCharacter);
-//     }, []);
+export const DetailsPharmacyMaps = () => {
+    const { store, actions } = useContext(Context);
 
-//     return (
-//         <div>
-//             <h1>Details</h1>
-//             <Link className="navbar-brand" to="/characters">To Characters Go Back</Link>
-//             <div className="container bg-dark">
-//                 <div className="card mb-3  bg-dark text-light">
-//                     <div className="row g-0">
-//                         <div className="col-md-7 col-lg-6 col-xl-5">
-//                             <img src={`${imgUrl}${params.idCharacter}.jpg`} className="card-img-top w-100 h-100" alt="..." />
-//                         </div>
-//                         <div className="col-md-5 col-lg-6 col-xl-7">
-//                             <div className="card-body">
 
-//                                 {/* <h3>{params.idCharacter}</h3> */}
-//                                 <h1>{store.detailCharacter.properties.name}</h1>
-//                                 <p><strong>Height: {store.detailCharacter.properties.height} </strong></p>
-//                                 <p><strong>Mass: </strong> {store.detailCharacter.properties.mass} </p>
-//                                 <p><strong>Hair color: </strong> {store.detailCharacter.properties.hair_color}</p>
-//                                 <p><strong>Skin color: </strong> {store.detailCharacter.properties.skin_color}</p>
-//                                 <p><strong>Eye color: </strong> {store.detailCharacter.properties.eye_color}</p>
-//                                 <p><strong>Birth year: </strong> {store.detailCharacter.properties.birth_year}</p>
-//                                 <p><strong>Gender: </strong> {store.detailCharacter.properties.gender} </p>
-
-//                                 {/* Si no funciona: */}
-//                                 {/* <h1>{store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.name}</h1>
-//                                 <p><strong>Height: {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.height} </strong></p>
-//                                 <p><strong>Mass: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.mass} </p>
-//                                 <p><strong>Hair color: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.hair_color}</p>
-//                                 <p><strong>Skin color: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.skin_color}</p>
-//                                 <p><strong>Eye color: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.eye_color}</p>
-//                                 <p><strong>Birth year: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.birth_year}</p>
-//                                 <p><strong>Gender: </strong> {store.detailCharacter && store.detailCharacter.properties && store.detailCharacter.properties.gender} </p> */}
-//                             </div>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
+    return (
+        <div>
+            <Link className="navbar-brand m-3" to="/maps">Volver</Link>
+            <h1 className="text-center p-2 m-3">Detalle de la Farmacia</h1>
+            {store.pharmacyDetails ? (
+                <div className="container bg-success">
+                    <div className="card mb-3  bg-success text-light">
+                        <div className="row g-0">
+                            <div className="col-md-7 col-lg-6 col-xl-5">
+                                <img
+                                    src={store.pharmacyDetails.icon}
+                                    className="card-img-top w-100 h-100"
+                                    alt="farmacia"
+                                />
+                            </div>
+                            <div className="col-md-5 col-lg-6 col-xl-7">
+                                <div className="card-body">
+                                    <h1>{store.pharmacyDetails.place_id}</h1>
+                                    <h1>{store.pharmacyDetails.name}</h1>
+                                    <p> Dirección: {store.pharmacyDetails.formatted_address}</p>
+                                    <p>Teléfono: {store.pharmacyDetails.formatted_phone_number}</p>
+                                    <p>Horario Laboral: {store.pharmacyDetails.working_hours}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <p>No encuentra detalles de la farmacia...</p>
+            )}
+        </div>
+    );
+};

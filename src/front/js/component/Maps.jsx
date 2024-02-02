@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../store/appContext.js';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useParams } from "react-router-dom";
+import { Button } from 'bootstrap';
 
 export const Maps = () => {
   const { store, actions } = useContext(Context);
@@ -9,6 +11,9 @@ export const Maps = () => {
   const [noResults, setNoResults] = useState(false);
   const [loading, setLoading] = useState(false);
   const [autocomplete, setAutocomplete] = useState([]);
+  const [pharmacy_fields, setpharmacy_fields] = useState('');
+  const params = useParams();
+  const navigate = useNavigate()
 
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
@@ -18,6 +23,9 @@ export const Maps = () => {
       setNoResults(false);
       actions.getAutocomplete(city);
       localStorage.setItem('lastSearchbycity', city);
+      await setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
+      console.log('pharmacyFields:', pharmacy_fields);
+      actions.getPharmaciesDetails(pharmacy_fields);
     }
   };
 
@@ -26,6 +34,7 @@ export const Maps = () => {
     setAutocomplete([]); // Oculta las sugerencias después de seleccionar una
     handlePharmacies();
   };
+  
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (name) {
@@ -35,6 +44,16 @@ export const Maps = () => {
       }
     }
   };
+
+  const handleOnClick = (place_id) => {
+    actions.getPharmaciesDetails(place_id);
+    navigate(`/pharmacies-details/${place_id}`)
+  }
+
+  useEffect(() => {
+    actions.getPharmaciesDetails(params.place_id);
+  }, [params.place_id]);
+
 
   return (
     <div className="text-center">
@@ -80,10 +99,11 @@ export const Maps = () => {
               )}
               <p>Dirección: {item.vicinity}</p>
               <p>Reseñas: {item.rating}</p>
-              <p>place_pharmacy_id: {item.place_id}</p>
-              <Link to={`/pharmacies_details/${item.place_id}`} className="btn btn-light">
+              {/* <p>place_pharmacy_id: {item.place_id}</p> */}
+              {/* <Link to={`/pharmacies-details/${item.place_id}`} className="btn btn-light">
                 Datos de Contacto
-              </Link>
+              </Link> */}
+              <button className="btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
             </div>
           ))
         )}

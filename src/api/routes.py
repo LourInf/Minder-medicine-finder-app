@@ -100,6 +100,30 @@ def handle_maps():
 
 
 # Post Para Extraer Details de la Pharmacy desde el ID que viene del Front
+# @api.route('/pharmacies_details', methods=['POST'])
+# def handle_pharmacies_details():
+#     response_body = {}
+#     api_url_places_details = os.environ.get('URL_GOOGLE_PLACES_DETAILS')
+#     api_key = os.environ.get('GOOGLE_API_KEY')
+#     data = request.json
+#     # Este dato debe venir del Front
+#     pharmacy_id = data['place_id']
+#     print data
+#     # Estos campos son los seleccioandos para extraer, se pueden modificar. Consultar Documentación API. 
+#     pharmacy_fields = 'name%2formatted_address%2current_opening_hours%2formatted_phone_number'
+#     if not pharmacy_id or not pharmacy_fields:
+#         response_body = {"error": "Id or Fields' no proporcionado"}
+#         return jsonify(response_body), 400
+#     url_pharmacies_details = f'{api_url_places_details}?place_id={pharmacy_id}&fields={pharmacy_fields}&key={api_key}'
+#     headers = {
+#          'Content-Type': 'application/json'}
+#     response = requests.get(url_pharmacies_details, headers=headers) # Get para la API
+#     if response.status_code == 200:
+#         return jsonify(response.json()), 200
+#     else:
+#         return {'error': "Error en la API Google Places para obtener detalles"}, 500
+
+
 @api.route('/pharmacies_details', methods=['POST'])
 def handle_pharmacies_details():
     response_body = {}
@@ -109,7 +133,7 @@ def handle_pharmacies_details():
     # Este dato debe venir del Front
     pharmacy_id = data['place_id']
     # Estos campos son los seleccioandos para extraer, se pueden modificar. Consultar Documentación API. 
-    pharmacy_fields = 'name,formatted_address,current_opening_hours,formatted_phone_number'
+    pharmacy_fields = 'name,adr_address,formatted_address,current_opening_hours,formatted_phone_number'
     if not pharmacy_id or not pharmacy_fields:
         response_body = {"error": "Id or Fields' no proporcionado"}
         return jsonify(response_body), 400
@@ -120,7 +144,4 @@ def handle_pharmacies_details():
     if response.status_code == 200:
         return jsonify(response.json()), 200
     else:
-        return {'error': "Error en la API Google Places para obtener detalles"}
-
-
-    
+        return {'error': "Error en la API Google Places para obtener detalles"} 
