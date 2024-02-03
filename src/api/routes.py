@@ -69,9 +69,10 @@ def handle_maps():
         response_body = {"error": "Error en la solicitud a la API de geocoding"}
         return jsonify(response_body), 500
 
-# Activar geolocalización
-@api.route('/geolocation', methods=['POST'])
-def handle_geolocation():
+# # Activar geolocalización
+# @api.route('/geolocation', methods=['POST'])
+# def handle_geolocation():
+
 # Necessary, DO NOT REMOVE!!!!!
 @api.route('/hello', methods=['GET'])
 def handle_hello():
@@ -84,6 +85,7 @@ def handle_hello():
     api_url_geolocation = os.environ.get('URL_GOOGLE_GEOLOCATION')
     api_key = os.environ.get('GOOGLE_API_KEY')
     url_maps_geolocation = f'{api_url_geolocation}?&key={api_key}'
+
 
 # Post Para Extraer Details de la Pharmacy desde el ID que viene del Front
 @api.route('/pharmacies', methods=['POST'])

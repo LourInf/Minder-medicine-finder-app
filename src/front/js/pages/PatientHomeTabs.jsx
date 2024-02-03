@@ -7,17 +7,17 @@ export const PatientHome = () => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-        if(userLogged){
-            if(userLogged.expire < new Date().getTime()){
-                localStorage.removeItem("userLogged");
-                navigate("/login");
-            }
-        }else{
-            navigate("/login");
-        }
-    }, [navigate])
+    // useEffect(() => {
+    //     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+    //     if(userLogged){
+    //         if(userLogged.expire < new Date().getTime()){
+    //             localStorage.removeItem("userLogged");
+    //             navigate("/login");
+    //         }
+    //     }else{
+    //         navigate("/login");
+    //     }
+    // }, [navigate])
 
 
 

@@ -31,6 +31,15 @@ export const Login = () => {
             const data = await response.json();
             actions.login(data.token)
 
+        //POST-LOGIN added - Needed for going back to modal reservation after user logs in
+        const postLoginAction = store.postLoginAction;
+        if(postLoginAction) {
+            postLoginAction();
+        actions.setPostLoginAction(null); // Reset post-login action
+        } else {
+            navigate("/");
+        }
+     
             const currentTime = new Date();
 
 

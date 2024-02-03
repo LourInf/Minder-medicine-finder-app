@@ -14,13 +14,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 			availablePharmacies:[],
 			user_id: ""
 
-
 		},
 		
 		actions: {
+			getMessage: async () => {
+				try {
+					// Fetching data from the backend
+					const response = await fetch(process.env.BACKEND_URL + "/api/hello")
+					const data = await response.json()
+					setStore({message: data.message})
+					return data;  // Don't forget to return something, that is how the async resolves
+				} catch(error) {
+					console.log("Error loading message from backend", error)
+				}
+			},
+			
 			login: (token) => {
 				setStore({isLoggedIn: true});
 				localStorage.setItem("token", token);
+
+				const postLoginAction = getStore().postLoginAction;
+				if (postLoginAction) {
+					postLoginAction(); // Execute if it's a function
+					setStore({ postLoginAction: null }); // Reset it
+				}
+
 			},
 
 			// to handle redirection in reservation modal after login
@@ -234,15 +252,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.ok) {
 						const data = await response.json();
 						console.log(data);
-						 // Success notification
-						 alert("La reserva se ha llevado a cabo correctamente!");
 						// Save the order details in the store
 						setStore({ lastCreatedOrder: data.order });
 					} else {
 						const errorData = await response.json();
 						const errorMessage = errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo";
 						console.error(errorMessage);
-						// Error notification
 						alert(errorMessage);
 					}
 				},

@@ -14,25 +14,22 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-    // Check if the user is logged in before showing the modal
-    const handleReserveOnline = () => {
-      if (!store.isLoggedIn) {
-        // Save the post-login action before redirecting
-        actions.setPostLoginAction({ type: 'reserve', medicineId, pharmacyId });
-    
-        // Redirect to login
-        navigate('/login');
-      } else {
-        // User is logged in, show the reservation modal
-        setShowModal(true);
-      }
-    };
+  const handleReserveOnline = () => {
+    if (!store.isLoggedIn) {
+      const afterLogin = () => setShowModal(true);
+      actions.setPostLoginAction(afterLogin);
+      navigate('/login');
+    } else {
+      // User is logged in, then show the modal directly
+      setShowModal(true);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
 
-
-  // const handleReserveOnline = () => {
-  //   actions.createOrderReservation(medicineId, pharmacyId);
-  // };
 
   return (
     <div>
@@ -64,8 +61,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
             </ListGroup>
           </Card.Body>
         </Card>
-        {/* Conditional rendering of the ModalReservation based on showModal state */}
-      {showModal && <ModalReservation show={showModal} handleClose={handleReserveOnline} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
+      {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
       </div>
     </div>
   );
