@@ -10,12 +10,12 @@ export const PatientDashboard = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Redirect to login page if patient is not logged in
-  //   if (!store.isLoggedIn) {
-  //     navigate('/login');
-  //   }
-  // }, [store.isLoggedIn, navigate]);
+  useEffect(() => {
+    // Redirect to login page if patient is not logged in
+    if (!store.isLoggedIn) {
+      navigate('/login');
+    }
+  }, [store.isLoggedIn, navigate]);
 
 
 

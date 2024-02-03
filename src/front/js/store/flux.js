@@ -35,18 +35,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({isLoggedIn: true});
 				localStorage.setItem("token", token);
 
-				// //const postLoginAction = getStore().postLoginAction;
-				// if (getStore().postLoginAction) {
-				// 	postLoginAction(); // Execute if it's a function
-				// 	setStore({ postLoginAction: null }); // Reset it
-				// }
 
 			},
-
-			// to handle redirection in reservation modal after login
-			// setPostLoginAction: (action) => {
-			// 	setStore({ postLoginAction: action });
-			//   },
 
 			logout: () => {
 				setStore({isLoggedIn: false});
@@ -272,17 +262,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				},
 
-			getOrders: async (value) => {
+			getUserOrders: async () => {
 				const url = `${process.env.BACKEND_URL}/api/orders`;
+				const token = localStorage.getItem('token'); // Retrieve the token from localStorage
 				const options = {
-					method: "GET"
+					method: "GET",
+					headers: {
+						'Authorization': `Bearer ${token}`, // Include the JWT token in the authorization header
+						'Content-Type': 'application/json'
+					  },
 				};
 				const response = await fetch (url,options);
 				if (response.ok) {
 					const data = await response.json();
 					console.log(data);
 					// We ensure that we're accessing the orders array within the results object
-					if (data.results && Array.isArray(data.results.orders)) {
+					if (data.results && data.results.orders) {
 						setStore({ orders: data.results.orders }); // Update store with the orders array
 						localStorage.setItem("orders", JSON.stringify(data.results.orders));
 					} else {

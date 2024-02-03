@@ -31,15 +31,6 @@ export const Login = () => {
             const data = await response.json();
             actions.login(data.token)
 
-            
-
-            //const postLoginAction = store.postLoginAction;
-            // if(postLoginAction) {
-            //     postLoginAction();
-            // actions.setPostLoginAction(null); // Reset post-login action
-            // } else {
-            //     navigate("/");
-            // }
         
             const currentTime = new Date();
 
@@ -90,7 +81,7 @@ export const Login = () => {
         }
 
 
-
+        //NOTE: I COMMENTED OUT CAUSE IT CREATES AN INFINITE LOOP! 
         // useEffect(() => {
         //     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
         //     if(userLogged){

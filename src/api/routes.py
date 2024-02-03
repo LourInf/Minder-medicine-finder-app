@@ -86,7 +86,7 @@ def handle_hello():
     url_maps_geolocation = f'{api_url_geolocation}?&key={api_key}'
 
 
-# Post Para Extraer Details de la Pharmacy desde el ID que viene del Front
+# Post Para Extraer Details de la Pharmacy desde el ID que viene del Front (=> actions: getPharmaciesDetails)
 @api.route('/pharmacies', methods=['POST'])
 def handle_pharmacies_details():
     response_body = {}
@@ -223,9 +223,9 @@ def create_order():
     response_body = {}
     data = request.json
     # here we write the logic to save the new order registry in our DB:
-    patient_id = 2  # HARDCODED FOR NOW-->CHANGE! the user needs to be authenticated and the session has a patient_id
-    pharmacy_id = 1 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected pharmacy from user session or database
-    medicine_id = 748 # HARDCODED FOR NOW-->CHANGE! Retrieve the last selected medicine from user session or database
+    patient_id = 2  
+    pharmacy_id = 1 
+    medicine_id = 748 
     requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
     validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
     order_status = OrderStatus.PENDING # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
@@ -292,37 +292,24 @@ def handle_specific_order(order_id):
         response_body['message'] = "La reserva se ha cancelado"
         return response_body, 200
 
-# Endpoint to get all orders
-@api.route('/orders', methods=['GET'])
-def get_all_orders():
-    response_body = {}
-    results = {}
-    orders = db.session.execute(select(Orders)).scalars().all()
-    if not orders:
-        response_body['message'] = 'No tiene ninguna reserva'
-        return response_body, 404
-    all_orders = [order.serialize() for order in orders]
-    results['orders'] = all_orders
-    response_body['message'] = "Reservas encontradas"
-    response_body['results'] = results
-    return response_body, 200
-
 @api.route("/private", methods=["GET"])
 @jwt_required()
 def protected():
     current_user_id = get_jwt_identity()
-    return jsonify(logged_in_as=current_user), 200
+    return jsonify(logged_in_as=current_user_id), 200
 
-# Endpoint to get all orders for the logged-in user
+# Endpoint to get all orders for the logged-in user (=> Actions: getUserOrders)
 @api.route('/orders', methods=['GET'])
 @jwt_required()  
 def get_user_orders():
     response_body = {}
     results = {}
     current_user_id = get_jwt_identity()
+    print(f"Current User ID: {current_user_id}") 
     if not current_user_id:
-        return jsonify({"message": "Access denied. Please log in/sign up"}), 401
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    print(f"Orders fetched: {orders}")
     if not orders:
         response_body['message'] = 'No tiene ninguna reserva'
         return response_body, 404
@@ -409,7 +396,7 @@ def get_pharmacies_available_medicine():
         return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento"}), 404
 
 
-# Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy
+# Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy    (=> Actions: updateMedicineAvailability)
 @api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT'])
 def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
     if request.method == 'GET':
