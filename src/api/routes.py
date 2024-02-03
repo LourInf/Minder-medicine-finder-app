@@ -293,6 +293,22 @@ def handle_specific_order(order_id):
         response_body['message'] = "La reserva se ha cancelado"
         return response_body, 200
 
+# Endpoint to get all orders
+@api.route('/orders', methods=['GET'])
+def get_all_orders():
+    response_body = {}
+    results = {}
+    orders = db.session.execute(select(Orders)).scalars().all()
+    if not orders:
+        response_body['message'] = 'No tiene ninguna reserva'
+        return response_body, 404
+    all_orders = [order.serialize() for order in orders]
+    results['orders'] = all_orders
+    response_body['message'] = "Reservas encontradas"
+    response_body['results'] = results
+
+    return response_body, 200
+
 # Endpoint to get info on availability
 @api.route('/availability', methods=['GET','POST'])
 def handle_availability():

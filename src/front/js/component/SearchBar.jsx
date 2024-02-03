@@ -32,7 +32,7 @@ export const SearchBar = () =>{
     const handleMedicineSelect = (item) => {
         setInput(item.medicine_name);
         setSelectedItem(item);
-        actions.getMedicines("");
+        actions.getMedicines(item.medicine_name);
         // For Results: we update the store with the selected medicine
         actions.getSelectedMedicine(item.medicine_name);
         // save selected medicine in session storage

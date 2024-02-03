@@ -10,6 +10,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			selectedCity: "",		// stores the selected city chosen by the user
 			medicinesPsum: [],		// stores all the medicines which have distrib.problems
 			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
+			orders:[],				// stores all orders made by an user
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: ""
@@ -136,15 +137,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const data = await response.json();
 					console.log(data);
 			
-					// We ensure that we're accessing the medicines array within the results object
-					if (data.results && Array.isArray(data.results.medicines)) {
-						setStore({ medicines: data.results.medicines }); // Update store with the medicines array
+					if (data.results.medicines.length > 0) {
+						setStore({ medicines: data.results.medicines });
 						localStorage.setItem("medicines", JSON.stringify(data.results.medicines));
 					} else {
-						console.log("No medicines found or invalid format");
 						setStore({ medicines: [] });
 						localStorage.setItem("medicines", JSON.stringify([]));
-					}
+					}				
 			
 					return data;
 				} else {
@@ -252,8 +251,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (response.ok) {
 						const data = await response.json();
 						console.log(data);
-						// Save the order details in the store
-						setStore({ lastCreatedOrder: data.order });
+						setStore((prevState) => {
+							return {
+								...prevState,
+								lastCreatedOrder: data.order, // Saves the current order details 
+								orders: [...prevState.orders, data.order] // Adds the new order to the existing orders array
+							};
+						});
 					} else {
 						const errorData = await response.json();
 						const errorMessage = errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo";
@@ -261,6 +265,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 						alert(errorMessage);
 					}
 				},
+
+			getOrders: async (value) => {
+				const url = `${process.env.BACKEND_URL}/api/orders`;
+				const options = {
+					method: "GET"
+				};
+				const response = await fetch (url,options);
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data);
+					// We ensure that we're accessing the orders array within the results object
+					if (data.results && Array.isArray(data.results.orders)) {
+						setStore({ orders: data.results.orders }); // Update store with the orders array
+						localStorage.setItem("orders", JSON.stringify(data.results.orders));
+					} else {
+						console.log("No se han encontrado reservas o el formato es incorrecto");
+						setStore({ orders: [] });
+						localStorage.setItem("orders", JSON.stringify([]));
+					}
+			
+					return data;
+				} else {
+					console.log("Error:", response.status, response.statusText);
+				}
+			},
+
 			
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
 			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));

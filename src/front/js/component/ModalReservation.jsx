@@ -5,17 +5,17 @@ import { Context } from '../store/appContext';
 export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId }) => {
     const { store, actions } = useContext(Context);
     // const [show, setShow] = useState(false); -->added to CardResults
-    const [reservationNumber, setReservationNumber] = useState("");
+    // const [reservationNumber, setReservationNumber] = useState(""); --> removed: we'll use the order.id
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
 
-     // generate a unique reservation number only when the modal is opened, and runs whenever show changes
-    useEffect(() => {
-        if (show) {
-            const uniqueNumber = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-            setReservationNumber(uniqueNumber);
-        }
-    }, [show]);
+     // generate a unique reservation number only when the modal is opened, and runs whenever show changes  --> removed: we'll use the order.id
+    // useEffect(() => {
+    //     if (show) {
+    //         const uniqueNumber = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    //         setReservationNumber(uniqueNumber);
+    //     }
+    // }, [show]);
 
     useEffect(() => {
         if (store.lastCreatedOrder) {
@@ -55,7 +55,7 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
             </Form.Group>
             <Form.Group className="mb-3">
             <Form.Label>Numero de reserva</Form.Label>
-            <Form.Control type="text" placeholder={reservationNumber} readOnly />
+            <Form.Control type="text" placeholder="Confirme para generar su numero de reserva" readOnly />
             </Form.Group>
         </Form>
         </Modal.Body>
@@ -72,7 +72,7 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
     <Toast.Header>
         <strong className="me-auto">Reserva confirmada</strong>
     </Toast.Header>
-    <Toast.Body>Tu numero de reserva es: {reservationNumber}</Toast.Body>
+    <Toast.Body>{toastMessage}</Toast.Body>
     </Toast>
     </>
     )
