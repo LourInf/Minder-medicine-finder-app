@@ -11,6 +11,7 @@ import math
 from sqlalchemy import select, or_, and_
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from sqlalchemy.orm import joinedload
 
 
 api = Blueprint('api', __name__)
@@ -321,10 +322,18 @@ def get_user_orders():
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == current_user_id)
+    orders = orders_query.all()
     if not orders:
         response_body['message'] = 'No tiene ninguna reserva'
         return response_body, 404
-    all_user_orders = [order.serialize() for order in orders]
+    all_user_orders = []
+    for order in orders:
+        order_data = order.serialize()
+        # Directly access medicine and pharmacy from the order due to joinedload
+        order_data['medicine_name'] = order.medicine.medicine_name if order.medicine else 'No disponible'
+        order_data['pharmacy_name'] = order.pharmacy.pharmacy_name if order.pharmacy else 'No disponible'
+        all_user_orders.append(order_data)
     results['orders'] = all_user_orders
     response_body['message'] = "Reservas encontradas"
     response_body['results'] = results

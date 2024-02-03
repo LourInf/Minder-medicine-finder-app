@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
 import { Card, Button, ListGroup, ListGroupItem, Toast } from 'react-bootstrap';
@@ -27,6 +27,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
     }
   };
 
+  
   const closeModal = () => {
     setShowModal(false);
   };
@@ -34,8 +35,15 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
   const displayToast = (message) => {
     setToastMessage(message);
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 5000);
+    const toastTimeout = setTimeout(() => setShowToast(false), 5000);
   };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(toastTimeout);
+    };
+  }, []);
+  
 
   return (
     <div>
