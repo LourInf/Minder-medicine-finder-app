@@ -17,11 +17,10 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
   const [toastMessage, setToastMessage] = useState("");
 
   const handleReserveOnline = () => {
+    actions.setSelectedPharmacy(pharmacy);
     if (!store.isLoggedIn) {
       actions.setUrlLogin(medicineId)
-      // const afterLogin = () => setShowModal(true);
-      // actions.setPostLoginAction(afterLogin);
-      navigate('/login');
+      navigate('/login');  
     } else {
       // User is logged in, then show the modal directly
       setShowModal(true);
@@ -63,7 +62,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
         <Card className="card-container contact">
           <Card.Body>
             <ListGroup className="list-group card-group">
-             <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleReserveOnline}><span className="icon-keyboard"><FontAwesomeIcon icon={faKeyboard} /> Reservar online</span></Button>
+             <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleReserveOnline} ><span className="icon-keyboard"><FontAwesomeIcon icon={faKeyboard} /> Reservar online</span></Button>
               <Card.Link href="#"><span className="icon-phone"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</span></Card.Link>
             </ListGroup>
           </Card.Body>

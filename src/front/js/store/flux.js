@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			isLoggedIn: false,		// indicates if user is logged in
 			postLoginAction: null,
 			pharmacies: [],			//stores a list of pharmacies fetched from Google API
+			selectedPharmacy:null,
 			medicines: [],			 // stores a list of medicines fetched from our backend
 			selectedMedicine: "",  // stores the selected medicine chosen by the patient when searching
 			cities:[],				// stores a list of cities, used for city search functionality
@@ -11,6 +12,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			medicinesPsum: [],		// stores all the medicines which have distrib.problems
 			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
 			orders:[],				// stores all orders made by an user
+			updatedOrders:[],
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: "",
@@ -149,6 +151,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ selectedMedicine: medicine });
 				},
 			
+
+			setSelectedPharmacy: (pharmacy) => {
+    			setStore({ selectedPharmacy: pharmacy });
+			},
+			
 			//CHANGE!!!! For now only use with Madrid example! ;)
 			getSearchCities: (searchQuery) => {
 				const mockCity = { id: 1, city_name: "Madrid" };
@@ -226,9 +233,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				},
 
-			createOrderReservation: async (medicineId, pharmacyId) => {
+			createOrderReservation: async (medicineId) => {
+				const { selectedPharmacy } = getStore(); 
+				const pharmacyId = selectedPharmacy.id;
+
 				const url = `${process.env.BACKEND_URL}/api/orders/`;
 				const token = localStorage.getItem('token');
+				
 				const options = {
 					method: "POST",
 					headers: {
@@ -236,21 +247,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Authorization': `Bearer ${token}`
 					},
 					body: JSON.stringify({ 
-						medicine_id: medicineId,
+						medicine_id: medicineId, 
 						pharmacy_id: pharmacyId,
-						//order_quantity: 1, //hardcoded -always 1??
-						requested_date: new Date().toISOString().split('T')[0]  // format YYYY-MM-DD
+						requested_date: new Date().toISOString().split('T')[0] 
 					})
+					
 				};
 				const response = await fetch(url, options);
 					if (response.ok) {
 						const data = await response.json();
 						console.log(data);
 						setStore((prevState) => {
+							const updatedOrders = [...prevState.orders, data.order];
 							return {
 								...prevState,
 								lastCreatedOrder: data.order, // Saves the current order details 
-								orders: [...prevState.orders, data.order] // Adds the new order to the existing orders array
+								orders: updatedOrders // Adds the new order to the existing orders array
 							};
 						});
 						return data.order;

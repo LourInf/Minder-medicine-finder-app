@@ -28,8 +28,8 @@ export const Orders = () => {
                     {store.orders.map((order, index) => (
                         <tr key={index}>
                             <td>{order.id}</td>
-                            <td>{store.selectedMedicine}</td> {/* can't be selectedMedicine as it only selects the recent 1. CHECK how to do it */}
-                            <td>tbd - Pharmacy name </td>  {/* Where to get pharmacy name from??? */}
+                            <td>{order.medicine_name}</td> 
+                            <td>{order.pharmacy_name}</td> 
                             <td>Tiene 24 h para recoger el medicamento</td>
                             <td>{order.order_status}</td>
                         </tr>

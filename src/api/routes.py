@@ -219,13 +219,15 @@ def get_medicines_psum():
 
 # Endpoint to create a new order (=> actions: createOrderReservation)
 @api.route('/orders', methods=['POST'])
+@jwt_required()
 def create_order():
+    current_user_id = get_jwt_identity()
     response_body = {}
     data = request.json
     # here we write the logic to save the new order registry in our DB:
-    patient_id = 2  
-    pharmacy_id = 1 
-    medicine_id = 748 
+    patient_id = current_user_id
+    pharmacy_id = data.get('pharmacy_id')
+    medicine_id = data.get('medicine_id')  
     requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
     validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
     order_status = OrderStatus.PENDING # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
@@ -233,16 +235,27 @@ def create_order():
             patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data
             pharmacy_id=pharmacy_id, 
             medicine_id=medicine_id,
-            order_quantity=data.get('order_quantity', 1), # Default quantity to 1 if not provided
+            order_quantity=data.get('order_quantity', 1),   #default to 1
             requested_date=requested_date,
             validity_date=validity_date,
             order_status=order_status)
     # Add the new instance to the session and commit to the database
     db.session.add(new_order)
     db.session.commit()
-    # Serialize and return the created order
-    response_body['message'] = 'Reserva creada'
-    response_body ['order'] = new_order.serialize()
+    # Manually query for medicine and pharmacy details
+    medicine = Medicines.query.get(medicine_id)
+    pharmacy = Pharmacies.query.get(pharmacy_id)
+    response_body = {
+        'message': 'Reserva creada',
+        'order': {
+            'id': new_order.id,
+            'medicine_name': medicine.medicine_name if medicine else 'Not Found',  
+            'pharmacy_name': pharmacy.pharmacy_name if pharmacy else 'Not Found', 
+            'order_status': new_order.order_status.value, 
+            'requested_date': new_order.requested_date.isoformat(),
+            'validity_date': new_order.validity_date.isoformat(),
+        }
+    }
     return response_body, 201
 
 # Endpoint to get details of a specific order
@@ -305,11 +318,9 @@ def get_user_orders():
     response_body = {}
     results = {}
     current_user_id = get_jwt_identity()
-    print(f"Current User ID: {current_user_id}") 
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
-    print(f"Orders fetched: {orders}")
     if not orders:
         response_body['message'] = 'No tiene ninguna reserva'
         return response_body, 404
