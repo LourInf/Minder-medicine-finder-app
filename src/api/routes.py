@@ -10,8 +10,7 @@ import os
 import math
 from sqlalchemy import select, or_, and_
 from datetime import datetime, timedelta
-
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 
 api = Blueprint('api', __name__)
@@ -306,7 +305,31 @@ def get_all_orders():
     results['orders'] = all_orders
     response_body['message'] = "Reservas encontradas"
     response_body['results'] = results
+    return response_body, 200
 
+@api.route("/private", methods=["GET"])
+@jwt_required()
+def protected():
+    current_user_id = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
+
+# Endpoint to get all orders for the logged-in user
+@api.route('/orders', methods=['GET'])
+@jwt_required()  
+def get_user_orders():
+    response_body = {}
+    results = {}
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Access denied. Please log in/sign up"}), 401
+    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    if not orders:
+        response_body['message'] = 'No tiene ninguna reserva'
+        return response_body, 404
+    all_user_orders = [order.serialize() for order in orders]
+    results['orders'] = all_user_orders
+    response_body['message'] = "Reservas encontradas"
+    response_body['results'] = results
     return response_body, 200
 
 # Endpoint to get info on availability

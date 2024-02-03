@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
-import { Card, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Card, Button, ListGroup, ListGroupItem, Toast } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard } from '@fortawesome/free-solid-svg-icons'
@@ -13,11 +13,14 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   const handleReserveOnline = () => {
     if (!store.isLoggedIn) {
-      const afterLogin = () => setShowModal(true);
-      actions.setPostLoginAction(afterLogin);
+      actions.setUrlLogin(medicineId)
+      // const afterLogin = () => setShowModal(true);
+      // actions.setPostLoginAction(afterLogin);
       navigate('/login');
     } else {
       // User is logged in, then show the modal directly
@@ -29,7 +32,11 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
     setShowModal(false);
   };
 
-
+  const displayToast = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 5000);
+  };
 
   return (
     <div>
@@ -61,7 +68,13 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
             </ListGroup>
           </Card.Body>
         </Card>
-      {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
+      {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} displayToast={displayToast}/>}
+      <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide position="top-center">
+        <Toast.Header>
+          <strong className="me-auto">Reserva confirmada</strong>
+        </Toast.Header>
+        <Toast.Body>{toastMessage}</Toast.Body>
+      </Toast>
       </div>
     </div>
   );

@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			orders:[],				// stores all orders made by an user
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
-			user_id: ""
+			user_id: "",
+			urlPostLogin:"/patientHome"
 
 		},
 		
@@ -34,18 +35,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({isLoggedIn: true});
 				localStorage.setItem("token", token);
 
-				const postLoginAction = getStore().postLoginAction;
-				if (postLoginAction) {
-					postLoginAction(); // Execute if it's a function
-					setStore({ postLoginAction: null }); // Reset it
-				}
+				// //const postLoginAction = getStore().postLoginAction;
+				// if (getStore().postLoginAction) {
+				// 	postLoginAction(); // Execute if it's a function
+				// 	setStore({ postLoginAction: null }); // Reset it
+				// }
 
 			},
 
 			// to handle redirection in reservation modal after login
-			setPostLoginAction: (action) => {
-				setStore({ postLoginAction: action });
-			  },
+			// setPostLoginAction: (action) => {
+			// 	setStore({ postLoginAction: action });
+			//   },
 
 			logout: () => {
 				setStore({isLoggedIn: false});
@@ -62,6 +63,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
+			setUrlLogin: (medicineId) => {
+				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCity}`})
+					},
+				
 			getPharmacies: async (cityName) => {
 				// 1. Definir la URL que está en el env. Parámetro city. 
 				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${cityName}`;
@@ -258,6 +263,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 								orders: [...prevState.orders, data.order] // Adds the new order to the existing orders array
 							};
 						});
+						return data.order;
 					} else {
 						const errorData = await response.json();
 						const errorMessage = errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo";

@@ -31,15 +31,16 @@ export const Login = () => {
             const data = await response.json();
             actions.login(data.token)
 
-        //POST-LOGIN added - Needed for going back to modal reservation after user logs in
-        const postLoginAction = store.postLoginAction;
-        if(postLoginAction) {
-            postLoginAction();
-        actions.setPostLoginAction(null); // Reset post-login action
-        } else {
-            navigate("/");
-        }
-     
+            
+
+            //const postLoginAction = store.postLoginAction;
+            // if(postLoginAction) {
+            //     postLoginAction();
+            // actions.setPostLoginAction(null); // Reset post-login action
+            // } else {
+            //     navigate("/");
+            // }
+        
             const currentTime = new Date();
 
 
@@ -59,7 +60,7 @@ export const Login = () => {
             }else if(data.role == false){
                 // TODO 
                 // Hay que hacer la lógica para solo poder acceder si tiene token. AUTHENTICATION
-                navigate("/patientHome");
+                //navigate("/patientHome");
             }else{
                 console.error("What is this role -> ",data.role);
                 const msg = document.querySelector("#errorMessageRole");
@@ -69,6 +70,16 @@ export const Login = () => {
                 }, 3000)
             }
             console.log(data);
+
+
+            //POST-LOGIN added - Needed for going back to modal reservation after user logs in
+			if(store.urlPostLogin) {
+                navigate(store.urlPostLogin)
+            } else {
+                navigate("/");
+            }
+
+
         }else{
             const msg = document.querySelector("#errorMessage");
             msg.style.display = "block";
@@ -80,25 +91,23 @@ export const Login = () => {
 
 
 
-        useEffect(() => {
-            const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-            if(userLogged){
-                if(userLogged.expire < new Date().getTime()){
-                    localStorage.removeItem("userLogged");
-                }else{
-                    navigate("/patientHome");
-                }
-            }
-        }, [navigate])
-
-
+        // useEffect(() => {
+        //     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+        //     if(userLogged){
+        //         if(userLogged.expire < new Date().getTime()){
+        //             localStorage.removeItem("userLogged");
+        //         }else{
+        //             navigate("/patientHome");
+        //         }
+        //     }
+        // }, [navigate])
 
 
     }
 
 
     return (
-        store.isLoggedIn ? <Navigate to="/patientHome"/>:   //  Nee to be changed in the case of pharmacy
+        store.isLoggedIn ? <Navigate to={store.urlPostLogin}/>:   //  Nee to be changed in the case of pharmacy
         <div>
 
             <form onSubmit={handleSubmit} className=" form-group col-md-6 py-5 px-md-5">

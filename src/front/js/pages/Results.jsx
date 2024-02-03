@@ -26,10 +26,10 @@ export const Results = () => {
     return (
         <div>
             {/* Section 1: Pharmacies with selected medicine availability in our DB */}
-            <h2>Section 1: (farmacias afiliadas y con stock de ese medicamento) 20 farmacias tienen disponibilidad de {store.selectedMedicine} en {store.selectedCity}</h2>          {/*MODIFICATION IN PROGRESS - START*/}
+            <h2>Section 1: (farmacias afiliadas y con stock de ese medicamento) 20 farmacias tienen disponibilidad de {store.selectedMedicine} en {store.selectedCity}</h2>    {/*MODIFICATION IN PROGRESS - START*/}
             {store.availablePharmacies && store.availablePharmacies.length > 0 ? (
                 store.availablePharmacies.map((pharmacy, index) => (
-                    <CardResults key={index} pharmacy={pharmacy} />
+                    <CardResults key={index} pharmacy={pharmacy} medicineId={medicineId} />
                 ))
             ) : (
                 <p>No pharmacies found with this medicine available.</p>

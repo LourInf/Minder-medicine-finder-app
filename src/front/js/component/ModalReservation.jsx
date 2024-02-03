@@ -2,12 +2,10 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Modal, Button, Form, Toast } from 'react-bootstrap';
 import { Context } from '../store/appContext';
 
-export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId }) => {
+export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId, displayToast }) => {
     const { store, actions } = useContext(Context);
     // const [show, setShow] = useState(false); -->added to CardResults
     // const [reservationNumber, setReservationNumber] = useState(""); --> removed: we'll use the order.id
-    const [showToast, setShowToast] = useState(false);
-    const [toastMessage, setToastMessage] = useState("");
 
      // generate a unique reservation number only when the modal is opened, and runs whenever show changes  --> removed: we'll use the order.id
     // useEffect(() => {
@@ -17,16 +15,17 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
     //     }
     // }, [show]);
 
-    useEffect(() => {
-        if (store.lastCreatedOrder) {
-            setToastMessage("Reserva realizada con éxito.");
-            setShowToast(true);
-        }
-    }, [store.lastCreatedOrder]);
+    // useEffect(() => {
+    //     if (store.lastCreatedOrder) {
+    //         setToastMessage("Reserva realizada con éxito.");
+    //         setShowToast(true);
+    //     }
+    // }, [store.lastCreatedOrder]);
 
-    const handleReserve = () => {
-        actions.createOrderReservation(medicineId, pharmacyId); 
+    const handleReserve = async () => {
+        const order = await actions.createOrderReservation(medicineId, pharmacyId); 
         handleCloseModal()
+        displayToast(`Reserva realizada con éxito.Su numero de reserva es: ${order.id}`);
         // setToastMessage("Reserva realizada con éxito.");
         // setShowToast(true);
  
@@ -68,12 +67,6 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
         </Button>
         </Modal.Footer>
     </Modal>
-    <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide position="top-end">
-    <Toast.Header>
-        <strong className="me-auto">Reserva confirmada</strong>
-    </Toast.Header>
-    <Toast.Body>{toastMessage}</Toast.Body>
-    </Toast>
     </>
     )
 };
