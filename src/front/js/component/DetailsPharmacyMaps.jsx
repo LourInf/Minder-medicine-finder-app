@@ -11,7 +11,7 @@ export const DetailsPharmacyMaps = () => {
         <div>
             <Link className="navbar-brand m-3" to="/maps">Volver</Link>
             <h1 className="text-center p-2 m-3">Detalle de la Farmacia</h1>
-            {store.pharmacyDetails && store.pharmacyDetails.length > 0 ? (
+            {store.pharmacyDetails ? (
                 <div className="container bg-success">
                     <div className="card mb-3  bg-success text-light">
                         <div className="row g-0">
@@ -29,10 +29,12 @@ export const DetailsPharmacyMaps = () => {
                                     <h1>{store.pharmacyDetails.name}</h1>
                                     <p> Dirección: {store.pharmacyDetails.formatted_address}</p>
                                     <p>Teléfono: {store.pharmacyDetails.formatted_phone_number}</p>
-                                    <p>Estado: {store.pharmacies.current_opening_hours}</p>
-                                    <p>Horario Laboral: {store.pharmacyDetails.working_hours}</p>
+                                    <p>Horario Laboral: {store.pharmacyDetails.current_opening_hours.weekday_text}</p>
+                                    <p>Estado: {store.pharmacyDetails.current_opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
+                                    {/* <p>Horario Laboral: {store.pharmacyDetails.working_hours}</p> */}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
