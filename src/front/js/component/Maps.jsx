@@ -5,10 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
-
+///-------DONE---------
 export const Maps = () => {
   const { store, actions } = useContext(Context);
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState(''); //same
   const [name, setName] = useState('');
   const [noResults, setNoResults] = useState(false);
   const [pharmacy_fields, setpharmacy_fields] = useState('');
@@ -16,7 +16,16 @@ export const Maps = () => {
   const [currentPage, setCurrentPage] = useState(1);
   // const params = useParams();
   const navigate = useNavigate();
+  const handleCityChange = (e) => {
+    const newCity = e.target.value;
+    setCity(newCity); // Update local state to reflect input
+    actions.setSelectedCityName(newCity); // Store the city name in the Flux store
+  };
+///-------DONE---------
+  
 
+
+///-------CHECKING---------
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
     if (store.pharmacies.length === 0) {
@@ -27,6 +36,12 @@ export const Maps = () => {
       // console.log('pharmacyFields:', pharmacy_fields);
       actions.getPharmaciesDetails(pharmacy_fields, currentPage);
     }
+  ///-------CHECKING---------
+
+
+
+
+///-------where to put it???---------
   };
   // Activar botón "enter"
   const handleKeyPress = (e) => {
@@ -37,6 +52,12 @@ export const Maps = () => {
       }
     }
   };
+///-------where to put it???---------
+
+
+
+
+///-------CHECKING---------
   // Para poder hacer POST a los detalles de la API
   const handleOnClick = (place_id) => {
     actions.getPharmaciesDetails(place_id);
@@ -52,6 +73,13 @@ export const Maps = () => {
     setCurrentPage(pageNumber); // Actualiza el estado de currentPage
     actions.getPharmaciesDetails(pharmacy_fields, pageNumber); // hace llamada con el nuevo nº de página
   };
+  ///-------CHECKING---------
+
+
+
+
+
+
   return (
     <div className="text-center">
       <h1>Encuentra tu Farmacia más cercana</h1>
@@ -63,9 +91,7 @@ export const Maps = () => {
             id="location"
             value={city}
             placeholder="Introduce tu Localidad"
-            onChange={(e) => {
-              setCity(e.target.value);
-            }}
+            onChange={handleCityChange}
             onKeyPress={handleKeyPress}
           />
           <button className="m-1 py-1 btn btn-success text-break" onClick={handlePharmacies}>
@@ -91,6 +117,7 @@ export const Maps = () => {
             </div>
           ))
         )}
+        
         {/* Paginar */}
         {store.pharmacies.length > resultsPerPage && (
           <ul className="pagination justify-content-center p-2 m-2">

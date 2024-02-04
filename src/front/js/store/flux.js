@@ -18,11 +18,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: "",
-			urlPostLogin:"/patientHome"
+			urlPostLogin:"/patientHome",
+			selectedCityName: ""
 
 		},
 		
 		actions: {
+			setSelectedCityName: (cityName) => {
+				setStore({ selectedCityName: cityName });
+			  },
+
 			getMessage: async () => {
 				try {
 					// Fetching data from the backend
@@ -86,7 +91,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log('Error:', "No encuentra Farmacias Cercanas")
 				}
 			},
-			
+
 			// Extraer Info de las Farmacias desde Api Places Details (POST)
             getPharmaciesDetails: async (place_pharmacy_id) => {
                 // 1. Definir la URL + el dato de place_id que necesita google.
@@ -162,16 +167,16 @@ const getState = ({ getStore, getActions, setStore }) => {
     			setStore({ selectedPharmacy: pharmacy });
 			},
 			
-			//CHANGE!!!! For now only use with Madrid example! ;)
-			getSearchCities: (searchQuery) => {
-				const mockCity = { id: 1, city_name: "Madrid" };
-				// Check if the search query matches "Madrid" (case insensitive)
-				if (mockCity.city_name.toLowerCase().includes(searchQuery.toLowerCase())) {
-					setStore({ cities: [mockCity] }); // If it matches, set the store with the mock city
-				} else {
-					setStore({ cities: [] });
-				}
-			},
+			// //CHANGE!!!! For now only use with Madrid example! ;)
+			// getSearchCities: (searchQuery) => {
+			// 	const mockCity = { id: 1, city_name: "Madrid" };
+			// 	// Check if the search query matches "Madrid" (case insensitive)
+			// 	if (mockCity.city_name.toLowerCase().includes(searchQuery.toLowerCase())) {
+			// 		setStore({ cities: [mockCity] }); // If it matches, set the store with the mock city
+			// 	} else {
+			// 		setStore({ cities: [] });
+			// 	}
+			// },
 
 			getSelectedCity: (city) => {
 				setStore({ selectedCity: city });

@@ -11,8 +11,9 @@ export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
     const [selectedItem, setSelectedItem] = useState("");
+
     const [city, setCity] = useState("");
-    const [selectedCity, setSelectedCity] = useState("");
+    //const [selectedCity, setSelectedCity] = useState("");
     const navigate = useNavigate();
     
 
@@ -44,49 +45,66 @@ export const SearchBar = () =>{
       setSelectedItem("");
   };
 
-    const handleCityChange = (value) => {
-      setCity(value);
-      actions.getSearchCities(value) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
-      setSelectedCity(""); 
-    };
-
-
-    const handleKeyPress = (e) => {
-      if (e.key === 'Enter') {
-        actions.getSearchCities(city) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
-        setSelectedCity(""); 
-      }
-    };
-
-  const handleCitySelect = (city) => {
-    setCity(city.city_name); 
-    setSelectedCity(city);   
-    actions.getSelectedCity(city);
-    // For Results: we update the store with the selected city
-    actions.getSelectedCity(city.city_name);
-    // save selected medicine in session storage
-    sessionStorage.setItem('selectedCity', JSON.stringify(city));
-    actions.clearCities(); 
+  const handleCityChange = (e) => {
+    const newCity = e.target.value;
+    setCity(newCity); 
+    actions.setSelectedCityName(newCity);
   };
 
 
-  const clearSelectionCity = () => {
-    setCity("");
-    setSelectedCity("");
-  };
+    // const handleCityChange = (value) => {
+    //   setCity(value);
+    //   actions.getSearchCities(value) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
+    //   setSelectedCity(""); 
+    // };
 
+
+    // const handleKeyPress = (e) => {
+    //   if (e.key === 'Enter') {
+    //     actions.getSearchCities(city) //NEEDS TO BE MODIFIED!! Now only works with "Madrid" (TBC - API PLACES?)
+    //     setSelectedCity(""); 
+    //   }
+    // };
+
+  // const handleCitySelect = (city) => {
+  //   setCity(city.city_name); 
+  //   setSelectedCity(city);   
+  //   actions.getSelectedCity(city);
+  //   // For Results: we update the store with the selected city
+  //   actions.getSelectedCity(city.city_name);
+  //   // save selected medicine in session storage
+  //   sessionStorage.setItem('selectedCity', JSON.stringify(city));
+  //   actions.clearCities(); 
+  // };
+
+
+  // const clearSelectionCity = () => {
+  //   setCity("");
+  //   setSelectedCity("");
+  // };
+
+    // const handleSearchResults = () => {
+    //   const selectedMedicine = JSON.parse(sessionStorage.getItem('selectedMedicine'));
+    //   const selectedCity = JSON.parse(sessionStorage.getItem('store.selectedCityName'));
+      
+    //   if (selectedMedicine && selectedMedicine.id && selectedCity) {
+    //   navigate(`/results/${selectedMedicine.id}/${selectedCity}`);
+    //   } else {
+      
+    //   console.log("Debe seleccionar un medicamento y una ciudad.");
+    //   }
+    // };
+    
     const handleSearchResults = () => {
       const selectedMedicine = JSON.parse(sessionStorage.getItem('selectedMedicine'));
-      const selectedCity = JSON.parse(sessionStorage.getItem('selectedCity'));
       
-      if (selectedMedicine && selectedMedicine.id && selectedCity && selectedCity.id) {
-      navigate(`/results/${selectedMedicine.id}/${selectedCity.city_name}`);
+      if (selectedMedicine && selectedMedicine.id && city) {
+          navigate(`/results/${selectedMedicine.id}/${encodeURIComponent(store.selectedCityName)}`);
       } else {
-      
-      console.log("Debe seleccionar un medicamento y una ciudad.");
+          console.log("You must select both a medicine and a city.");
       }
-    };
-    
+  };
+
     //To clean up sessionStorage after navigating to Results page
     useEffect(() => { 
       return () => {
@@ -94,6 +112,11 @@ export const SearchBar = () =>{
           sessionStorage.removeItem('selectedCity');
       };
     }, []);
+
+    const clearSelectionCity = () => {
+      setCity("");
+  };
+
 
     return(
             <div className="search-component">
@@ -133,18 +156,18 @@ export const SearchBar = () =>{
                       aria-label="localizacion"
                       aria-describedby="localizacion"
                       value={city}
-                      onChange={(e) => handleCityChange(e.target.value)} 
-                      onKeyDown={handleKeyPress}/>
+                      onChange={handleCityChange} 
+                      />
                       {city && (
                       <button className="btn-clear-selection" onClick={clearSelectionCity}>
                         <FontAwesomeIcon icon={faTimes} />
                       </button>
                     )}
                   </InputGroup>
-                  <SearchResultsList 
+                  {/* <SearchResultsList 
                     items={store.cities} 
                     displayItem="city_name" // CHANGE?? CHECK when implementing real API call (now in Flux getSearchCities I called it city_name)
-                    onItemClick={handleCitySelect} />
+                    onItemClick={handleCitySelect} /> */}
                 </Col>
                 <Col sm={12} md={1}>
                 <Button variant="outline-secondary" className="search-form-button" type="button" onClick={handleSearchResults}>

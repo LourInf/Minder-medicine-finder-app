@@ -4,17 +4,25 @@ import "../../styles/cardResults.css";
 import { Card, Button, ListGroup, ListGroupItem, Toast } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { faPhone, faKeyboard } from '@fortawesome/free-solid-svg-icons'
+import { faPhone, faKeyboard, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 import { ModalReservation } from './ModalReservation.jsx';
 import { useNavigate } from "react-router-dom";
 
 
-export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => { 
+export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) => { 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+
+  const handleButtonClick = () => {
+    if (buttonType === 'reserve') {
+      handleReserveOnline();
+    } else if (buttonType === 'details') {
+      navigate(`/pharmacies-details/${pharmacy.place_id || pharmacyId}`);
+    }
+  };
 
   const handleReserveOnline = () => {
     actions.setSelectedPharmacy(pharmacy);
@@ -70,8 +78,13 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
         <Card className="card-container contact">
           <Card.Body>
             <ListGroup className="list-group card-group">
-             <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleReserveOnline} ><span className="icon-keyboard"><FontAwesomeIcon icon={faKeyboard} /> Reservar online</span></Button>
-              <Card.Link href="#"><span className="icon-phone"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</span></Card.Link>
+            <Button variant="outline-primary" size="sm" className="btn-action" onClick={handleButtonClick}>
+            <span className="icon">
+            {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
+            </span>
+            {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
+            </Button>
+            <Card.Link href="#"><span className="icon-phone"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</span></Card.Link>
             </ListGroup>
           </Card.Body>
         </Card>
