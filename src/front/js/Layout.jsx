@@ -22,6 +22,9 @@ import { Register } from "./pages/Register.jsx";
 import { PatientHome } from "./pages/PatientHomeTabs.jsx";
 import { PatientInfo } from "./pages/PatientInfo.jsx";
 import { PatientOrders } from "./pages/PatientOrders.jsx";
+import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
+import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
+DetailsPharmacyMaps
 
 
 // Create your first component
@@ -29,9 +32,10 @@ const Layout = () => {
     // The basename is used when your project is published in a subdirectory and not in the root of the domain
     // You can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
-    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
+    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
+
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
@@ -43,6 +47,8 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
                         <Route element={<Maps />} path="/maps" />
+                        <Route element={<SearchNamePharmacy />} path="/findyourpharmacy" />
+                        <Route element={<DetailsPharmacyMaps />} path="/pharmacies-details/:place_id" component={DetailsPharmacyMaps} />
                          {/* React Router Outlet: 1.Define the parent route for the pharmacy dashboard */}
                          <Route path="/pharmacy" element={<PharmacyDashboard />}> 
                              {/* 2.Define the nested routes for the different sections within the pharmacy dashboard */}

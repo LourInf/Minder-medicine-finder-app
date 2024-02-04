@@ -5,6 +5,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			postLoginAction: null,
 			pharmacies: [],			//stores a list of pharmacies fetched from Google API
 			selectedPharmacy:null,
+			pharmacyDetails: null,
+			pharmaciesNames: [],
 			medicines: [],			 // stores a list of medicines fetched from our backend
 			selectedMedicine: "",  // stores the selected medicine chosen by the patient when searching
 			cities:[],				// stores a list of cities, used for city search functionality
@@ -59,9 +61,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCity}`})
 					},
 				
-			getPharmacies: async (cityName) => {
+			// Get para lat/lng de la ciudad - busca por ciudad
+			getPharmacies: async (city) => {
 				// 1. Definir la URL que está en el env. Parámetro city. 
-				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${cityName}`;
+				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${city}&language=es`;
 				// 2. Options - únicamente GET del listado de Farmacias
 				const options = {
 					method: 'GET'
@@ -75,38 +78,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// Grabar los datos en el store y en local Storage
 					setStore({ "pharmacies": data.results })
 					localStorage.setItem('pharmacies', JSON.stringify(data.results))
-					console.log(data),
-						console.log(data.results) // para ver qué trae
-
+					console.log(data)
+					console.log(data.results) // para ver qué trae
 				} else {
+					setStore({ "pharmacies": []})
+					localStorage.setItem('pharmacies', [])
 					console.log('Error:', "No encuentra Farmacias Cercanas")
 				}
 			},
+			
+			// Extraer Info de las Farmacias desde Api Places Details (POST)
+            getPharmaciesDetails: async (place_pharmacy_id) => {
+                // 1. Definir la URL + el dato de place_id que necesita google.
+                const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details`;
+                // 2. Options - Usar POST porque lo requiere la API
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    // Para que la API funciona necesitamos el ID por lo tanto es lo que hay que enviar en el body
+                    body: JSON.stringify({ place_id: place_pharmacy_id }),
+                }
+                const response = await fetch(url_pharmacy_details, options);
+                if (response.ok) {
+					// Tratamiento del IF = Ok. 
+                 	const data = await response.json();
+					console.log(data)
+                    setStore({ pharmacyDetails: data.result });
+                 	// localStorage.setItem('pharmacies', JSON.stringify(data.results));
+					 localStorage.setItem('pharmacyDetails', JSON.stringify(data.result));
+                } else {
+                        console.log('Error', "No encuentra el ID de la Farmacia")
+                    	 }
+            },
 
-			getPharmaciesDetails: async (pharmacy_id) => {
-				// 1. Definir la URL que está en el env. Parámetro city. 
-				const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details`;
-				// 2. Options - Usar POST
-				const options = {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					// Para que la API funciona necesitamos el ID por lo tanto es lo que hay que enviar en el body
-					body: JSON.stringify({ pharmacy_id: pharmacy_id }),
-				}
-				// 3. Response
-				const response = await fetch(url_pharmacy_details, options);
-				// 4. Verificar response (console log)
-				if (response.ok) {
-					// 5. If = ok; Tratamiento del OK - definimos el data
-					const data = await response.json();
-					return data;
-					} else {
-						console.log('Error', "No encuentra el ID de la Farmacia")
-						return null;
-					}
-			},
 
 			getAvailablePharmacies: async (medicineId) => {
 				const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies/available?medicine_id=${medicineId}`);

@@ -35,14 +35,14 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy }) => {
   const displayToast = (message) => {
     setToastMessage(message);
     setShowToast(true);
-    const toastTimeout = setTimeout(() => setShowToast(false), 5000);
+    //const toastTimeout = setTimeout(() => setShowToast(false), 5000);
   };
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(toastTimeout);
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     clearTimeout(toastTimeout);
+  //   };
+  // }, []);
   
 
   return (
