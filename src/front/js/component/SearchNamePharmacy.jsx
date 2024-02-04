@@ -9,14 +9,10 @@ export const SearchNamePharmacy = () => {
   const [name, setName] = useState('');
 
   
-  useEffect(() => {
-    const handleSearchYourPharmacies = async () => {
-      await actions.getPharmacyName(name);
-    };
-      if (name) {
-        fetchPharmacies();
-      }
-    }, [name, actions]);
+  const handleSearchYourPharmacies = async () => {
+    console.log("handleSearchYourPharmacies")
+    await actions.getPharmacyName(name);
+  }
   
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -52,19 +48,16 @@ export const SearchNamePharmacy = () => {
             store.pharmaciesNames.map((item, index) => (
               <div key={index} className="card p-2 m-2">
                 <div className="bg-image hover-overlay">
-               
-                  {/* <Link to="/">
-                    <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
-                  </Link> */}
+              
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">{item.description}</h5>
-                  <h5 className="card-title">{item.terms[2].value}</h5>
+                  <h7 className="card-title">{item.terms[2].value}</h7>
                   {/* <p>{item.place_id}</p> */}
                   <p className="card-text"></p>
                   {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
                    <Link to={`/register/${item.place_id}`}> {/*Formulario de login in, enviar id para poder rellenar campos(?)*/}
-                    <div className="mask">Continua</div>
+                    <div className="mask">Continua para registrarte</div>
                   </Link>
                 </div>
               </div>
