@@ -102,7 +102,7 @@ def handle_pharmacies_names():
         names = request.args.get('pharmacy')
         if not names:
             return jsonify('error:' 'No se ha proporcionado parámetro names'), 500
-        url = f'{api_url}?input={names}&types=pharmacy&key={api_key}'
+        url = f'{api_url}?input={names}&components=country:es&types=pharmacy&key={api_key}'
         print(f"Constructed URL: {url}")
         response = requests.get(url)
         if response.ok:

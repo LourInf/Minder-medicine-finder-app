@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../store/appContext.js';
 import { Link, useNavigate } from 'react-router-dom';
 // import { useParams } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 
 export const Maps = () => {
@@ -10,8 +12,10 @@ export const Maps = () => {
   const [name, setName] = useState('');
   const [noResults, setNoResults] = useState(false);
   const [pharmacy_fields, setpharmacy_fields] = useState('');
+  const [resultsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
   // const params = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
@@ -19,10 +23,9 @@ export const Maps = () => {
       setNoResults(true);
     } else {
       setNoResults(false);
-      // localStorage.setItem('lastSearchbycity', city);
       setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
-      console.log('pharmacyFields:', pharmacy_fields);
-      actions.getPharmaciesDetails(pharmacy_fields);
+      // console.log('pharmacyFields:', pharmacy_fields);
+      actions.getPharmaciesDetails(pharmacy_fields, currentPage);
     }
   };
   // Activar botón "enter"
@@ -39,8 +42,16 @@ export const Maps = () => {
     actions.getPharmaciesDetails(place_id);
     navigate(`/pharmacies-details/${place_id}`)
   }
-
-
+// Para Paginar
+// Index last y first calculan los indices del primer y último resultado. 
+  const indexLastResult = currentPage * resultsPerPage;
+  const indexFirstResult = indexLastResult - resultsPerPage; // Current es la actual. resultsPerPage es la cantidad: useState(5);
+  const currentResults = store.pharmacies.slice(indexFirstResult, indexLastResult);
+  // Función para cambiar de página
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber); // Actualiza el estado de currentPage
+    actions.getPharmaciesDetails(pharmacy_fields, pageNumber); // hace llamada con el nuevo nº de página
+  };
   return (
     <div className="text-center">
       <h1>Encuentra tu Farmacia más cercana</h1>
@@ -51,14 +62,14 @@ export const Maps = () => {
             type="text"
             id="location"
             value={city}
-            placeholder="¿Dónde vives?"
+            placeholder="Introduce tu Localidad"
             onChange={(e) => {
               setCity(e.target.value);
             }}
             onKeyPress={handleKeyPress}
           />
-          <button className="m-1 py-1 btn btn-success" onClick={handlePharmacies}>
-            Buscar Farmacias por dirección
+          <button className="m-1 py-1 btn btn-success text-break" onClick={handlePharmacies}>
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
       </div>
@@ -67,8 +78,8 @@ export const Maps = () => {
         {noResults ? (
           <h2>No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</h2>
         ) : (
-          // Mostrar Farmacias
-          store.pharmacies.map((item, index) => (
+          // Mostrar Farmacias - Cambiamos el map a currentResults para que muestre los 5 resultados y no todos como hacía anteriormente.
+          currentResults.map((item, index) => (
             <div className="container w-50 alert-success" key={index}>
               <h2 className="text-success">{item.name}</h2>
               {item.opening_hours && (
@@ -76,9 +87,21 @@ export const Maps = () => {
               )}
               <p>Dirección: {item.vicinity}</p>
               <p>Reseñas: {item.rating}</p>
-              <button className="btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
+              <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
             </div>
           ))
+        )}
+        {/* Paginar */}
+        {store.pharmacies.length > resultsPerPage && (
+          <ul className="pagination justify-content-center p-2 m-2">
+            {Array.from({length: Math.ceil(store.pharmacies.length / resultsPerPage) }, (_, index) => (
+              <li key={index} className={`page-item & {index + 1 === currentPage ? 'active' : ''}`}>
+                <button className="page-link" onClick={() => paginate(index + 1)}>
+                  {index + 1}
+                </button>
+              </li>
+            ) )}
+          </ul>
         )}
       </div>
     </div>

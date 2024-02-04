@@ -6,12 +6,15 @@ import { Link } from "react-router-dom";
 export const DetailsPharmacyMaps = () => {
     const { store, actions } = useContext(Context);
 
+    useEffect(() => {
+        actions.getPharmacyDetails()
+    }, []);
 
     return (
         <div>
             <Link className="navbar-brand m-3" to="/maps">Volver</Link>
             <h1 className="text-center p-2 m-3">Detalle de la Farmacia</h1>
-            {store.pharmacyDetails ? (
+            {store.pharmacyDetails && store.pharmacyDetails.length > 0 ? (
                 <div className="container bg-success">
                     <div className="card mb-3  bg-success text-light">
                         <div className="row g-0">

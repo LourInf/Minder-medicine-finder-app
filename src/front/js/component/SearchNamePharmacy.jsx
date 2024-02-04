@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../store/appContext.js';
 import { Link } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 export const SearchNamePharmacy = () => {
   const { store, actions } = useContext(Context);
   const [name, setName] = useState('');
 
+  
+  const handleSearchYourPharmacies = async () => {
+    console.log("handleSearchYourPharmacies")
+    await actions.getPharmacyName(name);
+  }
+  
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (name) {
@@ -13,11 +21,6 @@ export const SearchNamePharmacy = () => {
       }
     }
   };
-
-  const handleSearchYourPharmacies = async () => {
-    console.log("handleSearchYourPharmacies")
-    await actions.getPharmacyName(name);
-  }
 
   return (
     <div className="text-center">
@@ -36,32 +39,33 @@ export const SearchNamePharmacy = () => {
             onKeyPress={handleKeyPress}
           />
           <button className="m-1 py-1 btn btn-success" onClick={handleSearchYourPharmacies}>
-            Por favor, busca tu farmacia
+          <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
         <ul>
-          {store.pharmaciesNames && store.pharmaciesNames.length > 0 ? (
+          {store.pharmaciesNames.length > 0 ? (
             // Mostramos Las Farmacias
             store.pharmaciesNames.map((item, index) => (
               <div key={index} className="card p-2 m-2">
                 <div className="bg-image hover-overlay">
-                  <img src="" className="img-fluid" alt={`farmacia-${index}`} />
+               
                   {/* <Link to="/">
                     <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
                   </Link> */}
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">{item.description}</h5>
+                  {/* <p>{item.place_id}</p> */}
                   <p className="card-text"></p>
                   {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
-                   <Link to="/"> {/*Formulario de lgo in */}
-                    <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
+                   <Link to={`/register/${item.place_id}`}> {/*Formulario de login in, enviar id para poder rellenar campos(?)*/}
+                    <div className="mask">Continua</div>
                   </Link>
                 </div>
               </div>
             ))
           ) : (
-            <h2>No encuentra la farmacia</h2>
+            <p>No encuentra tu farmacia, Por favor, comprueba que el nombre de tu farmacia es correcto</p>
           )}
         </ul>
       </div>
