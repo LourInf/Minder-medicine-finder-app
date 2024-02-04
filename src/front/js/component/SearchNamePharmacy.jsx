@@ -9,10 +9,14 @@ export const SearchNamePharmacy = () => {
   const [name, setName] = useState('');
 
   
-  const handleSearchYourPharmacies = async () => {
-    console.log("handleSearchYourPharmacies")
-    await actions.getPharmacyName(name);
-  }
+  useEffect(() => {
+    const handleSearchYourPharmacies = async () => {
+      await actions.getPharmacyName(name);
+    };
+      if (name) {
+        fetchPharmacies();
+      }
+    }, [name, actions]);
   
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -55,6 +59,7 @@ export const SearchNamePharmacy = () => {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">{item.description}</h5>
+                  <h5 className="card-title">{item.terms[2].value}</h5>
                   {/* <p>{item.place_id}</p> */}
                   <p className="card-text"></p>
                   {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
