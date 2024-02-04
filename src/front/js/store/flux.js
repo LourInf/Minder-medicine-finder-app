@@ -4,6 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			message: null,
 			pharmacies: [],
 			pharmacyDetails: null,
+			pharmaciesNames: [],
 			demo: [
 				{
 					title: "FIRST",
@@ -41,11 +42,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				setStore({ demo: demo });  // Reset the global store
 			},
-			// Get Pharmacies y Details...
+			// Get para lat/lng de la ciudad - busca por ciudad
 			getPharmacies: async (city) => {
 				// 1. Definir la URL que está en el env. Parámetro city. 
-				// const url_maps = `${https://redesigned-carnival-vxg7gq6x7v4c6wv9-3001.app.github.dev/api/maps?city=${city}`;
-				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${city}`;
+				const url_maps = `${process.env.BACKEND_URL}/api/maps?city=${city}&language=es`;
 				// 2. Options - únicamente GET del listado de Farmacias
 				const options = {
 					method: 'GET'
@@ -59,16 +59,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// Grabar los datos en el store y en local Storage
 					setStore({ "pharmacies": data.results })
 					localStorage.setItem('pharmacies', JSON.stringify(data.results))
-					console.log(data),
-						console.log(data.results) // para ver qué trae
-
+					console.log(data)
+					console.log(data.results) // para ver qué trae
 				} else {
+					setStore({ "pharmacies": []})
+					localStorage.setItem('pharmacies', [])
 					console.log('Error:', "No encuentra Farmacias Cercanas")
 				}
 			},
-
-
-			// Extraer Info de las Farmacias desde Api Places Details
+			// Extraer Info de las Farmacias desde Api Places Details (POST)
             getPharmaciesDetails: async (place_pharmacy_id) => {
                 // 1. Definir la URL + el dato de place_id que necesita google.
                 const url_pharmacy_details = `${process.env.BACKEND_URL}/api/pharmacies_details`;
@@ -93,6 +92,29 @@ const getState = ({ getStore, getActions, setStore }) => {
                         console.log('Error', "No encuentra el ID de la Farmacia")
                     	 }
             },
+
+			getPharmacyName: async (name) => {
+					const url_maps = `${process.env.BACKEND_URL}/api/pharmacies_names?pharmacy=${name}`;
+					const options = {
+						method: 'GET'
+					};
+					// 3. Response
+					const response = await fetch(url_maps, options);
+					// 4. Verificar response (console log)
+					// console.log(response)
+					if (response.ok) {
+						// 5. If = ok; Tratamiento del OK - definimos el data
+						const data = await response.json();
+						// Grabar los datos en el store y en local Storage
+						setStore({ "pharmaciesNames": data.predictions })
+						// localStorage.setItem('pharmaciesNames', JSON.stringify(data.predictions))
+						// console.log(data.predictions)
+					} else {
+						setStore({ "pharmaciesNames": []})
+						// localStorage.setItem('pharmaciesNames', [])
+						console.log('Error:', "No encuentra Farmacias por el Nombre")
+					}
+				},
 		}
 	};
 };

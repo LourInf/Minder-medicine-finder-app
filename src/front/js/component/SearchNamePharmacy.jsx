@@ -1,39 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Context } from '../store/appContext.js';
-import { Link, useNavigate } from 'react-router-dom';
-import { useParams } from "react-router-dom";
-
+import { Link } from 'react-router-dom';
 
 export const SearchNamePharmacy = () => {
   const { store, actions } = useContext(Context);
   const [name, setName] = useState('');
-  // const [noResults, setNoResults] = useState(false);
-  // const [pharmacy_fields, setpharmacy_fields] = useState('');
-  const params = useParams();
-  const navigate = useNavigate();
-  const [noResults, setNoResults] = useState(false);
-  const [filteredPharmacies, setFilteredPharmacies] = useState([]);
 
-  // Activar botón "enter"
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       if (name) {
-      } else {
         handleSearchYourPharmacies();
       }
     }
   };
 
-  const handleSearchYourPharmacies = () => {
-    const storedPharmacies = JSON.parse(localStorage.getItem('pharmacies')) || [];
-    const filtered = storedPharmacies.filter(pharmacy => pharmacy.name.toLowerCase().includes(name.toLowerCase()));
-    setFilteredPharmacies(filtered);
-    if (filtered.length === 0) {
-      setNoResults(true);
-    } else {
-      setNoResults(false);
-    }
-  };
+  const handleSearchYourPharmacies = async () => {
+    console.log("handleSearchYourPharmacies")
+    await actions.getPharmacyName(name);
+  }
 
   return (
     <div className="text-center">
@@ -56,17 +40,28 @@ export const SearchNamePharmacy = () => {
           </button>
         </div>
         <ul>
-          {noResults ? (
-            <h2>No encuentra su Farmacia</h2>
-          ) : (
+          {store.pharmaciesNames && store.pharmaciesNames.length > 0 ? (
             // Mostramos Las Farmacias
-            filteredPharmacies.map((item, index) => (
-              <div key={index}>
-                <h2>
-                  {item.name}
-                </h2>
+            store.pharmaciesNames.map((item, index) => (
+              <div key={index} className="card p-2 m-2">
+                <div className="bg-image hover-overlay">
+                  <img src="" className="img-fluid" alt={`farmacia-${index}`} />
+                  {/* <Link to="/">
+                    <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
+                  </Link> */}
+                </div>
+                <div className="card-body">
+                  <h5 className="card-title">{item.description}</h5>
+                  <p className="card-text"></p>
+                  {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
+                   <Link to="/"> {/*Formulario de lgo in */}
+                    <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
+                  </Link>
+                </div>
               </div>
             ))
+          ) : (
+            <h2>No encuentra la farmacia</h2>
           )}
         </ul>
       </div>

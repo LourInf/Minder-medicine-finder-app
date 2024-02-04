@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Context } from '../store/appContext.js';
 import { Link, useNavigate } from 'react-router-dom';
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 
 
 export const Maps = () => {
@@ -10,7 +10,7 @@ export const Maps = () => {
   const [name, setName] = useState('');
   const [noResults, setNoResults] = useState(false);
   const [pharmacy_fields, setpharmacy_fields] = useState('');
-  const params = useParams();
+  // const params = useParams();
   const navigate = useNavigate()
 
   const handlePharmacies = async () => {
@@ -19,7 +19,7 @@ export const Maps = () => {
       setNoResults(true);
     } else {
       setNoResults(false);
-      localStorage.setItem('lastSearchbycity', city);
+      // localStorage.setItem('lastSearchbycity', city);
       setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
       console.log('pharmacyFields:', pharmacy_fields);
       actions.getPharmaciesDetails(pharmacy_fields);
@@ -39,10 +39,6 @@ export const Maps = () => {
     actions.getPharmaciesDetails(place_id);
     navigate(`/pharmacies-details/${place_id}`)
   }
-
-  // useEffect(() => {
-  //   actions.getPharmaciesDetails(params.place_id);
-  // }, [params.place_id]);
 
 
   return (
