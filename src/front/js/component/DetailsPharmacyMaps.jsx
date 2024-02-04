@@ -11,7 +11,7 @@ export const DetailsPharmacyMaps = () => {
         <div>
             <Link className="navbar-brand m-3" to="/maps">Volver</Link>
             <h1 className="text-center p-2 m-3">Detalle de la Farmacia</h1>
-            {store.pharmacyDetails && store.pharmacyDetails.length > 0 ? (
+            {store.pharmacyDetails ? (
                 <div className="container bg-success">
                     <div className="card mb-3  bg-success text-light">
                         <div className="row g-0">
