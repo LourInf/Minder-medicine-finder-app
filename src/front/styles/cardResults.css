@@ -1,47 +1,59 @@
-.card-container{
-    max-width: 30rem;
-    margin: 0 1rem 1rem 3rem;
-}
-
-.card-container.contact{
-    border: none;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
+.card-wrapper {
+    width: 60%;
+    margin: 1rem auto;
    
+    padding-bottom: 1rem;  
+    position: relative;
 }
 
-.card-group{
+.card-wrapper::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 30%; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    height: 1px;
+    background-color: #ccc; 
+    transform: translateX(-50%); 
+}
+
+.card-container {
+    border: none;
+    margin-bottom: 1.5rem; 
+}
+
+.card-body {
+    padding: 1.25rem;
+    border-bottom: none;
+}
+
+.card-footer {
+    background-color: #fff;
+    border-top: none;
+    padding: 1.25rem;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.card-actions {
+    display: flex;
     justify-content: space-between;
-
-}
-.address-item{
-    display: flex;
-    padding-left: 0;
+    align-items:center;
+    gap: 40%;
     
 }
 
-.working-hours-item{
-    display: flex;
-    padding-right: 0;
-
+.btn-reserve-online,
+.btn-reserve-phone {
+    white-space: nowrap; 
 }
 
-.distance-item{
-    margin: 0 0 0 3rem;
-}
-
-.card-wrapper{
-    display:flex;
-}
-
-.btn-reserve-online{
-    margin-right: 2rem;
-}
-
-.card-link {
+.btn-reserve-phone {
+    color: black;
+    cursor: pointer; 
     text-decoration: none;
-    color:black
-  }
+    border: none;
+}

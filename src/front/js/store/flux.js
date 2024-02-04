@@ -178,6 +178,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 			// 	}
 			// },
 
+			getPharmacyName: async (name) => {
+				const url_maps = `${process.env.BACKEND_URL}/api/pharmacies_names?pharmacy=${name}`;
+				const options = {
+					method: 'GET'
+				};
+				// 3. Response
+				const response = await fetch(url_maps, options);
+				// 4. Verificar response (console log)
+				// console.log(response)
+				if (response.ok) {
+					// 5. If = ok; Tratamiento del OK - definimos el data
+					const data = await response.json();
+					// Grabar los datos en el store y en local Storage
+					setStore({ "pharmaciesNames": data.predictions })
+					// localStorage.setItem('pharmaciesNames', JSON.stringify(data.predictions))
+					// console.log(data.predictions)
+				} else {
+					setStore({ "pharmaciesNames": []})
+					// localStorage.setItem('pharmaciesNames', [])
+					console.log('Error:', "No encuentra Farmacias por el Nombre")
+				}
+			},
+
 			getSelectedCity: (city) => {
 				setStore({ selectedCity: city });
 				},

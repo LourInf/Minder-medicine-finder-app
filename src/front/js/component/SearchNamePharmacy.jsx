@@ -55,11 +55,12 @@ export const SearchNamePharmacy = () => {
                 </div>
                 <div className="card-body">
                   <h5 className="card-title">{item.description}</h5>
+                  <h7 className="card-title">{item.terms[2].value}</h7>
                   {/* <p>{item.place_id}</p> */}
                   <p className="card-text"></p>
                   {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
                    <Link to={`/register/${item.place_id}`}> {/*Formulario de login in, enviar id para poder rellenar campos(?)*/}
-                    <div className="mask">Continua</div>
+                    <div className="mask">Continua para registrarte</div>
                   </Link>
                 </div>
               </div>

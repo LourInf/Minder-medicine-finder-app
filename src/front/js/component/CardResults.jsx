@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
-import { Card, Button, ListGroup, ListGroupItem, Toast } from 'react-bootstrap';
+import { Card, Button, ListGroup, ListGroupItem, Toast, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
@@ -55,38 +55,30 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
 
   return (
     <div>
-      <small className="distance-item mb-2 text-muted">0.4km</small>
+      {/* <small className="distance-item mb-2 text-muted">0.4km</small> */}
       <div className="card-wrapper">
-        <Card className="card-container details">
-          <Card.Body>
-            <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>   {/*we have different name conventions in google API vs our DB, so we need to put both (eg. pharmacy_name in our DB and pharmacy.name in google API)*/}
-            <ListGroup className="list-group card-group">
-              <ListGroupItem className="address-item">  {pharmacy?.vicinity || pharmacy.address}</ListGroupItem>
-              <ListGroupItem className="working-hours-item">   {pharmacy?.opening_hours || pharmacy?.working_hours ? (
-                                    <span className="icon-clock">
-                                        <FontAwesomeIcon icon={faClock} />
-                                        {pharmacy.opening_hours?.open_now ? "Abierto Ahora" : "Cerrado" }
-                                    </span>
-                                ) : "consultar horario"}
-             </ListGroupItem>
-            </ListGroup>
-          </Card.Body>
-          <Card.Footer>
-            <small className="text-muted disponibilidad-text">Disponibilidad actualizada hace 3h</small>
-          </Card.Footer>
-        </Card>
-        <Card className="card-container contact">
-          <Card.Body>
-            <ListGroup className="list-group card-group">
-            <Button variant="outline-primary" size="sm" className="btn-action" onClick={handleButtonClick}>
-            <span className="icon">
-            {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
-            </span>
-            {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
-            </Button>
-            <Card.Link href="#"><span className="icon-phone"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</span></Card.Link>
-            </ListGroup>
-          </Card.Body>
+        <Card className="card-container">
+            <Card.Body>
+                <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>
+                <ListGroup className="list-group">
+                    <ListGroupItem className="address-item">{pharmacy?.vicinity || pharmacy.address}</ListGroupItem>
+                    <ListGroupItem className="working-hours-item">
+                        {pharmacy?.opening_hours?.open_now ? "Abierto Ahora" : "Cerrado"}
+                    </ListGroupItem>
+                </ListGroup>
+            </Card.Body>
+            <Card.Footer className="text-muted">
+                <div className="card-actions">
+                    <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleButtonClick}>
+                        {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
+                        {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
+                    </Button>
+                    <OverlayTrigger key="top" placement="top"
+                      overlay={<Tooltip id={`tooltip-top`}> Teléfono: {pharmacy.phone}</Tooltip>}>
+                      <Card.Link className="btn-reserve-phone" variant="outline-primary" size="sm"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</Card.Link>
+                    </OverlayTrigger>
+                </div>
+            </Card.Footer>
         </Card>
       {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} displayToast={displayToast}/>}
       <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide position="top-center">
