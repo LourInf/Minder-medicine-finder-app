@@ -29,10 +29,12 @@ export const DetailsPharmacyMaps = () => {
                                     <h1>{store.pharmacyDetails.name}</h1>
                                     <p> Dirección: {store.pharmacyDetails.formatted_address}</p>
                                     <p>Teléfono: {store.pharmacyDetails.formatted_phone_number}</p>
-                                    <p>Estado: {store.pharmacies.current_opening_hours}</p>
-                                    <p>Horario Laboral: {store.pharmacyDetails.working_hours}</p>
+                                    <p>Horario Laboral: {store.pharmacyDetails.current_opening_hours.weekday_text}</p>
+                                    <p>Estado: {store.pharmacyDetails.current_opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
+                                    {/* <p>Horario Laboral: {store.pharmacyDetails.working_hours}</p> */}
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
