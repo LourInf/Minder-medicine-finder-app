@@ -6,9 +6,6 @@ import { Link } from "react-router-dom";
 export const DetailsPharmacyMaps = () => {
     const { store, actions } = useContext(Context);
 
-    useEffect(() => {
-        actions.getPharmacyDetails()
-    }, []);
 
     return (
         <div>
