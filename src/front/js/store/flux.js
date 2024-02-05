@@ -168,6 +168,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setSelectedPharmacy: (pharmacy) => {
     			setStore({ selectedPharmacy: pharmacy });
 			},
+
+
+			clearMedicines: () => {
+				setStore({ medicines: [], selectedMedicine: "" });
+			},
+			
 			
 			// //CHANGE!!!! For now only use with Madrid example! ;)
 			// getSearchCities: (searchQuery) => {

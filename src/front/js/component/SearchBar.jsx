@@ -11,6 +11,7 @@ export const SearchBar = () =>{
     const  {store, actions } = useContext (Context); //3. destructuring store & actions
     const [input, setInput] = useState("");
     const [selectedItem, setSelectedItem] = useState("");
+    const [isMedicineSelected, setIsMedicineSelected] = useState(false);
 
     const [city, setCity] = useState("");
     //const [selectedCity, setSelectedCity] = useState("");
@@ -23,9 +24,9 @@ export const SearchBar = () =>{
         setSelectedItem("");   // Reset selected item
     };
 
-    const handleKeyDown = (e) => {
+    const handleMedicineKeyDown = (e) => {
         if (e.key === 'Enter') {
-            actions.getMedicines(input);
+            // actions.getMedicines(input);
             setSelectedItem(""); 
         }
     };
@@ -33,23 +34,38 @@ export const SearchBar = () =>{
     const handleMedicineSelect = (item) => {
         setInput(item.medicine_name);
         setSelectedItem(item);
-        actions.getMedicines(item.medicine_name);
+        actions.clearMedicines()
+        //actions.getMedicines(item.medicine_name);
         // For Results: we update the store with the selected medicine
         actions.getSelectedMedicine(item.medicine_name);
-        // save selected medicine in session storage
-        sessionStorage.setItem('selectedMedicine', JSON.stringify(item));
+        //sessionStorage.setItem('selectedMedicine', JSON.stringify(item));
+        localStorage.setItem('selectedMedicine', JSON.stringify(item))
+        setIsMedicineSelected(true);
     };
 
     const clearSelectionMedicine = () => {
       setInput("");
       setSelectedItem("");
-  };
+      actions.clearMedicines(); 
+    };
 
   const handleCityChange = (e) => {
     const newCity = e.target.value;
     setCity(newCity); 
     actions.setSelectedCityName(newCity);
+    //sessionStorage.setItem('selectedCityName', JSON.stringify(newCity));
+    localStorage.setItem('selectedCityName', JSON.stringify(newCity));
   };
+
+  const handleCityKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      if (isMedicineSelected) {
+        handleSearchResults();
+    } else {
+            alert('Por favor, seleccione una ciudad'); 
+        }
+    }
+};
 
 
     // const handleCityChange = (value) => {
@@ -96,7 +112,9 @@ export const SearchBar = () =>{
     // };
     
     const handleSearchResults = () => {
-      const selectedMedicine = JSON.parse(sessionStorage.getItem('selectedMedicine'));
+      const selectedMedicine = JSON.parse(localStorage.getItem('selectedMedicine'));
+      console.log('selectedMedicine:', selectedMedicine);
+      console.log('city:', city);
       
       if (selectedMedicine && selectedMedicine.id && city) {
           navigate(`/results/${selectedMedicine.id}/${encodeURIComponent(store.selectedCityName)}`);
@@ -105,13 +123,13 @@ export const SearchBar = () =>{
       }
   };
 
-    //To clean up sessionStorage after navigating to Results page
-    useEffect(() => { 
-      return () => {
-          sessionStorage.removeItem('selectedMedicine');
-          sessionStorage.removeItem('selectedCity');
-      };
-    }, []);
+    // //To clean up sessionStorage after navigating to Results page
+    // useEffect(() => { 
+    //   return () => {
+    //       localStorage.removeItem('selectedMedicine');
+    //       localStorage.removeItem('selectedCityName');
+    //   };
+    // }, []);
 
     const clearSelectionCity = () => {
       setCity("");
@@ -130,7 +148,7 @@ export const SearchBar = () =>{
                       placeholder="Busca tu medicamento"
                       aria-label="medicamento"
                       aria-describedby="medicamento"
-                      value={input} onChange ={(e) =>handleMedicineChange(e.target.value)} onKeyDown={(e) => handleKeyDown(e)}
+                      value={input} onChange ={(e) =>handleMedicineChange(e.target.value)} onKeyDown={(e) => handleMedicineKeyDown(e)}
                     />
                     {input && (
                       <button className="btn-clear-selection" onClick={clearSelectionMedicine}>
@@ -157,6 +175,7 @@ export const SearchBar = () =>{
                       aria-describedby="localizacion"
                       value={city}
                       onChange={handleCityChange} 
+                      onKeyDown={(e) => handleCityKeyDown(e)}
                       />
                       {city && (
                       <button className="btn-clear-selection" onClick={clearSelectionCity}>

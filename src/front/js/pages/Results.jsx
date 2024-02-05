@@ -7,12 +7,15 @@ import { useParams } from 'react-router-dom';
 export const Results = () => {
     const  {store, actions } = useContext (Context);
     const { medicineId, cityName } = useParams();
-    const [name, setName] = useState('');
-    const [noResults, setNoResults] = useState(false);
+    // const [name, setName] = useState('');
+    // const [noResults, setNoResults] = useState(false);
     const [pharmacy_fields, setpharmacy_fields] = useState('');
     const [resultsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const navigate = useNavigate();
+
+  const selectedMedicine = localStorage.getItem('selectedMedicine');
+  const selectedCityName = localStorage.getItem('selectedCityName');
 
     // const handlePharmacies = async () => {
     //     await actions.getPharmacies(city);
@@ -65,20 +68,22 @@ export const Results = () => {
     return (
         <div>
             {/* Section 1: Pharmacies with selected medicine availability in our DB */}
-            <h2>Section 1: (farmacias afiliadas y con stock de ese medicamento) 20 farmacias tienen disponibilidad de {store.selectedMedicine} en {store.selectedCity}</h2>    {/*MODIFICATION IN PROGRESS - START*/}
+            {/* <h3>Section 1: (farmacias afiliadas y con stock de ese medicamento) 20 farmacias tienen disponibilidad de {store.selectedMedicine} en {store.selectedCityName}</h3> */}
+            <h4>¡Buenas noticias! Es posible que el medicamento que buscas ({store.selectedMedicine}) esté disponible en las siguientes farmacias de {store.selectedCityName}</h4>
             {store.availablePharmacies && store.availablePharmacies.length > 0 ? (
                 store.availablePharmacies.map((pharmacy, index) => (
                     <CardResults key={index}  buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} setSelectedPharmacy={actions.setSelectedPharmacy}/>
                 ))
             ) : (
-                <p>No pharmacies found with this medicine available.</p>
+                <p>Lo sentimos, ninguna de las farmacias con las que trabajamos tienen este medicamento. Aqui te dejamos otras farmacias a las que puedes llamar y consultar</p>
             )}
              {/* Section 2: Pharmacies with selected medicine NOT available or unknown in our DB */}
-             <h2>Section 2: (farmacias afiliadas y stock desconocido)</h2>
+             {/* <h2>Section 2: (farmacias afiliadas y stock desconocido)</h2> */}
 
 
             {/* Section 3: Pharmacies from google API based on searched city */}
-            <h2>Section 3: ( farmacias no afiliadas - other pharmacies from google API in the area) Pharmacies in {cityName}</h2>
+            {/* <h2>Section 3: ( farmacias no afiliadas - other pharmacies from google API in the area) Pharmacies in {cityName}</h2> */}
+            <p className="text-center mt-5"><i>Estan son otras farmacias de {cityName} a las que puedes llamar para preguntar por su disponibilidad</i></p>
             <div className="p-3">
             {store.pharmacies && store.pharmacies.length > 0 ? (
                 store.pharmacies.map((pharmacy, index) => (

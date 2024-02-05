@@ -61,15 +61,14 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
             <Card.Body>
                 <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>
                 <ListGroup className="list-group">
-                    <ListGroupItem className="address-item">{pharmacy?.vicinity || pharmacy.address}</ListGroupItem>
-                    <ListGroupItem className="working-hours-item"><FontAwesomeIcon icon={faClock} />
-                        {pharmacy?.opening_hours?.open_now ? "Abierto Ahora" : "Cerrado"}
-                    </ListGroupItem>
+                <ListGroupItem className={`working-hours-item ${pharmacy?.opening_hours?.open_now ? 'text-success' : 'text-danger'}`}>
+                  <FontAwesomeIcon icon={faClock} className="pe-2" />{pharmacy?.opening_hours?.open_now ? "Abierta Ahora" : "Cerrada Ahora"}
+                </ListGroupItem>
                 </ListGroup>
             </Card.Body>
             <Card.Footer className="text-muted">
                 <div className="card-actions">
-                    <Button variant="outline-primary" size="sm" className="btn-reserve-online" onClick={handleButtonClick}>
+                    <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleButtonClick}>
                         {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
                         {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
                     </Button>

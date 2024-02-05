@@ -25,7 +25,6 @@ import { PatientInfo } from "./pages/PatientInfo.jsx";
 import { PatientOrders } from "./pages/PatientOrders.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
 import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
-DetailsPharmacyMaps
 
 
 // Create your first component
