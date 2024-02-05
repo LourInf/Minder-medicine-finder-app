@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
-import { Card, Button, ListGroup, ListGroupItem, Toast, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Card, Button, ListGroup, ListGroupItem, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
@@ -13,8 +13,8 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
+  // const [showToast, setShowToast] = useState(false);
+  // const [toastMessage, setToastMessage] = useState("");
 
   const handleButtonClick = () => {
     if (buttonType === 'reserve') {
@@ -40,11 +40,11 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
     setShowModal(false);
   };
 
-  const displayToast = (message) => {
-    setToastMessage(message);
-    setShowToast(true);
-    //const toastTimeout = setTimeout(() => setShowToast(false), 5000);
-  };
+  // const displayToast = (message) => {
+  //   setToastMessage(message);
+  //   setShowToast(true);
+  //   //const toastTimeout = setTimeout(() => setShowToast(false), 5000);
+  // };
 
   // useEffect(() => {
   //   return () => {
@@ -62,7 +62,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
                 <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>
                 <ListGroup className="list-group">
                     <ListGroupItem className="address-item">{pharmacy?.vicinity || pharmacy.address}</ListGroupItem>
-                    <ListGroupItem className="working-hours-item">
+                    <ListGroupItem className="working-hours-item"><FontAwesomeIcon icon={faClock} />
                         {pharmacy?.opening_hours?.open_now ? "Abierto Ahora" : "Cerrado"}
                     </ListGroupItem>
                 </ListGroup>
@@ -80,13 +80,13 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
                 </div>
             </Card.Footer>
         </Card>
-      {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} displayToast={displayToast}/>}
-      <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide position="top-center">
+      {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId}/>}
+      {/* <Toast onClose={() => setShowToast(false)} show={showToast} delay={5000} autohide position="top-center">
         <Toast.Header>
           <strong className="me-auto">Reserva confirmada</strong>
         </Toast.Header>
         <Toast.Body>{toastMessage}</Toast.Body>
-      </Toast>
+      </Toast> */}
       </div>
     </div>
   );

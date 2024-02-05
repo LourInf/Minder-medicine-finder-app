@@ -6,33 +6,32 @@ import Pagination from 'react-bootstrap/Pagination';
 export const Reservations = () => {
   const { store, actions } = useContext(Context);
 
-   // Filter the orders to get reservations for the selected pharmacy
-   const selectedPharmacyId = store.selectedPharmacy ? store.selectedPharmacy.id : null;
-   const reservations = store.orders.filter(order => order.order_status === "Pendiente" && order.pharmacy_id === selectedPharmacyId);
- 
+  useEffect(() => {
+    actions.getPharmacyOrders();
+    }, [actions.getPharmacyOrders]);
 
     return (
       <div className="container">
         <h3 className="m-3 text-center">Reservas:</h3>
-        <p className="m-3 text-center">Total reservas:{reservations.length} </p>
+        <p className="m-3 text-center">Total reservas:{store.ordersToPharmacy.length} </p>
         <Table striped bordered hover>
           <thead>
             <tr>
               <th># Reserva</th>
               <th>Medicamento</th> 
-              <th>Farmacia</th> 
+              <th>Usuario</th> 
               <th>Tiempo de reserva</th> {/*tienes hasta <fecha> para recoger el medicamento*/}
               <th>Order Status</th> {/*Pendiente, Aceptada, Cancelada, Recogida*/}
               </tr>
           </thead>
           
           <tbody>
-          {reservations.map((reservation, index) => (
+          {store.ordersToPharmacy.map((reservation, index) => (
             <tr key={index}>
               <td>Reserva número {reservation.id}</td>
-              <td>{reservation.medicine.medicine_name}</td>
-              <td>{reservation.pharmacy.pharmacy_name}</td>
-              <td>Tienes hasta {reservation.validity_date} para recoger el medicamento</td>
+              <td>{reservation.medicine ? reservation.medicine.medicine_name : 'N/A'}</td>
+              <td>{reservation.pharmacy ? reservation.patient.name : 'N/A'}</td>
+              <td>Tiene 24h para recoger el medicamento</td>
               <td>{reservation.order_status}</td>
             </tr>
           ))}

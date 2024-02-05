@@ -14,12 +14,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			medicinesPsum: [],		// stores all the medicines which have distrib.problems
 			totalMedicinesPsum: 0, // stores the total number of medicines which have distrib.problems
 			orders:[],				// stores all orders made by an user
+			ordersToPharmacy:[],	// stores all orders made to a specific pharmacy			
 			updatedOrders:[],
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: "",
 			urlPostLogin:"/patientHome",
-			selectedCityName: ""
+			selectedCityName: "",
+			orderConfirmationDetails:[]
 
 		},
 		
@@ -299,6 +301,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 								orders: updatedOrders // Adds the new order to the existing orders array
 							};
 						});
+						setStore({ orderConfirmationDetails: data.order });
 						return data.order;
 					} else {
 						const errorData = await response.json();
@@ -337,6 +340,33 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log("Error:", response.status, response.statusText);
 				}
 			},
+
+			getPharmacyOrders: async () => {
+				//const pharmacyId = getStore().user_id;
+				//const pharmacyId = 1
+				const url = `${process.env.BACKEND_URL}/api/orders/pharmacy/`;
+				const token = localStorage.getItem('token');
+				const options = {
+					method: "GET",
+					headers: {
+						'Authorization': `Bearer ${token}`,
+						'Content-Type': 'application/json'
+					},
+				};
+				const response = await fetch(url, options);
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data);
+						setStore({ ordersToPharmacy: data});
+						localStorage.setItem("ordersToPharmacy", JSON.stringify(data));
+				} else {
+						console.log("No se han encontrado pedidos");
+						setStore({ ordersToPharmacy: [] });
+						localStorage.setItem("ordersToPharmacy", JSON.stringify([]));
+					}
+		
+			},		
+
 
 			
 			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines

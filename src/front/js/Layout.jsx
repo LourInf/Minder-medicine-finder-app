@@ -6,6 +6,7 @@ import { Home } from "./pages/Home.jsx";
 import { Results } from "./pages/Results.jsx";
 import { PharmacyDashboard } from "./pages/PharmacyDashboard.jsx"; // Main pharmacy area component
 import { PatientDashboard } from "./pages/PatientDashboard.jsx"; // Main patient area component
+import { OrderConfirmation } from "./pages/OrderConfirmation.jsx";
 // Import components
 import ScrollToTop from "./component/ScrollToTop.jsx";
 import { BackendURL } from "./component/BackendURL.jsx";
@@ -44,6 +45,7 @@ const Layout = () => {
                         <Route element={<Home />} path="/" />
                         <Route element={<Results />} path="/results" />
                         <Route element={<Results />} path="/results/:medicineId/:cityName" />
+                        <Route element={<OrderConfirmation />} path="/order-confirmation" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
                         <Route element={<Maps />} path="/maps" />

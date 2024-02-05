@@ -1,9 +1,11 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Modal, Button, Form, Toast } from 'react-bootstrap';
 import { Context } from '../store/appContext';
+import { useNavigate } from 'react-router-dom';
 
-export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId, displayToast }) => {
+export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId }) => {
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate()
     // const [show, setShow] = useState(false); -->added to CardResults
     // const [reservationNumber, setReservationNumber] = useState(""); --> removed: we'll use the order.id
 
@@ -25,7 +27,8 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
     const handleReserve = async () => {
         const order = await actions.createOrderReservation(medicineId, pharmacyId); 
         handleCloseModal()
-        displayToast(`Reserva realizada con éxito.Su numero de reserva es: ${order.id}`);
+        navigate('/order-confirmation');
+        //displayToast(`Reserva realizada con éxito.Su numero de reserva es: ${order.id}`);
         // setToastMessage("Reserva realizada con éxito.");
         // setShowToast(true);
  

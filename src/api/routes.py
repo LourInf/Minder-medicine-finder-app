@@ -36,8 +36,79 @@ def handle_hello():
     api_key = os.environ.get('GOOGLE_API_KEY')
     url_maps_geolocation = f'{api_url_geolocation}?&key={api_key}'
 
+# The patient will enter the city or location and must receive a list of the closest pharmacies (=> Actions: getPharmaciesDetails)
+@api.route('/maps', methods=['GET'])            
+def handle_maps():
+    api_key = os.environ.get('GOOGLE_API_KEY')
+    api_url_places = os.environ.get('URL_GOOGLE_PLACES')
+    response_body: {}
+    # Request.args (request arguments) obtiene el valor de city que viene del Front-End inyectado por el Paciente.
+    city = request.args.get('city')
+    # Lógica si no obtenemos "city" y??
+    if not city:
+        response_body = {"error": "Parámetro city no proporcionado"}
+        return jsonify(response_body), 400
+        #Seguir con la lógica
+    # El paciente inserta la "city" y la API de Geocode de Google la transforma en formato Latitud y Longitud.
+    api_url_geocoding = os.environ.get('URL_GOOGLE_GEOCODING')  
+    # Extraer la API desde ENV + el argumento address obligatorio por la API. Sustituimos address por la "city" que introduce el paciente. 
+    geocoding_params = {'address': f'{city}, Spain','key': api_key}
+    # Necesitamos hacer un get de la api y extraer el parámetro que ha transformado la ciudad en lat y lng. 
+    geocoding_response = requests.get(api_url_geocoding, params=geocoding_params)
+    # Imprimir para ver el resultado si es ok.
+    print (geocoding_response)
+    if geocoding_response.status_code == 200:
+        # Cambiamos el dato de la API Rest a formato json para poder manipularlo desde el Front:
+        geocoding_data = geocoding_response.json()
+        if geocoding_data['status'] == 'OK':
+            # Aquí se usa la lógica de la API Geocode para cambiar el formato de ciudad por lat/lng
+            location_data = geocoding_data['results'][0]['geometry']['location']
+            location = f"{location_data['lat']},{location_data['lng']}"
+            types = 'pharmacy' # Dato fijo "farmacia" porque es el único tipo de comercio que queremos extraer. 
+            #     # location = "40.392163,-3.6978677"  # La Location debe venir dada por el usuario
+            # Establecemos la lógica si no tenemos "location". Sin esto, no se puede continuar.
+            if not location: 
+                return{'error': "Es necesaria la ubicación para poder continuar"}, 400
+            large_radius = 10000 # Dato fijo el radio está en metros = 10km
+            api_key = os.environ.get('GOOGLE_API_KEY')
+            api_url_places = os.environ.get('URL_GOOGLE_PLACES')
+            # Sí tenemos la ciudad, la cual hemos cambiado a formato lat/lng entonces montamos la url para acceder la API Places. 
+            url = f'{api_url_places}?location={location}&radius={large_radius}&types={types}&geocode&language=es&key={api_key}'
+            response = requests.get(url)
+            if response.status_code == 200:
+                return jsonify(response.json()), 200
+            else:
+                return {'error': 'Error en la solicitud a la API de Google Places'}, 500
+            # return jsonify(location) # Comprobar que devuelve lat/lng de la "city". 
+        else:
+            response_body = {"error": f"No se pudo obtener la ubicación para la ciudad: {city}"}
+            return jsonify(response_body), 400
+    else:
+        response_body = {"error": "Error en la solicitud a la API de geocoding"}
+        return jsonify(response_body), 500
 
-@api.route('/pharmacies_details', methods=['POST']) # Debe ser método POST
+
+
+@api.route('/pharmacies_names', methods=['GET'])
+def handle_pharmacies_names():
+        api_key = os.environ.get('GOOGLE_API_KEY')
+        api_url = os.environ.get('URL_GOOGLE_PLACES_AUTOCOMPLETE')
+        # https://maps.googleapis.com/maps/api/place/autocomplete/json?input=guareña&types=pharmacy&key
+        # https://maps.googleapis.com/maps/api/place/autocomplete/json
+        names = request.args.get('pharmacy')
+        if not names:
+            return jsonify('error:' 'No se ha proporcionado parámetro names'), 500
+        url = f'{api_url}?input={names}&components=country:es&types=pharmacy&key={api_key}'
+        print(f"Constructed URL: {url}")
+        response = requests.get(url)
+        if response.ok:
+            data=response.json()
+            return jsonify(data)
+        else:
+            return jsonify({"error": "Error en la búsqueda las farmacias"})
+        
+
+@api.route('/pharmacies_details', methods=['POST']) # Debe ser método POST    (=> Actions: getPharmaciesDetails)
 def handle_pharmacies_details():
     response_body = {}
     api_url_places_details = os.environ.get('URL_GOOGLE_PLACES_DETAILS')
@@ -288,6 +359,31 @@ def get_user_orders():
     response_body['results'] = results
     return response_body, 200
 
+# Endpoint to get all orders placed to a specific pharmacy, identified by the logged-in user (=> Actions: getPharmacyOrders)
+@api.route('/orders/pharmacy', methods=['GET'])
+@jwt_required()
+def get_pharmacy_orders():
+    response_body = {}
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
+    # Get all orders that are placed to this pharmacy
+    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == 3)).scalars().first().id  # TODO: Update current_user_id to not hardcoded (check also if .id is ok & jwt working properly)
+    orders = db.session.query(Orders).join(Pharmacies, Orders.pharmacy_id == Pharmacies.id).filter(Pharmacies.id == current_user_pharmacy_id).all()
+    if not orders:
+        response_body['message'] = 'No tiene pedidos'
+        return response_body
+    # Utilize the serialize method to prepare the data
+    orders_data = [order.serialize() for order in orders]
+    for order_data in orders_data:
+        # Assuming each order has a patient, medicine, and pharmacy associated, serialize those as well
+        order = Orders.query.get(order_data['id'])
+        order_data['patient'] = order.patient.serialize() if order.patient else None
+        order_data['pharmacy'] = order.pharmacy.serialize() if order.pharmacy else None
+        order_data['medicine'] = order.medicine.serialize() if order.medicine else None
+    return jsonify(orders_data), 200
+    
+
 # Endpoint to get info on availability
 @api.route('/availability', methods=['GET','POST'])
 def handle_availability():
@@ -472,8 +568,6 @@ def login_user():
     return jsonify({"message":"Login Successful", "token":token, "role":user.is_pharmacy, "user_id": user.id}) , 200
 
 
-
-
 @api.route('signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -503,81 +597,4 @@ def signup():
     
     
     return jsonify({"message": "User added successfully"}), 201
-
-    
-
-
-# React Router Outlet
-
-
-# The patient will enter the city or location and must receive a list of the closest pharmacies
-@api.route('/maps', methods=['GET'])
-def handle_maps():
-    api_key = os.environ.get('GOOGLE_API_KEY')
-    api_url_places = os.environ.get('URL_GOOGLE_PLACES')
-    response_body: {}
-    # Request.args (request arguments) obtiene el valor de city que viene del Front-End inyectado por el Paciente.
-    city = request.args.get('city')
-    # Lógica si no obtenemos "city" y??
-    if not city:
-        response_body = {"error": "Parámetro city no proporcionado"}
-        return jsonify(response_body), 400
-        #Seguir con la lógica
-    # El paciente inserta la "city" y la API de Geocode de Google la transforma en formato Latitud y Longitud.
-    api_url_geocoding = os.environ.get('URL_GOOGLE_GEOCODING')  
-    # Extraer la API desde ENV + el argumento address obligatorio por la API. Sustituimos address por la "city" que introduce el paciente. 
-    geocoding_params = {'address': f'{city}, Spain','key': api_key}
-    # Necesitamos hacer un get de la api y extraer el parámetro que ha transformado la ciudad en lat y lng. 
-    geocoding_response = requests.get(api_url_geocoding, params=geocoding_params)
-    # Imprimir para ver el resultado si es ok.
-    print (geocoding_response)
-    if geocoding_response.status_code == 200:
-        # Cambiamos el dato de la API Rest a formato json para poder manipularlo desde el Front:
-        geocoding_data = geocoding_response.json()
-        if geocoding_data['status'] == 'OK':
-            # Aquí se usa la lógica de la API Geocode para cambiar el formato de ciudad por lat/lng
-            location_data = geocoding_data['results'][0]['geometry']['location']
-            location = f"{location_data['lat']},{location_data['lng']}"
-            types = 'pharmacy' # Dato fijo "farmacia" porque es el único tipo de comercio que queremos extraer. 
-            #     # location = "40.392163,-3.6978677"  # La Location debe venir dada por el usuario
-            # Establecemos la lógica si no tenemos "location". Sin esto, no se puede continuar.
-            if not location: 
-                return{'error': "Es necesaria la ubicación para poder continuar"}, 400
-            large_radius = 10000 # Dato fijo el radio está en metros = 10km
-            api_key = os.environ.get('GOOGLE_API_KEY')
-            api_url_places = os.environ.get('URL_GOOGLE_PLACES')
-            # Sí tenemos la ciudad, la cual hemos cambiado a formato lat/lng entonces montamos la url para acceder la API Places. 
-            url = f'{api_url_places}?location={location}&radius={large_radius}&types={types}&geocode&language=es&key={api_key}'
-            response = requests.get(url)
-            if response.status_code == 200:
-                return jsonify(response.json()), 200
-            else:
-                return {'error': 'Error en la solicitud a la API de Google Places'}, 500
-            # return jsonify(location) # Comprobar que devuelve lat/lng de la "city". 
-        else:
-            response_body = {"error": f"No se pudo obtener la ubicación para la ciudad: {city}"}
-            return jsonify(response_body), 400
-    else:
-        response_body = {"error": "Error en la solicitud a la API de geocoding"}
-        return jsonify(response_body), 500
-
-
-
-@api.route('/pharmacies_names', methods=['GET'])
-def handle_pharmacies_names():
-        api_key = os.environ.get('GOOGLE_API_KEY')
-        api_url = os.environ.get('URL_GOOGLE_PLACES_AUTOCOMPLETE')
-        # https://maps.googleapis.com/maps/api/place/autocomplete/json?input=guareña&types=pharmacy&key
-        # https://maps.googleapis.com/maps/api/place/autocomplete/json
-        names = request.args.get('pharmacy')
-        if not names:
-            return jsonify('error:' 'No se ha proporcionado parámetro names'), 500
-        url = f'{api_url}?input={names}&components=country:es&types=pharmacy&key={api_key}'
-        print(f"Constructed URL: {url}")
-        response = requests.get(url)
-        if response.ok:
-            data=response.json()
-            return jsonify(data)
-        else:
-            return jsonify({"error": "Error en la búsqueda las farmacias"})
 
