@@ -41,7 +41,7 @@ const injectContext = (PassedComponent) => {
 		);
 	};
 
-	return StoreWrapper;
+		return StoreWrapper;
 };
 
 

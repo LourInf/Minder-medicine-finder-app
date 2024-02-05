@@ -20,7 +20,7 @@ import { Orders } from "./component/Orders.jsx";
 import { Maps } from "./component/Maps.jsx"
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
-import { PatientHome } from "./pages/PatientHomeTabs.jsx";
+import { PatientHome } from "./pages/PatientHome.jsx";
 import { PatientInfo } from "./pages/PatientInfo.jsx";
 import { PatientOrders } from "./pages/PatientOrders.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
