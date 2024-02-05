@@ -7,6 +7,7 @@ import { method } from "lodash";
 
 export const Register = () => {
     const { store, actions } = useContext(Context);
+    const [id, setId] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [is_pharmacy, setIs_pharmacy] = useState(false);
@@ -18,9 +19,8 @@ export const Register = () => {
     const [longitude, setLongitude] = useState("");
     const [is24, setIs24] = useState(false);
     const [phone, setPhone] = useState("");
-    const [workingHours, setWorkingHours] = useState("");
+    const [working_hours, setWorking_Hours] = useState("");
     const [existingEmail, setExistingEmail] = useState(false);
-    const [idPharma, setIdPharma] = useState("");
 
     const [ suggestedPharma, setSuggestedPharma ] = useState([]);
     const [ pharmaDetails, setPharmaDetails ] = useState(null);
@@ -68,35 +68,71 @@ export const Register = () => {
         if(!existingEmail){
             const url = process.env.BACKEND_URL + "/api/signup";
             console.log(url);
-            const options = {
-                method: "POST",
-                body: JSON.stringify({ email, password, is_pharmacy, name }),
-                headers: {
-                    "Content-Type": "application/json"
+
+            if (is_pharmacy){
+
+                const options = {
+                    method: "POST",
+                    // body: JSON.stringify({ email, password, is_pharmacy, name, email, password, is_pharmacy, id, pharmacy_name, soe_number, address, is24, phone, working_hours}),
+                    body: JSON.stringify({ email, password, is_pharmacy, name, email, password, is_pharmacy, pharmacy_name, soe_number, address, is24, phone, working_hours}),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+
+                const response = await fetch(url, options);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    btnSubmit.disabled = true;
+                    msgAllDone.style.display = "block";
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 2000)
+                } else {
+                    msg.style.display = "block";
+                    setTimeout(() => {
+                        msg.style.display = "none";
+                    }, 6000)
+                    console.log(" Falló...", response.status, response.statusText)
                 }
-            };
-            console.log(options);
-            // try{
-            const response = await fetch(url, options);
-            console.log(response);
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-                btnSubmit.disabled = true;
-                msgAllDone.style.display = "block";
-                setTimeout(() => {
-                    window.location.href = "/login"
-                }, 2000)
-            } else {
-                msg.style.display = "block";
-                setTimeout(() => {
-                    msg.style.display = "none";
-                }, 6000)
-                console.log(" Falló...", response.status, response.statusText)
+
+            }else{
+
+                const options = {
+                    method: "POST",
+                    body: JSON.stringify({ email, password, is_pharmacy, name }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+                console.log(options);
+                // try{
+                const response = await fetch(url, options);
+                console.log(response);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    btnSubmit.disabled = true;
+                    msgAllDone.style.display = "block";
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 2000)
+                } else {
+                    msg.style.display = "block";
+                    setTimeout(() => {
+                        msg.style.display = "none";
+                    }, 6000)
+                    console.log(" Falló...", response.status, response.statusText)
+                }
+                // }catch(error){
+                //     console.log("An error has ocurred -> ",error)
+                // }
+
             }
-            // }catch(error){
-            //     console.log("An error has ocurred -> ",error)
-            // }
+
+
+            
         }
         
 
@@ -161,6 +197,7 @@ export const Register = () => {
 
     const handlePharmaSelect = async (placeId, city) => {
         await getPharmaDetails(placeId);
+        setId(placeId);
         setAddress(city);
     }
 
@@ -193,7 +230,7 @@ export const Register = () => {
 
             })
             console.log(workHours);
-            setWorkingHours(workHours);
+            setWorking_Hours(workHours);
         }
 
     },[pharmaDetails])
@@ -257,9 +294,9 @@ export const Register = () => {
 
                             </div>
                             
-                            <div className="form-outline mb-4">
+                            <div className="form-outline mb-4">                                     {/* May be it isn't necessary */}
                                 <input type="text" id="registerForm6" className="form-control"
-                                    value={idPharma} onChange={(e) => setIdPharma(e.target.value)} required hidden/>
+                                    value={id} onChange={(e) => setId(e.target.value)} required hidden/>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm7" className="form-control"
@@ -283,7 +320,7 @@ export const Register = () => {
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm11" className="form-control"
-                                    value={workingHours} onChange={(e) => setWorkingHours(e.target.value)} required />
+                                    value={working_hours} onChange={(e) => setWorking_Hours(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm12">Working hours</label>
                             </div>
 
