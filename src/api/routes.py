@@ -497,6 +497,10 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
 
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
+    
+    
+    
+    
 
 
 

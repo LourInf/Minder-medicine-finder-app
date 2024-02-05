@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Navigate, useNavigate } from "react-router-dom";
+import { method } from "lodash";
 
 
 
@@ -19,6 +20,12 @@ export const Register = () => {
     const [phone, setPhone] = useState("");
     const [workingHours, setWorkingHours] = useState("");
     const [existingEmail, setExistingEmail] = useState(false);
+    const [idPharma, setIdPharma] = useState("");
+
+    const [ suggestedPharma, setSuggestedPharma ] = useState([]);
+    const [ pharmaDetails, setPharmaDetails ] = useState(null);
+
+
     const navigate = useNavigate();
 
 
@@ -103,6 +110,63 @@ export const Register = () => {
 
 
 
+    const suggestPharma = async (pharma_name) => {
+        
+        try{
+
+            const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies_names?pharmacy=${pharma_name}`);
+            if(response.ok){
+                const data = await response.json();
+                const results = data.predictions || [];
+                console.log(results)
+                setSuggestedPharma(results)
+            }else{
+                console.error("Error fetching the pharmacies");
+            }
+        }catch(error){
+            console.error("A huge error fetching pharmacies -> ",error);
+        }      
+
+    }
+
+    const handleSuggestPharma = async (pharma) => {
+        setPharmacy_name(pharma);
+        await suggestPharma(pharma);
+    } 
+
+
+    const getPharmaDetails = async (placeId) => {
+
+        try{
+
+            const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies_details`,{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ place_id: placeId }), 
+                }
+            );
+            if(response.ok){
+                const data = await response.json();
+                setPharmaDetails(data)
+            }else{
+                console.error("Error fetching the pharmacy details");
+            }
+        }catch(error){
+            console.error("A huge error fetching pharmacy details -> ", error);
+        }    
+
+    }
+
+    const handlePharmaSelect = async (placeId, city) => {
+        await getPharmaDetails(placeId);
+        setAddress(city);
+    }
+
+
+
+
 
     useEffect(() => {
         const userLogged = JSON.parse(localStorage.getItem("userLogged"));
@@ -114,6 +178,25 @@ export const Register = () => {
             }
         }
     }, [navigate])
+
+    useEffect(() => {
+
+        if(pharmaDetails){
+            console.log("Detalles -> ",pharmaDetails);
+            setPharmacy_name(pharmaDetails.result.name);
+            // setAddress(suggestedPharma.predictions[0].terms[2].value);
+            setPhone(pharmaDetails.result.formatted_phone_number);
+            let workHours = "";
+            (pharmaDetails.result.current_opening_hours.weekday_text).forEach((day) => {
+                console.log(day);
+                workHours += day+"  ";
+
+            })
+            console.log(workHours);
+            setWorkingHours(workHours);
+        }
+
+    },[pharmaDetails])
 
 
 
@@ -158,42 +241,48 @@ export const Register = () => {
                             <h3>You are a pharmacy</h3>
 
                             <div className="form-outline mb-4">
+
                                 <input type="text" id="registerForm5" className="form-control"
-                                    value={pharmacy_name} onChange={(e) => setPharmacy_name(e.target.value)} required />
+                                    value={pharmacy_name} onChange={(e) => handleSuggestPharma(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm5">Pharmacy name</label>
+                                {suggestedPharma.length > 0 && (
+                                    <ul>
+                                        {suggestedPharma.map((suggestion, index) => (
+                                            <li className="list-group-item list-group-item-action" key={index} onClick={() => handlePharmaSelect(suggestion.place_id, suggestion.terms[2].value)}>
+                                                {suggestion.structured_formatting.main_text}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
                             </div>
+                            
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm6" className="form-control"
+                                    value={idPharma} onChange={(e) => setIdPharma(e.target.value)} required hidden/>
+                            </div>
+                            <div className="form-outline mb-4">
+                                <input type="text" id="registerForm7" className="form-control"
                                     value={soe_number} onChange={(e) => setSoe_number(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm6">SOE number</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm7" className="form-control"
+                                <input type="text" id="registerForm8" className="form-control"
                                     value={address} onChange={(e) => setAddress(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm7">Address</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm8" className="form-control"
-                                    value={latitude} onChange={(e) => setLatitude(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm8">Latitude</label>
-                            </div>
-                            <div className="form-outline mb-4">
-                                <input type="text" id="registerForm9" className="form-control"
-                                    value={longitude} onChange={(e) => setLongitude(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm9">Longitude</label>
-                            </div>
-                            <div className="form-outline mb-4">
-                                <input type="checkbox" id="registerForm10" className="form-check-input"
+                                <input type="checkbox" id="registerForm9" className="form-check-input"
                                     onChange={(e) => setIs24(e.target.checked)} checked={is24} />
                                 <label className="form-label" htmlFor="registerForm3">Is 24 hours?</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm11" className="form-control"
+                                <input type="text" id="registerForm10" className="form-control"
                                     value={phone} onChange={(e) => setPhone(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm11">Phone</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm12" className="form-control"
+                                <input type="text" id="registerForm11" className="form-control"
                                     value={workingHours} onChange={(e) => setWorkingHours(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm12">Working hours</label>
                             </div>
