@@ -69,23 +69,18 @@ export const Login = () => {
             console.log(" Falló...", response.status, response.statusText)
         }
 
-
-
-        useEffect(() => {
-            const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-            if(userLogged){
-                if(userLogged.expire < new Date().getTime()){
-                    localStorage.removeItem("userLogged");
-                }else{
-                    navigate("/patientHome");
-                }
-            }
-        }, [navigate])
-
-
-
-
     }
+
+    useEffect(() => {
+        const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+        if(userLogged != null){
+            if(userLogged.expire < new Date().getTime()){
+                localStorage.removeItem("userLogged");
+            }else{
+                navigate("/patientHome");
+            }
+        }
+    }, [navigate])
 
 
     return (

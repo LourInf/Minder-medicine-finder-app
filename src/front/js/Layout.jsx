@@ -12,7 +12,7 @@ import { Navbar } from "./component/Navbar.jsx";
 import { Footer } from "./component/Footer.jsx";
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
-import { PatientHome } from "./pages/PatientHomeTabs.jsx";
+import { PatientHome } from "./pages/PatientHome.jsx";
 import { PatientInfo } from "./pages/PatientInfo.jsx";
 import { PatientOrders } from "./pages/PatientOrders.jsx";
 

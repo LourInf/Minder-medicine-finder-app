@@ -1,23 +1,22 @@
 import React, { useContext, useState, useEffect } from "react"
 import { Context } from "../store/appContext";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 
 export const PatientInfo = () => {
-    
     const { store, actions } = useContext(Context);
-    const [patient, setPatient] = useState(null);
+    const [ patient, setPatient ] = useState(null);
+    const [ fetchPatient, setFetchPatient ] = useState(false);
+    const navigate = useNavigate();
 
-    console.log("Que raro");
 
-    useEffect(() => {
+    const getPatientInfo = async () => {
 
-        console.log("Hola antes del getPatientInfo");
-        const getPatientInfo = async () => {
+        const patientLogged = JSON.parse(localStorage.getItem("userLogged"))   //  Lo malo es que el id de este usuario será vulnerable...
 
-            const patientId = localStorage.getItem("user_id")   //  Lo malo es que el id de este usuario será vulnerable...
-            const url = process.env.BACKEND_URL + `/api/getPatientById/${patientId}`;
+        if(patientLogged != null){
+            const url = process.env.BACKEND_URL + `/api/getPatientById/${patientLogged.user_id}`;
 
             try{
                 console.log("La url -> ",url);
@@ -28,20 +27,39 @@ export const PatientInfo = () => {
                     const data = await response.json();
                     console.log(data);
                     setPatient(data);
+                    setFetchPatient(true);
                 }else{
                     console.error("Error fetching the patient");
                 }
             }catch (error){
                 console.error("Error fetching the patient info -> ",error);
-            } 
-            
-
-
+            }
+        }else{
+            navigate("/login");
         }
 
-        getPatientInfo();
+    }
 
-    }, []);
+
+
+
+    useEffect(() => {
+        const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+        if(userLogged != null){
+            if(userLogged.expire < new Date().getTime()){
+                actions.logout();
+                localStorage.removeItem("userLogged");
+                navigate("/login");
+            }
+        }else{
+            navigate("/login");
+        }
+
+        if(!fetchPatient){
+            getPatientInfo();
+        }
+
+    }, [navigate]);
 
 
 
