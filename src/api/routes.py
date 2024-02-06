@@ -8,7 +8,7 @@ from flask_cors import CORS
 import requests
 import os
 import math
-from sqlalchemy import select, or_, and_
+from sqlalchemy import select, or_, and_, func
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from sqlalchemy.orm import joinedload
@@ -370,6 +370,17 @@ def protected():
     return jsonify(logged_in_as=current_user_id), 200
 
 
+
+# @jwt_required()
+# def create_patient_order():
+#     current_user_id = get_jwt_identity()
+    
+#      # Find the patient associated with the current user
+#     patient = Patients.query.filter_by(users_id=current_user_id).first()
+#     if not patient:
+#         return jsonify({"error": "Patient not found"}), 404
+    
+
 # Endpoint to get all orders placed to a specific pharmacy, identified by the logged-in user (=> Actions: getPharmacyOrders)
 @api.route('/orders/pharmacy', methods=['GET'])
 @jwt_required()
@@ -379,7 +390,7 @@ def get_pharmacy_orders():
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     # Get all orders that are placed to this pharmacy
-    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == 3)).scalars().first().id  # TODO: Update current_user_id to not hardcoded (check also if .id is ok & jwt working properly)
+    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id  # TODO: Update current_user_id to not hardcoded (check also if .id is ok & jwt working properly)
     orders = db.session.query(Orders).join(Pharmacies, Orders.pharmacy_id == Pharmacies.id).filter(Pharmacies.id == current_user_pharmacy_id).all()
     if not orders:
         response_body['message'] = 'No tiene pedidos'
@@ -456,20 +467,21 @@ def handle_availability():
 #     return response_body, 200
 
 
-# Endpoint to get affiliated pharmacies which have avaiable stock of the selected medicine (=> actions: getAvailablePharmacies)
+# Endpoint to get affiliated pharmacies which have available stock of the selected medicine in selected city (=> actions: getAvailablePharmacies)
 @api.route('/pharmacies/available', methods=['GET'])
-def get_pharmacies_available_medicine():
+def get_pharmacies_available_medicine_city():
     medicine_id = request.args.get('medicine_id', type=int)
     if not medicine_id:
         return jsonify({"error": "Falta el parametro medicine_id"}), 400
-    # Query pharmacies that have the medicine available
-    available_pharmacies_query = db.session.query(Pharmacies).join(Availability, Pharmacies.id == Availability.pharmacy_id).filter(Availability.medicine_id == medicine_id,Availability.availability_status == AvailabilityStatus.AVAILABLE)
+    address = request.args.get('address', type=str).lower().strip()
+    # Query pharmacies that have the medicine available at selected city
+    available_pharmacies_query = db.session.query(Pharmacies).join(Availability, Pharmacies.id == Availability.pharmacy_id).filter(Availability.medicine_id == medicine_id,Availability.availability_status == AvailabilityStatus.AVAILABLE, func.lower(func.trim(Pharmacies.address))==address)
     available_pharmacies = available_pharmacies_query.all()
     if available_pharmacies:
         pharmacies_data = [pharmacy.serialize() for pharmacy in available_pharmacies]
         return jsonify({"pharmacies": pharmacies_data}), 200
     else:
-        return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento"}), 404
+        return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento en esta ciudad"}), 404
 
 
 # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy    (=> Actions: updateMedicineAvailability)

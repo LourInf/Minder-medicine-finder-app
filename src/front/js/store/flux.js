@@ -28,9 +28,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 		},
 		
 		actions: {
-			setSelectedCityName: (cityName) => {
-				setStore({ selectedCityName: cityName });
-			  },
 
 			getMessage: async () => {
 				try {
@@ -54,9 +51,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					email: loginResponse.email,
 					role: loginResponse.role,
 					isPharmacy: isPharmacy,
-					urlPostLogin: isPharmacy ? "/pharmacy" : "/patient",
+					//urlPostLogin: urlPostLogin ? urlPostLogin : isPharmacy ? "/pharmacy" : "/patient",     -->REMOVED AS IT LOGGED OUT
 				});
 				localStorage.setItem("token", loginResponse.token);
+
 				const userData = {
 					user_id: loginResponse.user_id,
 					email: loginResponse.email,
@@ -157,14 +155,18 @@ const getState = ({ getStore, getActions, setStore }) => {
             },
 
 
-			getAvailablePharmacies: async (medicineId) => {
-				const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies/available?medicine_id=${medicineId}`);
+			getAvailablePharmacies: async (medicineId, address) => {
+				const url = `${process.env.BACKEND_URL}/api/pharmacies/available?medicine_id=${medicineId}&address=${encodeURIComponent(address)}`;
+				const options = {
+					method: "GET"
+				};
+				const response = await fetch (url,options);								
 				if (response.ok) {
 					const data = await response.json();
 					console.log(data)
 					setStore({ availablePharmacies: data.pharmacies });
 				} else {
-					console.log("Failed to fetch available pharmacies for the selected medicine");
+					console.log("Failed to fetch available pharmacies for the selected medicine and city");
 					setStore({ availablePharmacies: [] });
 				}
 			},
@@ -199,7 +201,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getSelectedMedicine: (medicine) => {
 				setStore({ selectedMedicine: medicine });
 				},
-			
+
+			setSelectedCityName: (cityName) => {
+				setStore({ selectedCityName: cityName });
+				},
 
 			setSelectedPharmacy: (pharmacy) => {
     			setStore({ selectedPharmacy: pharmacy });

@@ -30,7 +30,7 @@ export const Login = () => {
         if(response.ok){
             const data = await response.json();
             actions.login(data)
-            navigate(store.urlPostLogin);
+            //navigate(store.urlPostLogin);             -->REMOVED AS IT LOGGED OUT
         
             const currentTime = new Date();
 
@@ -40,7 +40,7 @@ export const Login = () => {
                 "user_id": data.user_id,
                 "email": data.email,
                 "is_pharmacy": data.is_pharmacy,
-                "expire": currentTime.getTime() + 10000  //  Expiración del token en 5 segundos...
+                "expire": currentTime.getTime() + 3600000  //  Expiración del token en 5 segundos... => CHANGED!! TOO SHORT
             };
 
             localStorage.setItem("userLogged", JSON.stringify(userLogged))

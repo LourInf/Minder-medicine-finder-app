@@ -9,7 +9,7 @@ import { ModalReservation } from './ModalReservation.jsx';
 import { useNavigate } from "react-router-dom";
 
 
-export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) => { 
+export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, buttonType }) => { 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
   const handleReserveOnline = () => {
     actions.setSelectedPharmacy(pharmacy);
     if (!store.isLoggedIn) {
-      actions.setUrlLogin(medicineId)
+      actions.setUrlLogin(medicineId, cityName)
       navigate('/login');  
     } else {
       // User is logged in, then show the modal directly
