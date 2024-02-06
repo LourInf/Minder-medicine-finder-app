@@ -13,7 +13,8 @@ export const PharmacyDashboard = () => {
    // Redirect if not logged in or not a pharmacy
    useEffect(() => {
     if (!store.isLoggedIn || !store.isPharmacy) {
-      navigate('/login');
+    actions.setNotification("Para acceder tiene que ser una farmacia", "error");
+      navigate('/');
     }
   }, [store.isLoggedIn, store.isPharmacy, navigate]);
 

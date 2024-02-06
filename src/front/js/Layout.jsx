@@ -25,6 +25,7 @@ import { PatientInfo } from "./pages/PatientInfo.jsx";
 import { PatientOrders } from "./pages/PatientOrders.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
 import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
+import { Notification } from "./component/Notification.jsx";
 
 
 // Create your first component
@@ -35,11 +36,11 @@ const Layout = () => {
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
-
         <div>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <NavigationBar />
+                    <Notification />
                     <Routes>
                         <Route element={<Home />} path="/" />
                         <Route element={<Results />} path="/results" />

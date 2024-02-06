@@ -22,7 +22,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			user_id: "",
 			urlPostLogin:"/",
 			selectedCityName: "",
-			orderConfirmationDetails:[]
+			orderConfirmationDetails:[],
+			notification:null
 
 		},
 		
@@ -94,6 +95,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCityName}`})
 					},
 				
+			setNotification: (message, type) => {
+				setStore({notification: { message, type } // 'type' could be 'error', 'info', 'success', etc.
+						});
+			},
+					  
+			clearNotification: () => {
+				setStore({notification: null});
+			},
+			
 			// Get para lat/lng de la ciudad - busca por ciudad
 			getPharmacies: async (city) => {
 				// 1. Definir la URL que está en el env. Parámetro city. 

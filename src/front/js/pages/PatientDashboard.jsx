@@ -13,6 +13,7 @@ export const PatientDashboard = () => {
   useEffect(() => {
     // Redirect to login page if patient is not logged in
     if (!store.isLoggedIn || store.isPharmacy) {
+      actions.setNotification("Para acceder tiene que ser un paciente", "error");
       navigate('/login');
     }
   }, [store.isLoggedIn, store.isPharmacy, navigate]);
