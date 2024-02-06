@@ -567,21 +567,22 @@ def getPatientById(user_id):
         return jsonify({"message": "Error during the search of the patient"}),500    
 
 
-@api.route('/getPatient/<string:email>', methods=['GET'])
-def getPatient(email):
+@api.route('/getUser/<string:email>', methods=['GET'])
+def getUser(email):
     try:
-        patient = Patients.query.join(Users).filter(Users.email == email).first() 
+        # patient = Patients.query.join(Users).filter(Users.email == email).first() 
+        user = Users.query.filter_by(email=email).first()
         
-        if patient:
-            return jsonify(patient.serialize()), 200
+        if user:
+            return jsonify(user.serialize()), 200
         
         else:
-            return jsonify({"message": "Patient not found"}), 404
+            return jsonify({"message": "User not found"}), 404
 
         
     except Exception as e:
         print(str(e))
-        return jsonify({"message": "Error during the search of the patient"}),500    
+        return jsonify({"message": "Error during the search of the User"}),500    
 
 
 
@@ -605,7 +606,7 @@ def login_user():
     else:
         return jsonify({"message":"This user is not correctly created"}), 503
     
-    return jsonify({"message":"Login Successful", "token":token, "role":user.is_pharmacy, "user_id": user.id, "email":email}) , 200
+    return jsonify({"message":"Login Successful", "token":token, "is_pharmacy":user.is_pharmacy, "user_id": user.id, "email":email}) , 200
 
 
 @api.route('signup', methods=['POST'])

@@ -33,7 +33,7 @@ export const Register = () => {
 
         console.log(`Qué es email -> ${emailToCheck}`);
 
-        const url = process.env.BACKEND_URL + `/api/getPatient/${emailToCheck}`;
+        const url = process.env.BACKEND_URL + `/api/getUser/${emailToCheck}`;
 
         try {
             const msg = document.querySelector("#errorExistingEmail");
@@ -211,7 +211,7 @@ export const Register = () => {
             if (userLogged.expire < new Date().getTime()) {
                 localStorage.removeItem("userLogged");
             } else {
-                navigate("/PatientDashboard");
+                // navigate("/PatientDashboard");      //  Estp se usa?
             }
         }
     }, [navigate])
