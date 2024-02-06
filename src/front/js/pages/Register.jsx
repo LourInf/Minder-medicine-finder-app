@@ -211,7 +211,7 @@ export const Register = () => {
             if (userLogged.expire < new Date().getTime()) {
                 localStorage.removeItem("userLogged");
             } else {
-                navigate("/patientHome");
+                navigate("/PatientDashboard");
             }
         }
     }, [navigate])

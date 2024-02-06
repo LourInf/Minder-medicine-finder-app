@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			isLoggedIn: false,		// indicates if user is logged in
+			isPharmacy: false,		
 			postLoginAction: null,
 			pharmacies: [],			//stores a list of pharmacies fetched from Google API
 			selectedPharmacy:null,
@@ -19,7 +20,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: "",
-			urlPostLogin:"/patientHome",
+			urlPostLogin:"/",
 			selectedCityName: "",
 			orderConfirmationDetails:[]
 
@@ -42,12 +43,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			
-			login: (token) => {
-				setStore({isLoggedIn: true});
-				localStorage.setItem("token", token);
-
-
+			login: async (loginResponse) => {
+				console.log(loginResponse);
+				 // Define isPharmacy based on the role
+  				const isPharmacy = loginResponse.role === true;
+				setStore({
+					isLoggedIn: true,
+					user_id: loginResponse.user_id,
+					email: loginResponse.email,
+					role: loginResponse.role,
+					isPharmacy: isPharmacy,
+					urlPostLogin: isPharmacy ? "/pharmacy" : "/patient",
+				});
+				localStorage.setItem("token", loginResponse.token);
+				const userData = {
+					user_id: loginResponse.user_id,
+					email: loginResponse.email,
+					role: loginResponse.role,
+					isPharmacy: isPharmacy
+				};
+				localStorage.setItem("userData", JSON.stringify(userData));
+				 // Check if the user is a pharmacy or a patient and load respective data
+				if (!isPharmacy) {
+					// Load pharmacy profile and reservations (TBD - PROFILE!)
+					await getActions().getUserOrders();
+					
+				} else {
+					// Load patient profile and reservations (TBD - PROFILE!)
+					await getActions().getPharmacyOrders();
+				}
 			},
+		
 
 			logout: () => {
 				setStore({isLoggedIn: false});
@@ -59,13 +85,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if(localStorage.getItem("token")){
 					setStore({isLogged: true})
 					setStore({user_id: localStorage.getItem("user_id")})
-					setStore({is_pharmacy: localStorage.getItem("is_pharmacy")})
+					setStore({isPharmacy: localStorage.getItem("is_pharmacy")})
 
 				}
 			},
 
 			setUrlLogin: (medicineId) => {
-				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCity}`})
+				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCityName}`})
 					},
 				
 			// Get para lat/lng de la ciudad - busca por ciudad
@@ -308,13 +334,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 							};
 						});
 						setStore({ orderConfirmationDetails: data.order });
-						return data.order;
+						return { success: true, order: data.order };
 					} else {
 						const errorData = await response.json();
-						const errorMessage = errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo";
-						console.error(errorMessage);
-						alert(errorMessage);
+						alert(errorData.message || "Error al hacer la reserva. Por favor, pruebe de nuevo"); 
+						return { success: false };
 					}
+        			
 				},
 
 			getUserOrders: async () => {

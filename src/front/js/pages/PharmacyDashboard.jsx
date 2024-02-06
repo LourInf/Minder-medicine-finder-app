@@ -10,15 +10,16 @@ export const PharmacyDashboard = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Redirect to login page if pharmacy is not logged in
-    if (!store.isLoggedIn) {
+   // Redirect if not logged in or not a pharmacy
+   useEffect(() => {
+    if (!store.isLoggedIn || !store.isPharmacy) {
       navigate('/login');
     }
-  }, [store.isLoggedIn, navigate]);
+  }, [store.isLoggedIn, store.isPharmacy, navigate]);
 
 
   return (
+ 
     <div>
       <h1>Pharmacy Dashboard</h1>
     {/* These links let you navigate between the nested routes. (React-router-bootstrap) */}

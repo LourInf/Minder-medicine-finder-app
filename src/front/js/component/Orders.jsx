@@ -20,7 +20,7 @@ export const Orders = () => {
     }
   };
 
-
+  //we run it when log in once, and then again here, in case new orders or modifications are made while logged in
   useEffect(() => {
     actions.getUserOrders();
   }, []); 

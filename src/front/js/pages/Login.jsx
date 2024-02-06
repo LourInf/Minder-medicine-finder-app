@@ -29,8 +29,8 @@ export const Login = () => {
         console.log(response);
         if(response.ok){
             const data = await response.json();
-            actions.login(data.token)
-
+            actions.login(data)
+            navigate(store.urlPostLogin);
         
             const currentTime = new Date();
 
@@ -38,6 +38,7 @@ export const Login = () => {
             const userLogged = {
                 "token": data.token,
                 "user_id": data.user_id,
+                "email": data.email,
                 "is_pharmacy": data.is_pharmacy,
                 "expire": currentTime.getTime() + 10000  //  Expiración del token en 5 segundos...
             };
@@ -51,7 +52,7 @@ export const Login = () => {
             }else if(data.role == false){
                 // TODO 
                 // Hay que hacer la lógica para solo poder acceder si tiene token. AUTHENTICATION
-                //navigate("/patientHome");
+                //navigate("/patient");
             }else{
                 console.error("What is this role -> ",data.role);
                 const msg = document.querySelector("#errorMessageRole");
@@ -61,14 +62,6 @@ export const Login = () => {
                 }, 3000)
             }
             console.log(data);
-
-
-            //POST-LOGIN added - Needed for going back to modal reservation after user logs in
-			if(store.urlPostLogin) {
-                navigate(store.urlPostLogin)
-            } else {
-                navigate("/");
-            }
 
 
         }else{
