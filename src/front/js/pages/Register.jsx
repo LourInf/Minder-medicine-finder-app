@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../store/appContext";
 import { Navigate, useNavigate } from "react-router-dom";
+import { method } from "lodash";
 
 
 
 export const Register = () => {
     const { store, actions } = useContext(Context);
+    const [id, setId] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [is_pharmacy, setIs_pharmacy] = useState(false);
@@ -17,8 +19,13 @@ export const Register = () => {
     const [longitude, setLongitude] = useState("");
     const [is24, setIs24] = useState(false);
     const [phone, setPhone] = useState("");
-    const [workingHours, setWorkingHours] = useState("");
+    const [working_hours, setWorking_Hours] = useState("");
     const [existingEmail, setExistingEmail] = useState(false);
+
+    const [ suggestedPharma, setSuggestedPharma ] = useState([]);
+    const [ pharmaDetails, setPharmaDetails ] = useState(null);
+
+
     const navigate = useNavigate();
 
 
@@ -61,35 +68,71 @@ export const Register = () => {
         if(!existingEmail){
             const url = process.env.BACKEND_URL + "/api/signup";
             console.log(url);
-            const options = {
-                method: "POST",
-                body: JSON.stringify({ email, password, is_pharmacy, name }),
-                headers: {
-                    "Content-Type": "application/json"
+
+            if (is_pharmacy){
+
+                const options = {
+                    method: "POST",
+                    // body: JSON.stringify({ email, password, is_pharmacy, name, email, password, is_pharmacy, id, pharmacy_name, soe_number, address, is24, phone, working_hours}),
+                    body: JSON.stringify({ email, password, is_pharmacy, name, email, password, is_pharmacy, pharmacy_name, soe_number, address, is24, phone, working_hours}),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+
+                const response = await fetch(url, options);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    btnSubmit.disabled = true;
+                    msgAllDone.style.display = "block";
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 2000)
+                } else {
+                    msg.style.display = "block";
+                    setTimeout(() => {
+                        msg.style.display = "none";
+                    }, 6000)
+                    console.log(" Falló...", response.status, response.statusText)
                 }
-            };
-            console.log(options);
-            // try{
-            const response = await fetch(url, options);
-            console.log(response);
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-                btnSubmit.disabled = true;
-                msgAllDone.style.display = "block";
-                setTimeout(() => {
-                    window.location.href = "/login"
-                }, 2000)
-            } else {
-                msg.style.display = "block";
-                setTimeout(() => {
-                    msg.style.display = "none";
-                }, 6000)
-                console.log(" Falló...", response.status, response.statusText)
+
+            }else{
+
+                const options = {
+                    method: "POST",
+                    body: JSON.stringify({ email, password, is_pharmacy, name }),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+                console.log(options);
+                // try{
+                const response = await fetch(url, options);
+                console.log(response);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(data);
+                    btnSubmit.disabled = true;
+                    msgAllDone.style.display = "block";
+                    setTimeout(() => {
+                        window.location.href = "/login"
+                    }, 2000)
+                } else {
+                    msg.style.display = "block";
+                    setTimeout(() => {
+                        msg.style.display = "none";
+                    }, 6000)
+                    console.log(" Falló...", response.status, response.statusText)
+                }
+                // }catch(error){
+                //     console.log("An error has ocurred -> ",error)
+                // }
+
             }
-            // }catch(error){
-            //     console.log("An error has ocurred -> ",error)
-            // }
+
+
+            
         }
         
 
@@ -100,6 +143,64 @@ export const Register = () => {
         setEmail(v);
         await checkExistingEmail(v);
     }
+
+
+
+    const suggestPharma = async (pharma_name) => {
+        
+        try{
+
+            const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies_names?pharmacy=${pharma_name}`);
+            if(response.ok){
+                const data = await response.json();
+                const results = data.predictions || [];
+                console.log(results)
+                setSuggestedPharma(results)
+            }else{
+                console.error("Error fetching the pharmacies");
+            }
+        }catch(error){
+            console.error("A huge error fetching pharmacies -> ",error);
+        }      
+
+    }
+
+    const handleSuggestPharma = async (pharma) => {
+        setPharmacy_name(pharma);
+        await suggestPharma(pharma);
+    } 
+
+
+    const getPharmaDetails = async (placeId) => {
+
+        try{
+
+            const response = await fetch(`${process.env.BACKEND_URL}/api/pharmacies_details`,{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ place_id: placeId }), 
+                }
+            );
+            if(response.ok){
+                const data = await response.json();
+                setPharmaDetails(data)
+            }else{
+                console.error("Error fetching the pharmacy details");
+            }
+        }catch(error){
+            console.error("A huge error fetching pharmacy details -> ", error);
+        }    
+
+    }
+
+    const handlePharmaSelect = async (placeId, city) => {
+        await getPharmaDetails(placeId);
+        setId(placeId);
+        setAddress(city);
+    }
+
 
 
 
@@ -114,6 +215,25 @@ export const Register = () => {
             }
         }
     }, [navigate])
+
+    useEffect(() => {
+
+        if(pharmaDetails){
+            console.log("Detalles -> ",pharmaDetails);
+            setPharmacy_name(pharmaDetails.result.name);
+            // setAddress(suggestedPharma.predictions[0].terms[2].value);
+            setPhone(pharmaDetails.result.formatted_phone_number);
+            let workHours = "";
+            (pharmaDetails.result.current_opening_hours.weekday_text).forEach((day) => {
+                console.log(day);
+                workHours += day+"  ";
+
+            })
+            console.log(workHours);
+            setWorking_Hours(workHours);
+        }
+
+    },[pharmaDetails])
 
 
 
@@ -158,43 +278,49 @@ export const Register = () => {
                             <h3>You are a pharmacy</h3>
 
                             <div className="form-outline mb-4">
+
                                 <input type="text" id="registerForm5" className="form-control"
-                                    value={pharmacy_name} onChange={(e) => setPharmacy_name(e.target.value)} required />
+                                    value={pharmacy_name} onChange={(e) => handleSuggestPharma(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm5">Pharmacy name</label>
+                                {suggestedPharma.length > 0 && (
+                                    <ul>
+                                        {suggestedPharma.map((suggestion, index) => (
+                                            <li className="list-group-item list-group-item-action" key={index} onClick={() => handlePharmaSelect(suggestion.place_id, suggestion.terms[2].value)}>
+                                                {suggestion.structured_formatting.main_text}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+
+                            </div>
+                            
+                            <div className="form-outline mb-4">                                     {/* May be it isn't necessary */}
+                                <input type="text" id="registerForm6" className="form-control"
+                                    value={id} onChange={(e) => setId(e.target.value)} required hidden/>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm6" className="form-control"
+                                <input type="text" id="registerForm7" className="form-control"
                                     value={soe_number} onChange={(e) => setSoe_number(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm6">SOE number</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm7" className="form-control"
+                                <input type="text" id="registerForm8" className="form-control"
                                     value={address} onChange={(e) => setAddress(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm7">Address</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm8" className="form-control"
-                                    value={latitude} onChange={(e) => setLatitude(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm8">Latitude</label>
-                            </div>
-                            <div className="form-outline mb-4">
-                                <input type="text" id="registerForm9" className="form-control"
-                                    value={longitude} onChange={(e) => setLongitude(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm9">Longitude</label>
-                            </div>
-                            <div className="form-outline mb-4">
-                                <input type="checkbox" id="registerForm10" className="form-check-input"
+                                <input type="checkbox" id="registerForm9" className="form-check-input"
                                     onChange={(e) => setIs24(e.target.checked)} checked={is24} />
                                 <label className="form-label" htmlFor="registerForm3">Is 24 hours?</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm11" className="form-control"
+                                <input type="text" id="registerForm10" className="form-control"
                                     value={phone} onChange={(e) => setPhone(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm11">Phone</label>
                             </div>
                             <div className="form-outline mb-4">
-                                <input type="text" id="registerForm12" className="form-control"
-                                    value={workingHours} onChange={(e) => setWorkingHours(e.target.value)} required />
+                                <input type="text" id="registerForm11" className="form-control"
+                                    value={working_hours} onChange={(e) => setWorking_Hours(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm12">Working hours</label>
                             </div>
 

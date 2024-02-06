@@ -497,9 +497,9 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
 
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
-
-
-
+    
+    
+    
 @api.route('/getPatientById/<int:id>', methods=['GET'])
 def getPatientById(id):
     try:
@@ -577,24 +577,51 @@ def signup():
     if data["is_pharmacy"] not in [True, False]:
         return jsonify({"message":"You need to be a pharmacy or user. Get out."}), 403
     
-    if data["is_pharmacy"] is False:
-        new_user = Users(email=data['email'], password=data['password'], is_pharmacy=data["is_pharmacy"], is_active=True) 
+    try:
+        if data["is_pharmacy"] is False:
+            new_user = Users(email=data['email'], password=data['password'], is_pharmacy=data["is_pharmacy"], is_active=True) 
+            
+            db.session.add(new_user)
+            db.session.commit()
+            
+            if 'name' not in data:
+                return jsonify({"message": "Where is your name?"})
+            
+            new_patient = Patients(name=data['name'], users=new_user)
+            
+            db.session.add(new_patient)
+            db.session.commit()
+            
+            return jsonify({"message": "User added successfully"}), 201
+
         
-        db.session.add(new_user)
-        db.session.commit()
-        
-        if 'name' not in data:
-            return jsonify({"message": "Where is your name?"})
-        
-        new_patient = Patients(name=data['name'], users=new_user)
-        
-        db.session.add(new_patient)
-        db.session.commit()
+        else:
+            new_user = Users(email=data['email'], password=data['password'], is_pharmacy=data["is_pharmacy"], is_active=True) 
+
+            db.session.add(new_user)
+            db.session.commit()
+            
+            # if 'id' not in data or 'pharmacy_name' not in data or 'soe_number' not in data or 'address' not in data or 'is24' not in data or 'phone' not in data or 'working_hours' not in data:
+            if 'pharmacy_name' not in data or 'soe_number' not in data or 'address' not in data or 'is24' not in data or 'phone' not in data or 'working_hours' not in data:
+                return jsonify({"message": "missing requeriments, get away from this place"}), 500
+            
+            
+            new_pharmacy = Pharmacies(
+                users=new_user,
+                # id=data['id'],
+                pharmacy_name=data['pharmacy_name'],
+                SOE_pharmacy_number=data['soe_number'],
+                address=data['address'],
+                is_24h=data['is24'],
+                phone=data['phone'],
+                working_hours=data['working_hours']
+            )        
+            
+            db.session.add(new_pharmacy)
+            db.session.commit()
+            
+            return jsonify({"message": "Pharmacy added successfully"}, 201)
+    except Exception as e:
+        return jsonify({'error ':str(e)}),500
     
-    else:
-    
-        return jsonify({"message": "Still working on..."}, 503)
-    
-    
-    return jsonify({"message": "User added successfully"}), 201
 
