@@ -73,7 +73,7 @@ export const PatientInfo = () => {
             <button className="btn btn-warning mb-3">Edit info</button>
             {patient !== null ? (
                 <div>
-                    <p><b>PatientID</b>: {patient.id}</p>
+                    <p><b>PatientID</b>: {patient.patient_id}</p>
                     <p><b>Name</b>: {patient.name}</p>
                     <p><b>Email</b>: {patient.email}</p>
                 </div>

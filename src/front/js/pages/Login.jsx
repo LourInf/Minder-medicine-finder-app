@@ -39,7 +39,7 @@ export const Login = () => {
                 "token": data.token,
                 "user_id": data.user_id,
                 "is_pharmacy": data.is_pharmacy,
-                "expire": currentTime.getTime() + 5000  //  Expiración del token en 5 segundos...
+                "expire": currentTime.getTime() + 10000  //  Expiración del token en 5 segundos...
             };
 
             localStorage.setItem("userLogged", JSON.stringify(userLogged))
