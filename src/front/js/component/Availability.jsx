@@ -1,8 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js" 
-import Table from 'react-bootstrap/Table';
+import { Table, InputGroup, Form, Button } from 'react-bootstrap';
 import Pagination from 'react-bootstrap/Pagination';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 export const Availability = () => {
   const { store, actions } = useContext(Context);
@@ -55,9 +56,9 @@ export const Availability = () => {
   const applyFilters = () => {
       const filteredItems = store.medicinesPsum.filter((medicine) => {
         const nameMatch = medicine.medicine_name.toLowerCase().includes(medicineNameFilter.toLowerCase());
-        const problemTypeMatch = problemTypeFilter === "" || medicine.problem_type.toLowerCase() === problemTypeFilter.toLowerCase();
+        // const problemTypeMatch = problemTypeFilter === "" || medicine.problem_type.toLowerCase() === problemTypeFilter.toLowerCase();
         const availabilityMatch = availabilityFilter === "all" || (availabilityFilter === "disponible" && medicine.is_available) || (availabilityFilter === "no_disponible" && !medicine.is_available);
-          return nameMatch && problemTypeMatch && availabilityMatch;
+          return nameMatch && availabilityMatch;  {/* I removed && problemTypeMach */}
         });
       return filteredItems;
     };
@@ -72,15 +73,25 @@ export const Availability = () => {
         {/* Filters */}
         <div className="d-flex justify-content-between mb-3">
           <div className="mb-3 mr-3">
-            <input type="text" placeholder="Buscar por nombre de medicamento" value={medicineNameFilter} onChange={(e) => setMedicineNameFilter(e.target.value)}/>
+          <InputGroup className="mb-3 ">
+          <Form.Control
+              type="text"
+              value={medicineNameFilter} 
+              onChange={(e) => setMedicineNameFilter(e.target.value)}
+              placeholder="Buscar por nombre de medicamento"
+              aria-label="buscar medicamento"/>
+            <Button variant="outline-secondary" id="button-addon2"><FontAwesomeIcon icon = { faSearch }/></Button>
+          </InputGroup>
+        
+            {/* <input type="text" placeholder="Buscar por nombre de medicamento" value={medicineNameFilter} onChange={(e) => setMedicineNameFilter(e.target.value)}/> */}
           </div>
-          <div className="mb-3 mr-3">
+          {/* <div className="mb-3 mr-3">
             <select value={problemTypeFilter} onChange={(e) => setProblemTypeFilter(e.target.value)}>
               <option value="">Todos los tipos de problema</option>
               <option value="problema1">Problema 1</option>
               <option value="problema2">Problema 2</option>
             </select>
-          </div>
+          </div> */}
           <div className="mb-3">
             <select value={availabilityFilter} onChange={(e) => setAvailabilityFilter(e.target.value)}>
               <option value="all">Todos</option>
@@ -94,15 +105,13 @@ export const Availability = () => {
           <thead>
             <tr><th>#</th>
               <th>Medicamento</th>
-              <th>Problema activo</th>
+              {/* <th>Problema activo</th> */}
               <th>Disponibilidad</th></tr>
           </thead>
           <tbody>{filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((medicine, index) => (<tr key={medicine.id}><td>{indexOfFirstItem + index + 1}</td>
                 <td>{medicine.medicine_name}</td>
-                <td>fetch descripcion problema</td> {/* You should fetch and display the actual problem description here */}
-                <td>
-                  <input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/>
-                </td></tr>
+                {/* <td>fetch descripcion problema</td> You should fetch and display the actual problem description here */}
+                <td><input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/></td></tr>
             ))}
           </tbody>
         </Table>

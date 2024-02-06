@@ -1,9 +1,25 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js" 
-import Table from 'react-bootstrap/Table';
+import  { Table, Badge, Button }  from 'react-bootstrap';
 
 export const Orders = () => {
   const { store, actions } = useContext(Context);
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Pendiente':
+        return <Badge pill bg="warning" text="dark" className="p-2">Pendiente</Badge>;
+      case 'Aceptada':
+        return <Badge pill bg="success" className="p-2">Aceptada</Badge>;
+      case 'Cancelada':
+        return <Badge pill bg="danger" className="p-2">Cancelada</Badge>;
+      case 'Recogida':
+        return <Badge pill bg="info" className="p-2">Recogida</Badge>;
+      default:
+        return <Badge pill bg="secondary" className="p-2">Desconocido</Badge>;
+    }
+  };
+
 
   useEffect(() => {
     actions.getUserOrders();
@@ -22,6 +38,7 @@ export const Orders = () => {
                         <th>Farmacia</th>
                         <th>Tiempo de reserva</th>
                         <th>Order Status</th>
+                        <th>Acción</th> 
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +48,9 @@ export const Orders = () => {
                             <td>{order.medicine_name}</td> 
                             <td>{order.pharmacy_name}</td> 
                             <td>Tiene 24 h para recoger el medicamento</td>
-                            <td>{order.order_status}</td>
+                            <td>{getStatusBadge(order.order_status)}</td>
+                            <td><Button variant="outline-success" className="rounded-pill ">Ver Detalles</Button>
+                            <Button  variant="outline-danger"  className="rounded-pill">Cancelar</Button></td>
                         </tr>
                     ))}
                 </tbody>

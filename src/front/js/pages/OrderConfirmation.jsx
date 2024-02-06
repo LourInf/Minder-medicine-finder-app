@@ -18,7 +18,7 @@ export const OrderConfirmation = () => {
       {orderDetails ? (
         <>
           <h3>Tu numero de reserva es: {orderDetails.id}</h3>
-          <p>¡Pedido confirmado! Gracias por su reserva.</p>
+          <p>En breve recibirá la confirmación por parte de la farmacia</p>
           <Button variant="info" onClick={() => navigate('/patient/orders')}>Ver mis reservas</Button>
           <Button variant="outline-info" onClick={() => navigate('/')} className="ms-2">Buscar otro medicamento</Button>
         </>
