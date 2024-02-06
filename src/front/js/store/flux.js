@@ -42,15 +42,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			login: async (loginResponse) => {
-				console.log(loginResponse);
+				console.log("El loginResponse -> ",loginResponse);
+				console.log("HOLA DESDE login EN STORE")
 				 // Define isPharmacy based on the role
-  				const isPharmacy = loginResponse.role === true;
+  				// const isPharmacy = loginResponse.role === true;
 				setStore({
 					isLoggedIn: true,
 					user_id: loginResponse.user_id,
 					email: loginResponse.email,
 					role: loginResponse.role,
-					isPharmacy: isPharmacy,
+					isPharmacy: loginResponse.is_pharmacy,
 					//urlPostLogin: urlPostLogin ? urlPostLogin : isPharmacy ? "/pharmacy" : "/patient",     -->REMOVED AS IT LOGGED OUT
 				});
 				localStorage.setItem("token", loginResponse.token);
@@ -59,7 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					user_id: loginResponse.user_id,
 					email: loginResponse.email,
 					role: loginResponse.role,
-					isPharmacy: isPharmacy
+					isPharmacy: loginResponse.is_pharmacy
 				};
 				localStorage.setItem("userData", JSON.stringify(userData));
 				 // Check if the user is a pharmacy or a patient and load respective data
