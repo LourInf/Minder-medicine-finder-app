@@ -25,9 +25,11 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
     // }, [store.lastCreatedOrder]);
 
     const handleReserve = async () => {
-        const order = await actions.createOrderReservation(medicineId, pharmacyId); 
-        handleCloseModal()
-        navigate('/order-confirmation');
+        const result = await actions.createOrderReservation(medicineId, pharmacyId); 
+        if (result.success) {
+            handleCloseModal();
+            navigate('/order-confirmation');
+        }
         //displayToast(`Reserva realizada con éxito.Su numero de reserva es: ${order.id}`);
         // setToastMessage("Reserva realizada con éxito.");
         // setShowToast(true);

@@ -30,11 +30,6 @@ export const Results = () => {
     //   };
 
 
-    // Para poder hacer POST a los detalles de la API
-  const handleOnClick = (place_id) => {
-    actions.getPharmaciesDetails(place_id);
-    navigate(`/pharmacies-details/${place_id}`)
-  }
 // Para Paginar
 // Index last y first calculan los indices del primer y último resultado. 
   const indexLastResult = currentPage * resultsPerPage;

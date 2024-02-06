@@ -238,22 +238,59 @@ def get_medicines_psum():
     return jsonify(response_body), 200
 
 
+
+# Endpoint to get all orders for the logged-in user (=> Actions: getUserOrders)
+@api.route('/orders', methods=['GET'])
+@jwt_required()  
+def get_user_orders():
+    current_user_id = get_jwt_identity() 
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
+    # Find the patient associated with the current user
+    patient = Patients.query.filter_by(users_id=current_user_id).first()
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    response_body = {}
+    results = {}
+    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == patient.id)
+    orders = orders_query.all()
+    if not orders:
+        response_body['message'] = 'No tiene ninguna reserva'
+        return response_body, 200
+    all_user_orders = []
+    for order in orders:
+        order_data = order.serialize()
+        # Directly access medicine and pharmacy from the order due to joinedload
+        order_data['medicine_name'] = order.medicine.medicine_name if order.medicine else 'No disponible'
+        order_data['pharmacy_name'] = order.pharmacy.pharmacy_name if order.pharmacy else 'No disponible'
+        all_user_orders.append(order_data)
+    results['orders'] = all_user_orders
+    response_body['message'] = "Reservas encontradas"
+    response_body['results'] = results
+    return response_body, 200
+
 # Endpoint to create a new order (=> actions: createOrderReservation)
 @api.route('/orders', methods=['POST'])
 @jwt_required()
-def create_order():
+def create_patient_order():
     current_user_id = get_jwt_identity()
+    
+     # Find the patient associated with the current user
+    patient = Patients.query.filter_by(users_id=current_user_id).first()
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    
     response_body = {}
     data = request.json
     # here we write the logic to save the new order registry in our DB:
-    patient_id = current_user_id
     pharmacy_id = data.get('pharmacy_id')
     medicine_id = data.get('medicine_id')  
     requested_date = datetime.strptime(data.get('requested_date'), '%Y-%m-%d') if data.get('requested_date') else datetime.utcnow()
     validity_date = requested_date + timedelta(hours=24)   # CHECK!! Set validity_date to 24 hours after requested_date
     order_status = OrderStatus.PENDING # Default status to 'pendiente' until pharmacy accepts and then it's changed to Aceptada/Rechazada
     new_order= Orders(
-            patient_id=patient_id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data
+            patient_id=patient.id, # Create new instance of the Orders class and sets different attributes of the new order object to the values obtained from the JSON data
             pharmacy_id=pharmacy_id, 
             medicine_id=medicine_id,
             order_quantity=data.get('order_quantity', 1),   #default to 1
@@ -332,32 +369,6 @@ def protected():
     current_user_id = get_jwt_identity()
     return jsonify(logged_in_as=current_user_id), 200
 
-# Endpoint to get all orders for the logged-in user (=> Actions: getUserOrders)
-@api.route('/orders', methods=['GET'])
-@jwt_required()  
-def get_user_orders():
-    response_body = {}
-    results = {}
-    current_user_id = get_jwt_identity()
-    if not current_user_id:
-        return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
-    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
-    orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == current_user_id)
-    orders = orders_query.all()
-    if not orders:
-        response_body['message'] = 'No tiene ninguna reserva'
-        return response_body, 404
-    all_user_orders = []
-    for order in orders:
-        order_data = order.serialize()
-        # Directly access medicine and pharmacy from the order due to joinedload
-        order_data['medicine_name'] = order.medicine.medicine_name if order.medicine else 'No disponible'
-        order_data['pharmacy_name'] = order.pharmacy.pharmacy_name if order.pharmacy else 'No disponible'
-        all_user_orders.append(order_data)
-    results['orders'] = all_user_orders
-    response_body['message'] = "Reservas encontradas"
-    response_body['results'] = results
-    return response_body, 200
 
 # Endpoint to get all orders placed to a specific pharmacy, identified by the logged-in user (=> Actions: getPharmacyOrders)
 @api.route('/orders/pharmacy', methods=['GET'])
@@ -565,7 +576,7 @@ def login_user():
     else:
         return jsonify({"message":"This user is not correctly created"}), 503
     
-    return jsonify({"message":"Login Successful", "token":token, "role":user.is_pharmacy, "user_id": user.id}) , 200
+    return jsonify({"message":"Login Successful", "token":token, "role":user.is_pharmacy, "user_id": user.id, "email":email}) , 200
 
 
 @api.route('signup', methods=['POST'])

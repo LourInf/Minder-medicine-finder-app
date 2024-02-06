@@ -12,16 +12,47 @@ export const PatientDashboard = () => {
 
   useEffect(() => {
     // Redirect to login page if patient is not logged in
-    if (!store.isLoggedIn) {
+    if (!store.isLoggedIn || store.isPharmacy) {
       navigate('/login');
     }
-  }, [store.isLoggedIn, navigate]);
+  }, [store.isLoggedIn, store.isPharmacy, navigate]);
 
+
+//LOGIC TRANSFERED TO FLUX:
+//   useEffect(() => {
+//     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+//     if(userLogged != null){
+//         if(userLogged.expire < new Date().getTime()){
+//             actions.logout();
+//             localStorage.removeItem("userLogged");
+//             navigate("/login");
+//          }
+//     // }else{
+//     //     navigate("/");
+//      }
+// }, [navigate])
+
+
+const handleLogout = () => {
+    actions.logout();
+
+    const userLogged = localStorage.getItem("userLogged");
+    if(userLogged != null){
+        localStorage.removeItem("userLogged");
+        navigate("/login", {replace: true});
+    }else{
+        navigate("/login");
+    }
+
+
+}
 
 
 return (
     <div>
-      <h1>Patient Dashboard</h1>
+      <h1>Patient Dashboard</h1>  
+      <button id="logoutBtn" className="btn btn-danger" onClick={handleLogout}>Log out</button>
+  
       <Nav variant="tabs" defaultActiveKey="/patient/orders">
         <LinkContainer to="/patient/orders"> 
           <Nav.Link>Orders</Nav.Link>

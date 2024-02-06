@@ -20,7 +20,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
     if (buttonType === 'reserve') {
       handleReserveOnline();
     } else if (buttonType === 'details') {
-      navigate(`/pharmacies-details/${pharmacy.place_id || pharmacyId}`);
+      navigate(`/pharmacies-details/${place_id}`);
     }
   };
 
@@ -39,6 +39,7 @@ export const CardResults = ({ medicineId, pharmacyId, pharmacy, buttonType }) =>
   const closeModal = () => {
     setShowModal(false);
   };
+
 
   // const displayToast = (message) => {
   //   setToastMessage(message);

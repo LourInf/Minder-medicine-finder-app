@@ -59,7 +59,7 @@ class Pharmacies(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pharmacy_name = db.Column(db.String(200), nullable=False)
     SOE_pharmacy_number = db.Column(db.String(20), unique=True, nullable=False)
-    address = db.Column(db.String(150), nullable=False)                          
+    address = db.Column(db.String(150), nullable=False)                     
     is_24h = db.Column(db.Boolean(), unique=False)             
     phone = db.Column(db.String, nullable=False)
     working_hours = db.Column(db.String())
@@ -78,8 +78,6 @@ class Pharmacies(db.Model):
                 'phone': self.phone,
                 'working_hours': self.working_hours,
                 'SOE_pharmacy_number': self.SOE_pharmacy_number,
-                'latitude': self.latitude,
-                'longitude': self.longitude,
                 'is_24h':self.is_24h
                 }
 
