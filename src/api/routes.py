@@ -509,19 +509,48 @@ def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id)
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
     
-    
-    
-@api.route('/getPatientById/<int:id>', methods=['GET'])
-def getPatientById(id):
+@api.route('/getUserById/<int:id>', methods=['GET'])
+def getUserById(id):
     try:
-        patient = Patients.query.get(id) 
+        user = Users.query.get(id) 
+        
+        
+        if user:
+            
+            user_info = {
+
+                "id": user.id,
+                "email": user.email,
+                "is_pharmacy": user.is_pharmacy
+                
+            }
+            
+            return jsonify(user_info), 200
+        
+        else:
+            return jsonify({"message": "Id user not found"}), 404
+
+        
+    except Exception as e:
+        print(str(e))
+        return jsonify({"message": "Error during the search of the user"}),500    
+
+    
+    
+    
+@api.route('/getPatientById/<int:user_id>', methods=['GET'])
+def getPatientById(user_id):
+    try:
+        # patient = Patients.query.get(id) 
+        patient = Patients.query.filter_by(users_id=user_id).first()
         
         
         if patient:
             
             patient_info = {
 
-                "id": patient.id,
+                "patient_id": patient.id,
+                "user_id": patient.users.id,
                 "name": patient.name,
                 "email": patient.users.email
                 
