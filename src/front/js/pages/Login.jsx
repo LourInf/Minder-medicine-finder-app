@@ -30,7 +30,7 @@ export const Login = () => {
         if(response.ok){
             const data = await response.json();
             actions.login(data)
-            navigate(store.urlPostLogin);
+            // navigate(store.urlPostLogin);
         
             const currentTime = new Date();
 
@@ -47,14 +47,18 @@ export const Login = () => {
 
 
 
-            if(data.role){
-                alert("working on...")
-            }else if(data.role == false){
+            if(data.is_pharmacy){
+                // alert("working on...")
+                console.log("What is the url -> ",store.urlPostLogin)
+                navigate(store.urlPostLogin);
+            }else if(data.is_pharmacy == false){
+                console.log("What is the url -> ",store.urlPostLogin)
+                navigate(store.urlPostLogin);
                 // TODO 
                 // Hay que hacer la lógica para solo poder acceder si tiene token. AUTHENTICATION
                 //navigate("/patient");
             }else{
-                console.error("What is this role -> ",data.role);
+                console.error("What is this role -> ",data.is_pharmacy);
                 const msg = document.querySelector("#errorMessageRole");
                 msg.style.display = "block";
                 setTimeout(() => {
@@ -81,40 +85,54 @@ export const Login = () => {
             if(userLogged.expire < new Date().getTime()){
                 localStorage.removeItem("userLogged");
             }else{
-                navigate("/patientHome");
+                // navigate("/patientHome");   //  se usa?
             }
         }
     }, [navigate])
 
 
     return (
-        store.isLoggedIn ? <Navigate to={store.urlPostLogin}/>:   //  Nee to be changed in the case of pharmacy
-        <div>
+        
+            store.isLoggedIn ? (
 
-            <form onSubmit={handleSubmit} className=" form-group col-md-6 py-5 px-md-5">
-                <h1 className="text-center">THIS IS LOGÍN</h1>
-                <p id="errorMessage" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>The pass or user doesn't exists <a href="/register">Would you like to sign up?</a></p>
-                <p id="errorMessageRole" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>Your role is not correct <a href="/register">Would you like to create a new account?</a></p>
-                <div className="form-group form-outline mb-4">
-                    <input type="email" id="form2Example1" className="form-control" 
-                        value={email} onChange={(e) => setEmail(e.target.value)}/>
-                    <label className="form-label" htmlFor="form2Example1">Email address</label>
-                </div>
-                <div className="form-group form-outline mb-4">
-                    <input type="password" id="form2Example2" className="form-control"
-                        value={password} onChange={(e) => setPassword(e.target.value)}/>
-                    <label className="form-label" htmlFor="form2Example2">Password</label>
-                </div>
-                <div>
-                    <button type="submit" className="btn btn-primary btn-block mb-4">
-                        Sign in
-                    </button>
-                </div>
-            </form>
+                // store.is_pharmacy ? (
+                //     <Navigate to={store.urlPostLogin}/>   //  Nee to be changed in the case of pharmacy
 
-        </div>
+                // ) : (
 
+                    <Navigate to={store.urlPostLogin}/>   //  Nee to be changed in the case of pharmacy
+                // )
+
+            ) : (
+            <div>
+    
+                <form onSubmit={handleSubmit} className=" form-group col-md-6 py-5 px-md-5">
+                    <h1 className="text-center">THIS IS LOGÍN</h1>
+                    <p id="errorMessage" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>The pass or user doesn't exists <a href="/register">Would you like to sign up?</a></p>
+                    <p id="errorMessageRole" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>Your role is not correct <a href="/register">Would you like to create a new account?</a></p>
+                    <div className="form-group form-outline mb-4">
+                        <input type="email" id="form2Example1" className="form-control" 
+                            value={email} onChange={(e) => setEmail(e.target.value)}/>
+                        <label className="form-label" htmlFor="form2Example1">Email address</label>
+                    </div>
+                    <div className="form-group form-outline mb-4">
+                        <input type="password" id="form2Example2" className="form-control"
+                            value={password} onChange={(e) => setPassword(e.target.value)}/>
+                        <label className="form-label" htmlFor="form2Example2">Password</label>
+                    </div>
+                    <div>
+                        <button type="submit" className="btn btn-primary btn-block mb-4">
+                            Sign in
+                        </button>
+                    </div>
+                </form>
+    
+            </div>
+            )
+        
     )
+
+    
 
 
 }
