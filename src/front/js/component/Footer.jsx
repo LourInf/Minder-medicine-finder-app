@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import logoImage from "../../img/minderlogo.png";
+import logoImage from "../../img/minderlogoimage.png";
 
 export const Footer =() => {
 	const currentYear = new Date().getFullYear();

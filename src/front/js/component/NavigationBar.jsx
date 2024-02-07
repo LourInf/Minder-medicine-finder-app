@@ -7,9 +7,6 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
-import { useNavigate } from "react-router-dom";
-import { Context } from "../store/appContext";
-
 import logoImage from "../../img/minderlogo.png";
 
 

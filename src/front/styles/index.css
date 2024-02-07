@@ -1,7 +1,6 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
-
 body {
     background-image: linear-gradient(to bottom right, #00a4ba, #5ec2bd, #9ef6ac, #66bd77, #2e8745);
 }
