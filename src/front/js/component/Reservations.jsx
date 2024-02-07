@@ -39,7 +39,6 @@ export const Reservations = () => {
     };
 
 
-
     const handlePickupOrder = (orderId) => {
       console.log("Marking order as picked up");
       actions.updateOrderStatus(orderId, "COMPLETED");
@@ -88,7 +87,7 @@ export const Reservations = () => {
                 {reservation.order_status === 'Pendiente' && (
                   <>
                     <Button variant="outline-success" className="me-2" onClick={() => handleAcceptOrder(reservation.id, 'Aceptada')}>Aceptar</Button>
-                    <Button variant="outline-danger" onClick={() => handleCancelOrder(reservation.id, 'Cancelada')}>Cancelar</Button>
+                    <Button variant="outline-danger" onClick={() => handleCancelOrder(reservation.id, 'Rechazada')}>Cancelar</Button>
                   </>
                 )}
                 {reservation.order_status === 'Aceptada' && (

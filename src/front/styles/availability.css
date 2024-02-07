@@ -1,0 +1,10 @@
+/* #custom-switch{
+    width: 60px;
+    height: 20px;
+    margin: auto;
+    background-color: transparent;
+}
+
+#custom-switch:checked {
+    background-color: greenyellow;
+} */

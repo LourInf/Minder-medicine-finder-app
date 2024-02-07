@@ -65,12 +65,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.setItem("userData", JSON.stringify(userData));
 				 // Check if the user is a pharmacy or a patient and load respective data
 				if (!isPharmacy) {
-					// Load pharmacy profile and reservations (TBD - PROFILE!)
+					// Load patient profile and reservations (TBD - PROFILE!)
 					await getActions().getUserOrders();
 					
 				} else {
-					// Load patient profile and reservations (TBD - PROFILE!)
+					// Load pharmacy profile and reservations (TBD - PROFILE!)
 					await getActions().getPharmacyOrders();
+					await getActions().getMedicinesPsum();
 				}
 			},
 		
@@ -290,7 +291,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				},
 			
-			updateMedicineAvailability : async (medicineId, availability) => {
+			updateMedicineAvailability : async (medicineId, availability) => {  //NOT WORKING- TO BE CORRECTED!
 				const store = getStore();
 				// Update local store
 				const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {
@@ -301,7 +302,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				});
 				setStore({ medicinesPsum: updatedMedicinesPsum });
 				
-				const url = `${process.env.BACKEND_URL}/api/pharmacies/${pharmacy_id}/medicines/${medicineId}/availability`;
+				const url = `${process.env.BACKEND_URL}/api/pharmacies/availability`; //removed: /${pharmacyId}/medicines/${medicineId}/availability
 				const token = localStorage.getItem('token');
 				const options = {
 					method: "PUT",
@@ -309,13 +310,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${token}`
 					},
-					body: JSON.stringify({ medicine_id: medicineId, availability })
+					body: JSON.stringify({ availability_status: availability })
 				};
 				const response = await fetch(url, options);
 					if (response.ok) {
 						const data = await response.json();
 						console.log(data);
-						 // Success notification
 						 alert("La disponibilidad se ha modificado correctamente!");
 					} else {
 						const errorData = await response.json();

@@ -3,7 +3,8 @@ import { Context } from "../store/appContext.js"
 import { Table, InputGroup, Form, Button } from 'react-bootstrap';
 import Pagination from 'react-bootstrap/Pagination';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons'
+import "../../styles/availability.css"
 
 export const Availability = () => {
   const { store, actions } = useContext(Context);
@@ -18,23 +19,30 @@ export const Availability = () => {
   const [itemsPerPage] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
 
-  // useState to track medicines' availability
-  const [medicineAvailability, setMedicineAvailability] = useState({});
+  // // useState to track medicines' availability
+  // const [medicineAvailability, setMedicineAvailability] = useState({});
 
-  const updateMedicineAvailability = (medicineId, isChecked) => {
-    setMedicineAvailability({
-      ...medicineAvailability,
-      [medicineId]: isChecked,
-    });
+  // const updateMedicineAvailability = (medicineId, isChecked) => {
+  //   setMedicineAvailability({
+  //     ...medicineAvailability,
+  //     [medicineId]: isChecked,
+  //   });
     
-    // Call action to update availability in the backend
-    actions.updateMedicineAvailability(medicineId, isChecked);
+  //   // Call action to update availability in the backend
+  //   actions.updateMedicineAvailability(medicineId, isChecked);
 
-  };
+  // };
 
   useEffect(() => {
     setTotalPages(Math.ceil(store.medicinesPsum.length / itemsPerPage));
   }, [store.medicinesPsum, itemsPerPage]);
+
+  
+  const handleToggleAvailability = async (medicineId, currentAvailability) => {
+    const newAvailability = !currentAvailability;
+    actions.updateMedicineAvailability(medicineId, newAvailability);
+  };
+
 
   const handlePageClick = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -67,8 +75,8 @@ export const Availability = () => {
       
     return (
       <div className="container">
-        <h3 className="m-3 text-center">Estos medicamentos actualmente presentan problemas de suministro. Por favor, indique si su farmacia dispone de inventario:</h3>
-        <p className="m-3 text-center">Total medicamentos con problemas de suministro: {store.totalMedicinesPsum}</p>
+        <h3 className="m-3 text-center">Estos medicamentos actualmente presentan <span className="text-danger fw-bold">problemas de suministro</span>. Por favor, indique si su farmacia dispone de inventario:</h3>
+        <p className="m-3 text-center">Total medicamentos con problemas de suministro: <span className="text-danger fs-2 fw-bold">{store.totalMedicinesPsum}</span></p>
         
         {/* Filters */}
         <div className="d-flex justify-content-between mb-3">
@@ -93,11 +101,11 @@ export const Availability = () => {
             </select>
           </div> */}
           <div className="mb-3">
-            <select value={availabilityFilter} onChange={(e) => setAvailabilityFilter(e.target.value)}>
+            <Form.Select value={availabilityFilter} onChange={(e) => setAvailabilityFilter(e.target.value)}>
               <option value="all">Todos</option>
               <option value="disponible">Disponible</option>
               <option value="no_disponible">No Disponible</option>
-            </select>
+            </Form.Select>
           </div>
         </div>
 
@@ -106,12 +114,24 @@ export const Availability = () => {
             <tr><th>#</th>
               <th>Medicamento</th>
               {/* <th>Problema activo</th> */}
-              <th>Disponibilidad</th></tr>
+              <th>Disponibilidad</th>
+              <th>Accion</th></tr>
           </thead>
-          <tbody>{filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((medicine, index) => (<tr key={medicine.id}><td>{indexOfFirstItem + index + 1}</td>
+          <tbody>  {currentItems.map((medicine, index) => (<tr key={medicine.id}><td>{indexOfFirstItem + index + 1}</td>
                 <td>{medicine.medicine_name}</td>
                 {/* <td>fetch descripcion problema</td> You should fetch and display the actual problem description here */}
-                <td><input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/></td></tr>
+                {/* <td><input type="checkbox" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/></td></tr> */}
+                <td>{medicine.is_available ? "Disponible" : "No Disponible"}</td>
+                {/* <td><Form.Check type="switch" id="custom-switch" label="" checked={medicine.is_available} onChange={() => actions.updateMedicineAvailability(medicine.id, !medicine.is_available)}/></td></tr> */}
+                <td>
+                <Button 
+                  variant={medicine.is_available ? "success" : "warning"} 
+                  onClick={() => handleToggleAvailability(medicine.id, medicine.is_available)}>
+                  {medicine.is_available ? <FontAwesomeIcon icon={faToggleOff} /> : <FontAwesomeIcon icon={faToggleOn} />}
+                  {medicine.is_available ? "" : ""}
+                </Button>
+              </td>
+            </tr>
             ))}
           </tbody>
         </Table>
