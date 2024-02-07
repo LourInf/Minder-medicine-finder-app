@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
-import Spinner from 'react-bootstrap/Spinner';
+import  Spinner  from 'react-bootstrap/Spinner';
 
 export const DetailsPharmacyMaps = () => {
     const { store, actions } = useContext(Context);

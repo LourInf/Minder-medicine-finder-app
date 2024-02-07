@@ -1,0 +1,29 @@
+/* Styles For Maps Component */
+body {
+    background: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #6ce9dc, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
+}
+
+footer {
+    background-color: transparent;
+}
+
+h1 {
+    font-family: 'Minderfont', sans-serif;
+    color: aliceblue;
+}
+
+h2 {
+    color: white;
+}
+
+.transparent-button {
+    background-color: transparent;
+    border-color:transparent;
+}
+.custom-transparent {
+    background-color: transparent;
+}
+
+.custom-transparentcard {
+    background-color:aliceblue
+}
