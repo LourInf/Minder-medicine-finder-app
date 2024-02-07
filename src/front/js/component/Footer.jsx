@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import logoImage from "../../img/minderlogoimage.png";
 
 export const Footer =() => {
 	const currentYear = new Date().getFullYear();
@@ -37,8 +38,8 @@ export const Footer =() => {
 			  <Row>
 			  <Col xs={12} md={4}>
               <Link to="/" className="d-flex align-items-center text-dark text-decoration-none">
-                <img src="logo" alt="logo" width="30px" />
-                <span className="ms-3 h5 font-weight-bold">OUR LOGO</span>
+                <img src={logoImage} alt="logo" width="70px" />
+                <span className="ms-3 h5 font-weight-bold">Minder</span>
               </Link>
               <p className="my-3" style={{ maxWidth: '250px' }}>
 				Lorem ipsum dolor sit amet consectetur adipisicing elit.
