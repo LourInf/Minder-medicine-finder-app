@@ -10,6 +10,8 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 
+import logoImage from "../../img/minderlogo.png";
+
 
 
 export const NavigationBar = () => {
@@ -56,12 +58,11 @@ export const NavigationBar = () => {
 		  <Link to="/"><Navbar.Brand>
             <img
               alt=""
-              src="/img/logo.svg"
-              width="30"
-              height="30"
+              src={logoImage}
+              width="40"
+              height="40"
               className="d-inline-block align-top"
-            />{' '}
-            LOGO
+			/>{' '}Minder
           </Navbar.Brand> </Link>
 		  	<div className="d-flex justify-content-center">
 			<Navbar.Toggle aria-controls="basic-navbar-nav" />
