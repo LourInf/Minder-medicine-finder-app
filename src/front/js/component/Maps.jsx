@@ -16,6 +16,7 @@ export const Maps = () => {
   const [pharmacy_fields, setpharmacy_fields] = useState('');
   const [resultsPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const [checked, setChecked] = useState(false)
   // const params = useParams();
   const navigate = useNavigate();
 
@@ -45,8 +46,8 @@ export const Maps = () => {
     actions.getPharmaciesDetails(place_id);
     navigate(`/pharmacies-details/${place_id}`)
   }
-// Para Paginar
-// Index last y first calculan los indices del primer y último resultado.
+  // Para Paginar
+  // Index last y first calculan los indices del primer y último resultado.
   const indexLastResult = currentPage * resultsPerPage;
   const indexFirstResult = indexLastResult - resultsPerPage; // Current es la actual. resultsPerPage es la cantidad: useState(5);
   const currentResults = store.pharmacies.slice(indexFirstResult, indexLastResult);
@@ -72,17 +73,46 @@ export const Maps = () => {
             onKeyPress={handleKeyPress}
           />
           <button className="m-1 py-1 btn btn-success text-break" onClick={handlePharmacies}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
+      <div className="form-check form-switch mt-2">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                               checked={checked}
+                onChange={(event) => setChecked(event.target.checked)}
+              />
+              <label className="form-check-label bg-green">
+                Mostrar solo abiertas
+              </label>
+            </div>
       </div>
+      
+
+      
       <div className="p-3">
         {/* Mostrar mensaje si no se encuentran las farmacias */}
         {noResults ? (
           <h2>No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</h2>
         ) : (
           // Mostrar Farmacias - Cambiamos el map a currentResults para que muestre los 5 resultados y no todos como hacía anteriormente.
-          currentResults.map((item, index) => (
+          currentResults.map((item, index) => 
+          <div>   
+          {
+          checked ? 
+            item.opening_hours.open_now ?
+              <div className="container w-50 alert-success" key={index}>
+                <h2 className="text-success">{item.name}</h2>
+                {item.opening_hours && (
+                  <p>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
+                )}
+                <p>Dirección: {item.vicinity}</p>
+                <p>Reseñas: {item.rating}</p>
+                <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
+              </div>
+              : null
+            :
             <div className="container w-50 alert-success" key={index}>
               <h2 className="text-success">{item.name}</h2>
               {item.opening_hours && (
@@ -92,18 +122,20 @@ export const Maps = () => {
               <p>Reseñas: {item.rating}</p>
               <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
             </div>
-          ))
+          }
+          </div>
+          )
         )}
         {/* Paginar */}
         {store.pharmacies.length > resultsPerPage && (
           <ul className="pagination justify-content-center p-2 m-2">
-            {Array.from({length: Math.ceil(store.pharmacies.length / resultsPerPage) }, (_, index) => (
+            {Array.from({ length: Math.ceil(store.pharmacies.length / resultsPerPage) }, (_, index) => (
               <li key={index} className={`page-item & {index + 1 === currentPage ? 'active' : ''}`}>
                 <button className="page-link" onClick={() => paginate(index + 1)}>
                   {index + 1}
                 </button>
               </li>
-            ) )}
+            ))}
           </ul>
         )}
       </div>

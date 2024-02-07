@@ -25,6 +25,7 @@ export const SearchNamePharmacy = () => {
   return (
     <div className="text-center">
       <h1>Selecciona Tu Farmacia</h1>
+      {/* Alert Componente que se renderice cuando X tenga contenido "no se encontró" */}
       <img src="https://png.pngtree.com/png-vector/20220716/ourmid/pngtree-medical-cross-vector-icon-cross-pharmacy-care-vector-png-image_37968170.png" alt="yourpharmacy" />
       <div className="container justify-content-center">
         <div>
@@ -63,7 +64,7 @@ export const SearchNamePharmacy = () => {
               </div>
             ))
           ) : (
-            <p>No encuentra tu farmacia, Por favor, comprueba que el nombre de tu farmacia es correcto</p>
+            <p>Ingrese el nombre de su Farmacia</p> // ? un alert
           )}
         </ul>
       </div>
