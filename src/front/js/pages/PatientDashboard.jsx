@@ -34,25 +34,18 @@ export const PatientDashboard = () => {
 // }, [navigate])
 
 
+
 const handleLogout = () => {
-    actions.logout();
-
-    const userLogged = localStorage.getItem("userLogged");
-    if(userLogged != null){
-        localStorage.removeItem("userLogged");
-        navigate("/login", {replace: true});
-    }else{
-        navigate("/login");
-    }
-
-
+  actions.logout(); 
+  navigate("/login", {replace: true}); 
 }
+
 
 
 return (
     <div>
       <h1>Patient Dashboard</h1>  
-      <button id="logoutBtn" className="btn btn-danger" onClick={handleLogout}>Log out</button>
+      <button id="logoutBtn" className="btn btn-danger mt-3" onClick={handleLogout}>Log out</button>
   
       <Nav variant="tabs" defaultActiveKey="/patient/orders">
         <LinkContainer to="/patient/orders"> 

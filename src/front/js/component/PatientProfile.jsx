@@ -38,23 +38,23 @@ export const PatientProfile = () => {
 
   }
 
-  useEffect(() => {
-    const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-    if(userLogged != null){
-        if(userLogged.expire < new Date().getTime()){
-            actions.logout();
-            localStorage.removeItem("userLogged");
-            navigate("/login");
-        }
-    }else{
-        navigate("/login");
-    }
+//   useEffect(() => {
+//     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+//     if(userLogged != null){
+//         if(userLogged.expire < new Date().getTime()){
+//             actions.logout();
+//             localStorage.removeItem("userLogged");
+//             navigate("/login");
+//         }
+//     }else{
+//         navigate("/login");
+//     }
 
-    if(!fetchPatient){
-        getPatientInfo();
-    }
+//     if(!fetchPatient){
+//         getPatientInfo();
+//     }
 
-}, [navigate]);
+// }, [navigate]);
 
 
 

@@ -1,138 +1,85 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { Context } from "../store/appContext";
-import { Navigate, useNavigate } from "react-router-dom";
-
-
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
     const { store, actions } = useContext(Context);
-    const [ email, setEmail ] = useState("");
-    const [ password, setPassword ] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessageRole, setErrorMessageRole] = useState("");
     const navigate = useNavigate();
-    
 
+    // redirect users based on their role if already logged in:
+    useEffect(() => {
+        if (store.isLoggedIn) {
+            let redirectTo = store.isPharmacy ? '/pharmacy' : '/patient';
+            redirectTo = store.urlPostLogin.includes("result") ? store.urlPostLogin : redirectTo
+            navigate(redirectTo);
+            actions.resetUrlPostLogin();
+        
+        }
+    }, [store.isLoggedIn, store.isPharmacy, navigate]);
 
-    const handleSubmit = async (e, ttl) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const url = process.env.BACKEND_URL + "/api/login";
-        console.log(url);
+        const url = `${process.env.BACKEND_URL}/api/login`;
         const options = {
-            method : "POST",
-            body : JSON.stringify({email, password}),
-            headers : {
-                "Content-Type" : "application/json"
-            }
+            method: "POST",
+            body: JSON.stringify({ email, password }),
+            headers: {
+                "Content-Type": "application/json" 
+            },
         };
         console.log(options);
 
-        const response = await fetch(url, options);
-        console.log(response);
-        if(response.ok){
-            const data = await response.json();
-            actions.login(data)
-            //navigate(store.urlPostLogin);             -->REMOVED AS IT LOGGED OUT
-        
-            const currentTime = new Date();
+            const response = await fetch(url, options);
+            console.log(response);
 
-
-            const userLogged = {
-                "token": data.token,
-                "user_id": data.user_id,
-                "email": data.email,
-                "is_pharmacy": data.is_pharmacy,
-                "expire": currentTime.getTime() + 3600000  //  Expiración del token en 5 segundos... => CHANGED!! TOO SHORT
-            };
-
-            localStorage.setItem("userLogged", JSON.stringify(userLogged))
-
-
-
-            if(data.is_pharmacy){
-                // alert("working on...")
-                console.log("What is the url -> ",store.urlPostLogin)
-                navigate(store.urlPostLogin);
-            }else if(data.is_pharmacy == false){
-                console.log("What is the url -> ",store.urlPostLogin)
-                navigate(store.urlPostLogin);
-                // TODO 
-                // Hay que hacer la lógica para solo poder acceder si tiene token. AUTHENTICATION
-                //navigate("/patient");
-            }else{
-                console.error("What is this role -> ",data.is_pharmacy);
-                const msg = document.querySelector("#errorMessageRole");
-                msg.style.display = "block";
-                setTimeout(() => {
-                    msg.style.display = "none";
-                }, 3000)
+            if (response.ok) {
+                const data = await response.json();
+                actions.login(data); 
+    
+                // Assuming `data.is_pharmacy` can be true, false, or undefined
+                if (data.is_pharmacy === true || data.is_pharmacy === false) {
+                    const currentTime = new Date();
+                    const userLogged = {
+                        "token": data.token,
+                        "user_id": data.user_id,
+                        "email": data.email,
+                        "is_pharmacy": data.is_pharmacy,
+                        "expire": currentTime.getTime() + 3600000,
+                    };
+    
+                    localStorage.setItem("userLogged", JSON.stringify(userLogged));
+    
+                    let redirectTo = data.is_pharmacy ? '/pharmacy' : '/patient';
+                    navigate(redirectTo);
+                } else {
+                    setErrorMessageRole("Your role is not correct. Would you like to create a new account?");
+                }
+            } else {
+                setErrorMessage("Login failed. The password or user doesn't exists.");
             }
-            console.log(data);
-
-
-        }else{
-            const msg = document.querySelector("#errorMessage");
-            msg.style.display = "block";
-            setTimeout(() => {
-                msg.style.display = "none";
-            }, 3000)
-            console.log(" Falló...", response.status, response.statusText)
-        }
-
-    }
-
-    useEffect(() => {
-        const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-        if(userLogged != null){
-            if(userLogged.expire < new Date().getTime()){
-                localStorage.removeItem("userLogged");
-            }else{
-                // navigate("/patientHome");   //  se usa?
-            }
-        }
-    }, [navigate])
+    };
 
 
     return (
-        
-            store.isLoggedIn ? (
-
-                // store.is_pharmacy ? (
-                //     <Navigate to={store.urlPostLogin}/>   //  Nee to be changed in the case of pharmacy
-
-                // ) : (
-
-                    <Navigate to={store.urlPostLogin}/>   //  Nee to be changed in the case of pharmacy
-                // )
-
-            ) : (
-            <div>
-    
-                <form onSubmit={handleSubmit} className=" form-group col-md-6 py-5 px-md-5">
-                    <h1 className="text-center">THIS IS LOGÍN</h1>
-                    <p id="errorMessage" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>The pass or user doesn't exists <a href="/register">Would you like to sign up?</a></p>
-                    <p id="errorMessageRole" className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px", display: "none"}}>Your role is not correct <a href="/register">Would you like to create a new account?</a></p>
-                    <div className="form-group form-outline mb-4">
-                        <input type="email" id="form2Example1" className="form-control" 
-                            value={email} onChange={(e) => setEmail(e.target.value)}/>
-                        <label className="form-label" htmlFor="form2Example1">Email address</label>
-                    </div>
-                    <div className="form-group form-outline mb-4">
-                        <input type="password" id="form2Example2" className="form-control"
-                            value={password} onChange={(e) => setPassword(e.target.value)}/>
-                        <label className="form-label" htmlFor="form2Example2">Password</label>
-                    </div>
-                    <div>
-                        <button type="submit" className="btn btn-primary btn-block mb-4">
-                            Sign in
-                        </button>
-                    </div>
-                </form>
-    
-            </div>
-            )
-        
-    )
-
-    
-
-
-}
+        <div>
+            <form onSubmit={handleSubmit} className="form-group col-md-6 py-5 px-md-5">
+                <h1 className="text-center">Login</h1>
+                {errorMessage && <p className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px"}}>{errorMessage}</p>}
+                {errorMessageRole && <p className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px"}}>{errorMessageRole}</p>}
+                <div className="form-group form-outline mb-4">
+                    <input type="email" id="form2Example1" className="form-control"
+                        value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+                </div>
+                <div className="form-group form-outline mb-4">
+                    <input type="password" id="form2Example2" className="form-control"
+                        value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                </div>
+                <button type="submit" className="btn btn-primary btn-block mb-4">Sign in</button>
+            </form>
+        </div>
+    );
+};

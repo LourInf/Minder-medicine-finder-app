@@ -45,7 +45,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log("El loginResponse -> ",loginResponse);
 				console.log("HOLA DESDE login EN STORE")
 				 // Define isPharmacy based on the role
-  				// const isPharmacy = loginResponse.role === true;
+  				const isPharmacy = loginResponse.is_pharmacy;
 				setStore({
 					isLoggedIn: true,
 					user_id: loginResponse.user_id,
@@ -78,6 +78,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logout: () => {
 				setStore({isLoggedIn: false});
 				localStorage.removeItem("token");
+				
+				const userLogged = localStorage.getItem("userLogged");
+				if(userLogged != null){
+					localStorage.removeItem("userLogged");
+				}
 			},
 
 			
@@ -93,7 +98,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 			setUrlLogin: (medicineId) => {
 				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCityName}`})
 					},
-				
+			
+			resetUrlPostLogin: () => {
+				setStore({ urlPostLogin: '/' }); 
+				},
+
 			setNotification: (message, type) => {
 				setStore({notification: { message, type } // 'type' could be 'error', 'info', 'success', etc.
 						});
@@ -414,19 +423,53 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 		
 			},		
-
-
 			
-			// 		setStore({ medicines: data.results }); //1. if response ok, we save the data.results inside store-medicines[]. Now instead of having an empty array of medicines in store, we will have the array with the medicines
-			// 		//2. we also need to save the data in the localStorage using localStorage.setItem("variable", JSON.stringify(value we want to assign to the variable));
-			// 		//JSON.stringify is needed when we save in localStorage so it can read what's inside our data.results
-			// 		localStorage.setItem("medicines", JSON.stringify(data.results));
-			// 		console.log(store.medicines)
-			// 		return data;  // Don't forget to return something, that is how the async resolves
-			// 	} else {
-			// 		console.log ("Error:", response.status, response.statusText);
-			// 	}
-			// },
+			updateOrderStatus: async (orderId, newStatus) => {
+				console.log(`Updating order status for order ${orderId} to ${newStatus}`);
+				let url = '';
+				let method = '';
+				switch(newStatus) {
+					case 'ACCEPTED':
+						url = `${process.env.BACKEND_URL}/api/orders/${orderId}/accept`;
+						method = 'PUT';
+						break;
+					case 'REJECTED':
+						url = `${process.env.BACKEND_URL}/api/orders/${orderId}/cancel`;
+						method = 'PUT';
+						break;
+					case 'COMPLETED':
+						url = `${process.env.BACKEND_URL}/api/orders/${orderId}/pickup`;
+						method = 'PUT';
+						break;
+					default:
+						console.error('Invalid order status');
+						return;
+				}
+				console.log(`Sending ${method} request to ${url}`);
+
+				const token = localStorage.getItem('token');
+				const options = {
+					method: method,
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${token}`,
+					},
+				};
+				console.log('Request options:', options);
+
+				const response = await fetch(url, options);
+				if (response.ok) {
+					console.log(`Order status updated to ${newStatus} successfully`);
+					if (getStore().isPharmacy) {
+						await getActions().getPharmacyOrders(); // // get updated data after status change in pharmacy's orders
+					} else {
+						await getActions().getUserOrders(); // same for user's orders
+					}
+				} else {
+					console.error(`Failed to update order status to ${newStatus}`);
+				}
+				
+			},
 			
 		}
 	};

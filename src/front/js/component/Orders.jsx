@@ -11,7 +11,7 @@ export const Orders = () => {
         return <Badge pill bg="warning" text="dark" className="p-2">Pendiente</Badge>;
       case 'Aceptada':
         return <Badge pill bg="success" className="p-2">Aceptada</Badge>;
-      case 'Cancelada':
+      case 'Rechazada':
         return <Badge pill bg="danger" className="p-2">Cancelada</Badge>;
       case 'Recogida':
         return <Badge pill bg="info" className="p-2">Recogida</Badge>;
@@ -25,6 +25,11 @@ export const Orders = () => {
     actions.getUserOrders();
   }, []); 
 
+  const handleCancelOrder = (orderId) => {
+    console.log("Cancelling order with status: Rechazada");
+    actions.updateOrderStatus(orderId, "REJECTED");
+    actions.getUserOrders()
+};
 
     return (
       <div className="container">
@@ -49,8 +54,7 @@ export const Orders = () => {
                             <td>{order.pharmacy_name}</td> 
                             <td>Tiene 24 h para recoger el medicamento</td>
                             <td>{getStatusBadge(order.order_status)}</td>
-                            <td><Button variant="outline-success" className="rounded-pill ">Ver Detalles</Button>
-                            <Button  variant="outline-danger"  className="rounded-pill">Cancelar</Button></td>
+                            <td>{order.order_status === "Pendiente" && (<Button  variant="outline-danger"  className="rounded-pill"  onClick={() => handleCancelOrder(order.id)}>Cancelar</Button> )}</td> {/* REMOVED FOR NOW: <Button variant="outline-success" className="rounded-pill ">Ver Detalles</Button> */}
                         </tr>
                     ))}
                 </tbody>

@@ -317,13 +317,14 @@ def create_patient_order():
     return response_body, 201
 
 # Endpoint to get details of a specific order
-@api.route('/orders/<int:order_id>', methods=['GET', 'PUT', 'DELETE'])
-def handle_specific_order(order_id):
+@api.route('/orders/<int:order_id>', methods=['GET']) # For future button "Ver detalles de la reserva" (en la tabla Orders)
+def handle_specific_order(order_id):       
     if request.method == 'GET':
         response_body = {}
         results = {}
 		# Fetch the first result of the query as primary key:
-        order = db.session.execute(select(Orders).where(Orders.id == order_id)).scalars().first()
+        # order = db.session.execute(select(Orders).where(Orders.id == order_id)).scalars().all() # NOT WORING
+        order = db.session.query(Orders).filter(Orders.id == order_id).first()
         if not order:
             response_body['message'] = 'Esta reserva no existe'
             return response_body, 404
@@ -333,35 +334,66 @@ def handle_specific_order(order_id):
         response_body['results'] = results
         return response_body, 200
 
-    if request.method == 'PUT':
-        response_body = {}
-        results = {}
-        # Update order attributes with data from the request. 2 options:
-        data = request.json
-        order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
-        if not order:
-            response_body['message'] = 'Esta reserva no existe'
-            return response_body, 404
-        # User can only modify these 2 attributes:
-        order.order_quantity = data.get('order_quantity', order.order_quantity)
-        order.order_status = data.get('order_status', order.order_status)
-        db.session.commit()
-        results['order'] = order.serialize()
-        response_body['message'] = "La reserva se ha actualizado exitosamente"
-        response_body['results'] = results
-        return response_body, 200
+    # if request.method == 'PUT':
+    #     response_body = {}
+    #     results = {}
+    #     # Update order attributes with data from the request. 2 options:
+    #     data = request.json
+    #     order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
+    #     if not order:
+    #         response_body['message'] = 'Esta reserva no existe'
+    #         return response_body, 404
+    #     # order.order_quantity = data.get('order_quantity', order.order_quantity)   # FOR FUTURE:in case user will modify qty
+    #     order.order_status = data.get('order_status', order.order_status)
+    #     # Validate and update the order_status attribute
+    #     if 'order_status' in data:
+    #         new_status = data['order_status']
+    #         order.order_status = new_status
+    #         db.session.commit()
+    #         results['order'] = order.serialize()
+    #         response_body['message'] = "La reserva se ha actualizado exitosamente"
+    #         response_body['results'] = results
+    #         return response_body, 200
+    #     else:
+    #         return ({'message': 'No se proporcionaron datos válidos para actualizar'}), 400
 
-    if request.method == 'DELETE':
-        response_body = {}
-        # Delete the order and commit the change
-        order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()
-        if not order:
-            response_body['message'] = 'Esta reserva no existe'
-            return response_body, 404
-        db.session.delete(order)
-        db.session.commit()
-        response_body['message'] = "La reserva se ha cancelado"
-        return response_body, 200
+
+@api.route('/orders/<int:order_id>/accept', methods=['PUT'])
+def accept_order(order_id):
+    response_body = {}
+    order = db.session.query(Orders).filter(Orders.id == order_id).first()
+    if not order:
+        return jsonify({'message': 'Esta reserva no existe'}), 404  
+    order.order_status = OrderStatus.ACCEPTED
+    db.session.commit()
+    response_body['message'] = "La reserva se ha aceptado"
+    return response_body, 200
+
+@api.route('/orders/<int:order_id>/cancel', methods=['PUT'])
+def cancel_status_order(order_id):
+    response_body = {}
+    # order= db.session.execute(db.select(Orders).where(Orders.id == order_id)).scalar()   # NOT WORKING
+    order = db.session.query(Orders).filter(Orders.id == order_id).first()
+    if not order:
+        response_body['message'] = 'Esta reserva no existe'
+        return response_body, 404
+    order.order_status = OrderStatus.REJECTED
+    db.session.commit()
+    response_body['message'] = "La reserva se ha cancelado"
+    return response_body, 200
+
+
+@api.route('/orders/<int:order_id>/pickup', methods=['PUT'])
+def pickup_order(order_id):
+    response_body = {}
+    order = db.session.query(Orders).filter(Orders.id == order_id).first()
+    if not order:
+        return jsonify({'message': 'Esta reserva no existe'}), 404
+    order.order_status = OrderStatus.COMPLETED
+    db.session.commit()
+    response_body['message'] = "La reserva ha sido recogida"
+    return response_body, 200
+
 
 @api.route("/private", methods=["GET"])
 @jwt_required()
