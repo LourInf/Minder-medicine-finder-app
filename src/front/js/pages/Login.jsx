@@ -40,7 +40,7 @@ export const Login = () => {
                 const data = await response.json();
                 actions.login(data); 
     
-                // Assuming `data.is_pharmacy` can be true, false, or undefined
+                
                 if (data.is_pharmacy === true || data.is_pharmacy === false) {
                     const currentTime = new Date();
                     const userLogged = {
