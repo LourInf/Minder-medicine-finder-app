@@ -124,26 +124,26 @@ export const Maps = () => {
             {
               checked ?
                 item.opening_hours.open_now ?
-                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#84f4c5", }}>
-                    <h2 className=""  style={{ color: "#00a4ba", }}>{item.name}</h2>
+                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085", }}>
+                    <h2 className=""  style={{ color: "##00bab9", }}>{item.name}</h2>
                     {item.opening_hours && (
-                      <p>Abierto Ahora</p>
+                      <p className='text-light'>Abierto Ahora</p>
                     )}
-                    <p>Dirección: {item.vicinity}</p>
-                    <p>Reseñas: {item.rating}</p>
+                    <p className='text-light'>Dirección: {item.vicinity}</p>
+                    <p className='text-light'>Reseñas: {item.rating}</p>
                     <button className="p-2 m-2 btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
                   </div>
                   : null
                 :
                 // Si el filtro checked es false, entonces me muestras todas las farmacias.
-                <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#84f4c5"}}>
-                  <h2 className=""style={{ color: "#00a4ba", }}>{item.name}</h2>
+                <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085"}}>
+                  <h2 className=""style={{ color: "##00bab9", }}>{item.name}</h2>
                   {/* Si open_now es true, entonces estableces "Abierto" si no "Cerrado" */}
                   {item.opening_hours && (
-                    <p>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
+                    <p className='text-light'>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
                   )}
-                  <p>Dirección: {item.vicinity}</p>
-                  <p>Reseñas: {item.rating}</p>
+                  <p className='text-light'>Dirección: {item.vicinity}</p>
+                  <p className='text-light'>Reseñas: {item.rating}</p>
                   <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
                 </div>
             }

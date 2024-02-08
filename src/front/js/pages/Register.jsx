@@ -241,8 +241,8 @@ export const Register = () => {
         store.isLoggedIn ? <Navigate to="/login" /> :
             <div>
 
-                <form onSubmit={handleSubmit} className="form-group col-md-6 py-5 px-md-5">
-                    <h1 className="text-center">THIS IS REGISTER</h1>
+                <form onSubmit={handleSubmit} className="form-group col-md-6 py-5 px-md-5 mx-auto">
+                    <h1 className="text-center">Regístrate Aquí</h1>
                     <p id="allDoneMessage" className="p-3" style={{ color: "green", borderRadius: "10px", border: "solid green 3px", display: "none" }}>Register completed</p>
                     <p id="errorMessage" className="p-3" style={{ color: "red", borderRadius: "10px", border: "solid red 3px", display: "none" }}>Error during the register of new user</p>
                     <p id="errorExistingEmail" className="p-3" style={{ color: "orange", borderRadius: "10px", border: "solid red 3px", display: "none" }}>This User already exist <a href="/login">Would you like to login?</a></p>
@@ -260,12 +260,12 @@ export const Register = () => {
                     <div className="form-outline mb-4">
                         <input type="checkbox" id="registerForm3" className="form-check-input"
                             onChange={(e) => setIs_pharmacy(e.target.checked)} checked={is_pharmacy} />
-                        <label className="form-label" htmlFor="registerForm3">Is pharmcy?</label>
+                        <label className="form-label mx-1" htmlFor="registerForm3"> ¿Eres una Farmacia?</label>
                     </div>
 
                     {!is_pharmacy && (
                         <div className="form-outline mb-4">
-                            <h3>You are a patient</h3>
+                            <h3>¿Eres un paciente?</h3>
                             <input type="text" id="registerForm4" className="form-control"
                                 value={name} onChange={(e) => setName(e.target.value)} required />
                             <label className="form-label" htmlFor="registerForm4">Name</label>
@@ -330,8 +330,8 @@ export const Register = () => {
 
                     )}
 
-                    <div>
-                        <button id="send" type="submit" className="btn btn-primary btn-block mb-4">
+                    <div className="text-center">
+                        <button id="send" type="submit" className="btn btn-info btn-block mb-4">
                             Sign up
                         </button>
                     </div>
