@@ -20,10 +20,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 			lastCreatedOrder: null, //stores the order details when an order is created so that later user can check it. NOTE FOR LATER: if order created --> ask pharmacy do you still have the stock available of that medicine? (we dont work with qty at the moment, just toggle avail/not avail, so they need to confirm)
 			availablePharmacies:[],
 			user_id: "",
+			pharmacy_id: "",
+			patient_id: "",
+			email: "",
 			urlPostLogin:"/",
 			selectedCityName: "",
 			orderConfirmationDetails:[],
-			notification:null
+			notification:null,
+
 
 		},
 		
@@ -42,19 +46,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			
 			login: async (loginResponse) => {
-				console.log("El loginResponse -> ",loginResponse);
-				console.log("HOLA DESDE login EN STORE")
 				 // Define isPharmacy based on the role
   				const isPharmacy = loginResponse.is_pharmacy;
 				setStore({
 					isLoggedIn: true,
 					user_id: loginResponse.user_id,
 					email: loginResponse.email,
-					role: loginResponse.role,
-					isPharmacy: loginResponse.is_pharmacy,
+					isPharmacy: loginResponse.is_pharmacy,		
+					pharmacy_id: loginResponse.pharmacy_id,
+					patient_id: loginResponse.patient_id
 					//urlPostLogin: urlPostLogin ? urlPostLogin : isPharmacy ? "/pharmacy" : "/patient",     -->REMOVED AS IT LOGGED OUT
 				});
-				localStorage.setItem("token", loginResponse.token);
+				// localStorage.setItem("token", loginResponse.token);			//	Esto ya se guarda en LocalStorage cuando se loguea... *!^¡*
 
 				const userData = {
 					user_id: loginResponse.user_id,
@@ -62,7 +65,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					role: loginResponse.role,
 					isPharmacy: loginResponse.is_pharmacy
 				};
-				localStorage.setItem("userData", JSON.stringify(userData));
+				// localStorage.setItem("userData", JSON.stringify(userData));
 				 // Check if the user is a pharmacy or a patient and load respective data
 				if (!isPharmacy) {
 					// Load patient profile and reservations (TBD - PROFILE!)
@@ -77,23 +80,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 		
 
 			logout: () => {
-				setStore({isLoggedIn: false});
-				localStorage.removeItem("token");
+				// setStore({isLoggedIn: false});
+				localStorage.removeItem("userLogged");		//	Este item contiene todos los datos necesarios, no es necesario crear nuevos items
+				setStore({
+					isLoggedIn: false,
+					user_id: null,
+					email: null,
+					isPharmacy: null,		
+					pharmacy_id: null,
+					patient_id: null
+				});
+				// localStorage.removeItem("token");
 				
-				const userLogged = localStorage.getItem("userLogged");
-				if(userLogged != null){
-					localStorage.removeItem("userLogged");
-				}
+				// const userLogged = localStorage.getItem("userLogged");
+				// if(userLogged != null){
+				// 	localStorage.removeItem("userLogged");
+				// }
 			},
 
 			
 			isLogged : () => {
-				if(localStorage.getItem("token")){
-					setStore({isLogged: true})
-					setStore({user_id: localStorage.getItem("user_id")})
-					setStore({isPharmacy: localStorage.getItem("is_pharmacy")})
+				const userLogged = localStorage.getItem("userLogged");
+				if(userLogged != null){
+					if(userLogged.is_pharmacy || !userLogged.is_pharmacy){
+						setStore({
+							isLoggedIn: true,
+							user_id: userLogged.user_id,
+							email: userLogged.email,
+							isPharmacy: userLogged.is_pharmacy,		
+							pharmacy_id: userLogged.pharmacy_id,
+							patient_id: userLogged.patient_id
+						});
+					}else{
+						console.log("No eres ni pharmacy ni paciente, entonces, qué eres?");
+					}
+
 
 				}
+
+				// if(localStorage.getItem("token")){
+				// 	setStore({isLogged: true})
+				// 	setStore({user_id: localStorage.getItem("user_id")})
+				// 	setStore({isPharmacy: localStorage.getItem("is_pharmacy")})
+
+				// }
 			},
 
 			setUrlLogin: (medicineId) => {
@@ -303,12 +333,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ medicinesPsum: updatedMedicinesPsum });
 				
 				const url = `${process.env.BACKEND_URL}/api/pharmacies/availability`; //removed: /${pharmacyId}/medicines/${medicineId}/availability
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: "PUT",
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`
+						'Authorization': `Bearer ${userLogged.token}`
 					},
 					body: JSON.stringify({ availability_status: availability })
 				};
@@ -331,13 +361,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const pharmacyId = selectedPharmacy.id;
 
 				const url = `${process.env.BACKEND_URL}/api/orders/`;
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
+				console.log("Creando reserva -> ",userLogged.token);
 				
 				const options = {
 					method: "POST",
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`
+						'Authorization': `Bearer ${userLogged.token}`
 					},
 					body: JSON.stringify({ 
 						medicine_id: medicineId, 
@@ -370,11 +401,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			getUserOrders: async () => {
 				const url = `${process.env.BACKEND_URL}/api/orders`;
-				const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+				const userLogged = JSON.parse(localStorage.getItem('userLogged')); // Retrieve the token from localStorage
+				console.log("Esto es el userLogged -> ",userLogged);
+				console.log("Esto es el token de userLogged -> ",userLogged.token);
 				const options = {
 					method: "GET",
 					headers: {
-						'Authorization': `Bearer ${token}`, // Include the JWT token in the authorization header
+						'Authorization': `Bearer ${userLogged.token}`, // Include the JWT token in the authorization header
 						'Content-Type': 'application/json'
 					  },
 				};
@@ -402,11 +435,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//const pharmacyId = getStore().user_id;
 				//const pharmacyId = 1
 				const url = `${process.env.BACKEND_URL}/api/orders/pharmacy/`;
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: "GET",
 					headers: {
-						'Authorization': `Bearer ${token}`,
+						'Authorization': `Bearer ${userLogged.token}`,
 						'Content-Type': 'application/json'
 					},
 				};
@@ -447,12 +480,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				console.log(`Sending ${method} request to ${url}`);
 
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: method,
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`,
+						'Authorization': `Bearer ${userLogged.token}`,
 					},
 				};
 				console.log('Request options:', options);
@@ -470,6 +503,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				
 			},
+
+			getPatientId: async (user_id) => {
+				const url = `${process.env.BACKEND_URL}/api/getPatientById/${user_id}`;
+				const options = {
+					method: "GET",
+				};
+				const response = await fetch(url, options);
+				if(response.ok){
+					const data = await response.json();
+					console.log("ESTO QUE ES -> ",data);
+					setStore({patient_id: data.patient_id});
+				}else{
+					console.log("Error fetching the patient ID");
+				}
+			},
+
+			
+			getPharmacyId: async (user_id) => {
+				const url = `${process.env.BACKEND_URL}/api/getPharmacyById/${user_id}`;
+				const options = {
+					method: "GET",
+				};
+				const response = await fetch(url, options);
+		
+				if(response.ok){
+					const data = await response.json();
+					setStore({pharmacy_id: data.pharmacy_id});
+				}else{
+					console.log("Error fetching the pharmacy ID");
+				}
+			}
 			
 		}
 	};
