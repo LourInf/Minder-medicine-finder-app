@@ -609,6 +609,44 @@ def getPatientById(user_id):
     except Exception as e:
         print(str(e))
         return jsonify({"message": "Error during the search of the patient"}),500    
+    
+    
+    
+    
+       
+@api.route('/getPharmacyById/<int:user_id>', methods=['GET'])
+def getPharmacyById(user_id):
+    try:
+        # patient = Patients.query.get(id) 
+        pharmacy = Pharmacies.query.filter_by(users_id=user_id).first()
+        
+        
+        if pharmacy:
+            
+            pharmacy_info = {
+
+                "pharmacy_id": pharmacy.id,
+                "pharmacy_user_id": pharmacy.users.id,
+                "pharmacy_name": pharmacy.pharmacy_name,
+                "pharmacy_SOE": pharmacy.SOE_pharmacy_number,
+                "pharmacy_address": pharmacy.address,
+                "pharmacy_phone": pharmacy.phone,
+                "pharmacy_24H": pharmacy.is_24h,
+                "pharmacy_working_hours": pharmacy.is_24h,
+                "pharmacy_orders": pharmacy.orders
+                
+            }
+
+            return jsonify(pharmacy_info), 200
+        
+        else:
+            return jsonify({"message": "Id pharmacy not found"}), 404
+
+        
+    except Exception as e:
+        print(str(e))
+        return jsonify({"message": "Error during the search of the pharmacy"}),500    
+
 
 
 @api.route('/getUser/<string:email>', methods=['GET'])
