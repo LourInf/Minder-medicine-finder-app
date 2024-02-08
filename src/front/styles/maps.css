@@ -3,13 +3,10 @@ h1 {
     font-family: 'Minderfont', sans-serif;
     color: aliceblue;
 }
-
-
 h2 {
+    font-family: 'Minderfont', sans-serif;
     color: white;
 }
-
-
 .transparent-button {
     background-color: transparent;
     border-color:transparent;
@@ -17,8 +14,7 @@ h2 {
 .custom-transparent {
     background-color: transparent;
 }
-
-
 .custom-transparentcard {
     background-color:aliceblue
 }
+

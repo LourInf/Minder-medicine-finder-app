@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
+import "../../styles/maps.css"
 import { Context } from '../store/appContext.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import "../../styles/maps.css"
 import minderlogo from "../../img/minderlogoimage.png";
 
 ///-------DONE---------
@@ -80,15 +80,14 @@ export const Maps = () => {
   };
   ///-------CHECKING---------
 
-
-
-
-
-
   return (
     <div className="text-center">
-      <h1>Encuentra tu Farmacia más cercana</h1>
+      <h1 className="form-range">Encuentra tu Farmacia más cercana</h1>
       <img src={minderlogo} alt="Map Icon" width={300} />
+      {/* <p>¿Buscas tu Farmacia de confianza?</p>
+      <div>
+      <span>Haz click </span><Link to="/findyourpharmacy">aquí</Link>
+      </div> */}
       <div className="container justify-content-center d-flex">
         <div>
           <input
@@ -99,7 +98,7 @@ export const Maps = () => {
             onChange={handleCityChange}
             onKeyPress={handleKeyPress}
           />
-          <button className="m-1 py-1 transparent-button p-5 border-info" onClick={handlePharmacies}>
+          <button className="m-1 py-1 btn transparent-button p-5 border-info" onClick={handlePharmacies}>
           <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
@@ -125,20 +124,20 @@ export const Maps = () => {
             {
               checked ?
                 item.opening_hours.open_now ?
-                  <div className="container w-50 custom-transparentcard" key={index}>
-                    <h2 className="text-success">{item.name}</h2>
+                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#84f4c5", }}>
+                    <h2 className=""  style={{ color: "#00a4ba", }}>{item.name}</h2>
                     {item.opening_hours && (
                       <p>Abierto Ahora</p>
                     )}
                     <p>Dirección: {item.vicinity}</p>
                     <p>Reseñas: {item.rating}</p>
-                    <button className="p-2 m-2 transparent-button" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
+                    <button className="p-2 m-2 btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
                   </div>
                   : null
                 :
                 // Si el filtro checked es false, entonces me muestras todas las farmacias.
-                <div className="container w-50 custom-transparentcard" key={index}>
-                  <h2 className="text-success">{item.name}</h2>
+                <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#84f4c5"}}>
+                  <h2 className=""style={{ color: "#00a4ba", }}>{item.name}</h2>
                   {/* Si open_now es true, entonces estableces "Abierto" si no "Cerrado" */}
                   {item.opening_hours && (
                     <p>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>

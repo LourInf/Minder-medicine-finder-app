@@ -9,7 +9,7 @@ export const Footer = () => {
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<footer className="text-center style={{ backgroundColor: 'transparent' }}">
+		<footer className="text-center">
 			<Container className="p-4">
 				<section className="mb-4">
 					<Button variant="outline-light" className="m-1" as={Link} to="https://www.facebook.com/4GeeksAcademyES/" role="button">
