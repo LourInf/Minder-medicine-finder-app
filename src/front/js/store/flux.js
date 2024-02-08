@@ -529,6 +529,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		
 				if(response.ok){
 					const data = await response.json();
+					console.log("ESTO QUE ES de getPharmacyId -> ",data);
 					setStore({pharmacy_id: data.pharmacy_id});
 				}else{
 					console.log("Error fetching the pharmacy ID");
