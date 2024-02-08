@@ -7,9 +7,10 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
-import logoImage from "../../img/minderlogoimage.png";
+import logoImage from "../../img/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+
 
 
 
@@ -39,7 +40,7 @@ export const NavigationBar = () => {
         }else{
 			const register = document.getElementById("register");
 			register.innerHTML = "Nuevo usuario";
-			register.className = "btn btn-outline-secondary me-2";
+			// register.className = "btn btn-outline-light me-2";
 			setRegisterOrHome("/register");
 		}
 		// else{
@@ -52,16 +53,16 @@ export const NavigationBar = () => {
 
 
 	return (
-		<Navbar expand="lg" className="bg-body-tertiary mt-3 mb-5">
+		<Navbar expand="lg" className="bg-body-tertiary mt-3 mb-3">
 		  <Container className="d-flex flex-row">
 		  <Link to="/"><Navbar.Brand>
             <img
               alt=""
               src={logoImage}
-              width="40"
-              height="40"
+              width="100"
+              height="100"
               className="d-inline-block align-top"
-			/>{' '}Minder
+			/>{' '}
           </Navbar.Brand> </Link>
 		  	<div className="d-flex justify-content-center">
 			<Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -87,10 +88,10 @@ export const NavigationBar = () => {
 			</div>
 			<div className="d-flex justify-content-end">
 			<Link to={registerOrHome}>
-				<Button variant="outline-secondary" id="register" className="me-2">Nuevo usuario</Button>
+				<Button variant="outline-light" id="register" className="me-2 border-light">Nuevo usuario</Button>
 			</Link>
 			<Link to="/login">
-				<Button variant="secondary"><FontAwesomeIcon icon = { faUser } className=""/></Button>
+				<Button variant="outline-light"><FontAwesomeIcon icon = { faUser } style={{color: "#9ef6ac",}} className="" /></Button>
 			</Link>
 			</div>
 		  </Container>

@@ -53,7 +53,7 @@ export const Maps = () => {
       } else {
         handlePharmacies();
       }
-    }
+    } 
   };
 ///-------where to put it???---------
 
@@ -88,7 +88,7 @@ export const Maps = () => {
   return (
     <div className="text-center">
       <h1>Encuentra tu Farmacia más cercana</h1>
-      <img src={minderlogo} alt="Map Icon" />
+      <img src={minderlogo} alt="Map Icon" width={300} />
       <div className="container justify-content-center d-flex">
         <div>
           <input
@@ -116,7 +116,7 @@ export const Maps = () => {
       <div className="custom-transparent">
         {/* Mostrar mensaje si no se encuentran las farmacias */}
         {noResults ? (
-          <h2>No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</h2>
+          <p>No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</p>
         ) : (
           // Mostrar Farmacias - Cambiamos el map a currentResults para que muestre los 5 resultados y no todos como hacía anteriormente.
           currentResults.map((item, index) =>
