@@ -1,15 +1,17 @@
 import React from "react";
 import "../../styles/home.css";
 import { SearchBar } from ".././component/SearchBar.jsx";
-import { Container } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
+import minder from "../../img/minder.png"
 
 
 
 export const Home = () => {
 
 	return (
-		<Container className="text-center mt-5 main-content-container">
-			<h1>Busca medicamentos cerca de ti</h1>
+		<Container className="text-center mt-3 main-content-container">
+			<img src={minder} alt="minderletra" />
+			<h1 className="text-light-50">Busca medicamentos cerca de ti</h1>
 			<SearchBar />
     	</Container>
 	);

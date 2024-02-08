@@ -1,4 +1,11 @@
-/* body {
-    background: rgb(157,63,251);
-    background: radial-gradient(circle, rgba(157,63,251,1) 0%, rgba(149,251,248,1) 100%);
-} */
+font-face {
+    font-family: 'MinderFont';
+    src: ('.././src/front/styles/fonts/Chalet.ttf') format('truetype'); 
+}
+body, header, footer {
+    background: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #6ce9dc, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
+}
+h1 {
+    font-family: 'Minderfont', sans-serif;
+    color: aliceblue;
+}

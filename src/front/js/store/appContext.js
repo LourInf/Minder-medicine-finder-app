@@ -26,7 +26,7 @@ const injectContext = (PassedComponent) => {
 		useEffect(() => {
 
 			// state.actions.getMedicinesPsum();
-			state.actions.getPharmacies();
+			// state.actions.getPharmacies();
 			
 			state.actions.getMessage();  // Calling this function from the flux.js actions
 			state.actions.isLogged();
