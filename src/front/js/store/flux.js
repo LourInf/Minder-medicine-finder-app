@@ -23,7 +23,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			urlPostLogin:"/",
 			selectedCityName: "",
 			orderConfirmationDetails:[],
-			notification:null
+			notification:null,
+			medicinesAvailability:[],
+			medicinesAll:[]
 
 		},
 		
@@ -291,40 +293,97 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				},
 			
-			updateMedicineAvailability : async (medicineId, availability) => {  //NOT WORKING- TO BE CORRECTED!
-				const store = getStore();
-				// Update local store
-				const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {
-					if (medicine.id === medicineId) {
-						return { ...medicine, is_available: availability };
-					}
-					return medicine;
-				});
-				setStore({ medicinesPsum: updatedMedicinesPsum });
-				
-				const url = `${process.env.BACKEND_URL}/api/pharmacies/availability`; //removed: /${pharmacyId}/medicines/${medicineId}/availability
-				const token = localStorage.getItem('token');
+			
+			getMedicinesAllDb: async () => {
+				const url = `${process.env.BACKEND_URL}/api/medicines`;
 				const options = {
-					method: "PUT",
+					method: "GET",
+					headers: {
+					'Content-Type': 'application/json',
+					},
+				};
+				try {
+					const response = await fetch(url, options);
+					  if (response.ok) {
+					const data = await response.json();
+					setStore({
+						medicinesAll: [data.results.medicines],
+					});
+					} else {
+					console.error("Failed to fetch all medicines.");
+					}
+				} catch (error) {
+				  console.error("Error fetching all medicines:", error);
+				}
+				},
+
+			getMedicineAvailabilityForPharmacy: async () => {
+				const token = localStorage.getItem('token');
+				// const medicinesPsumIds = store.medicinesPsum.map(medicine => medicine.id); // Extract IDs of medicines with distribution problems
+				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`; 
+				const options = {
+					method: "GET",
 					headers: {
 						'Content-Type': 'application/json',
 						'Authorization': `Bearer ${token}`
 					},
-					body: JSON.stringify({ availability_status: availability })
 				};
 				const response = await fetch(url, options);
-					if (response.ok) {
-						const data = await response.json();
-						console.log(data);
-						 alert("La disponibilidad se ha modificado correctamente!");
+				if (response.ok) {
+					const data = await response.json();
+					console.log(data)
+				  
+						// const filteredAvailability = data.availability.filter(avail => medicinesPsumIds.includes(avail.medicine_id));
+						// setStore({ ...store, filteredMedicineAvailability: filteredAvailability });
+						// console.log("Filtered availability for medicines with distribution problems:", filteredAvailability);
+
+						
+						setStore({
+							medicinesAvailability: data.availability,
+						});
 					} else {
-						const errorData = await response.json();
-						const errorMessage = errorData.message || "Error al editar la disponibilidad del medicamento. Por favor, pruebe de nuevo";
-						console.error(errorMessage);
-						// Error notification
-						alert(errorMessage);
+						console.log("Medicamento no encontrado");
+						setStore({
+							medicinesPsum: [],
+						});
 					}
 				},
+	
+
+			// updateMedicineAvailability : async (medicineId, availability) => {  // update availability after click on toggle
+			// 	const store = getStore();
+			// 	// Update local store
+			// 	const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {  
+			// 		if (medicine.id === medicineId) {
+			// 			return { ...medicine, is_available: availability };
+			// 		}
+			// 		return medicine;
+			// 	});
+			// 	setStore({ medicinesPsum: updatedMedicinesPsum });
+				
+			// 	const url = `${process.env.BACKEND_URL}/api/pharmacies/<int:pharmacy_id>/medicines/${medicineId}`; 
+			// 	const token = localStorage.getItem('token');
+			// 	const options = {
+			// 		method: "PUT",
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			'Authorization': `Bearer ${token}`
+			// 		},
+			// 		body: JSON.stringify({ availability_status: availability })
+			// 	};
+			// 	const response = await fetch(url, options);
+			// 		if (response.ok) {
+			// 			const data = await response.json();
+			// 			console.log(data);
+			// 			 alert("La disponibilidad se ha modificado correctamente!");
+			// 		} else {
+			// 			const errorData = await response.json();
+			// 			const errorMessage = errorData.message || "Error al editar la disponibilidad del medicamento. Por favor, pruebe de nuevo";
+			// 			console.error(errorMessage);
+			// 			// Error notification
+			// 			alert(errorMessage);
+			// 		}
+			// 	},
 
 			createOrderReservation: async (medicineId) => {
 				const { selectedPharmacy } = getStore(); 

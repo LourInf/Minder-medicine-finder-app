@@ -182,20 +182,20 @@ def refresh_medicines():
 #     response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
 #     return jsonify(response_body), 200
 
-# # Enpoint to get all medicines from our db  --> FOR DEBUGGING ONLY <--
-# @api.route('/medicines', methods=['GET'])
-# def get_all_medicines():
-#     response_body = {}
-#     results = {}
-#     medicines = db.session.execute(select(Medicines)).scalars().all()
-#     # Serialize the data and set it in the results dictionary
-#     medicines_list = [medicine.serialize() for medicine in medicines]
-#     results['medicines'] = medicines_list
-#     response_body['results'] = results
-#     return jsonify(response_body), 200
+# Enpoint to get all medicines from our db  (=> Actions: getMedicinesAllDb)
+@api.route('/medicines', methods=['GET'])
+def get_all_medicines():
+    response_body = {}
+    results = {}
+    medicines = db.session.execute(select(Medicines)).scalars().all()
+    # Serialize the data and set it in the results dictionary
+    medicines_list = [medicine.serialize() for medicine in medicines]
+    results['medicines'] = medicines_list
+    response_body['results'] = results
+    return jsonify(response_body), 200
 
 
-# Enpoint to search medicines by name from our db (=> actions: getMedicines)
+# Enpoint to search medicines by name from our db (=> Actions: getMedicines)
 @api.route('/medicines/search', methods=['GET'])
 def search_medicines():
     response_body = {}
@@ -422,15 +422,14 @@ def get_pharmacy_orders():
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     # Get all orders that are placed to this pharmacy
-    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id  # TODO: Update current_user_id to not hardcoded (check also if .id is ok & jwt working properly)
+    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
     orders = db.session.query(Orders).join(Pharmacies, Orders.pharmacy_id == Pharmacies.id).filter(Pharmacies.id == current_user_pharmacy_id).all()
     if not orders:
         response_body['message'] = 'No tiene pedidos'
         return response_body
-    # Utilize the serialize method to prepare the data
+    # serialize
     orders_data = [order.serialize() for order in orders]
     for order_data in orders_data:
-        # Assuming each order has a patient, medicine, and pharmacy associated, serialize those as well
         order = Orders.query.get(order_data['id'])
         order_data['patient'] = order.patient.serialize() if order.patient else None
         order_data['pharmacy'] = order.pharmacy.serialize() if order.pharmacy else None
@@ -438,32 +437,23 @@ def get_pharmacy_orders():
     return jsonify(orders_data), 200
     
 
-# Endpoint to get info on availability
+# Endpoint to get info on availability (all medicines, all pharmacies)
 @api.route('/availability', methods=['GET','POST'])
 def handle_availability():
     if request.method == 'GET':
         response_body = {}
         results = {}
-    #     availability_records = Availability.query.all()
-    # if availability_records:
-    #     # Serialize the records if available
-    #     serialized_records = [record.serialize() for record in availability_records]
-    #     results['availability'] = serialized_records
-    #     response_body['message'] = 'Availability List'
-    #     response_body['results'] = results
-    # else:
-    #     # No records found
-    #     response_body['message'] = 'No availability records found.'
-    # return jsonify(response_body), 200
-
-        availability = db.session.execute(select(Availability)).scalars().all() # DOESN'T WORK (the old way, commented one, works. CHECK WHY)
-        if availability:
-            results ['availability'] = [row.serialize() for row in availability]
-            response_body['message'] = 'Availability List'
-            return response_body, 200
-        else:
-            response_body['message'] = 'No hay informacion de disponibilidad.'
-            return jsonify(response_body), 200
+        availability_records = Availability.query.all()
+    if availability_records:
+        # Serialize the records if available
+        serialized_records = [record.serialize() for record in availability_records]
+        results['availability'] = serialized_records
+        response_body['message'] = 'Availability List'
+        response_body['results'] = results
+    else:
+        # No records found
+        response_body['message'] = 'No availability records found.'
+        return jsonify(response_body), 200
 
     if request.method == 'POST':
         response_body = {}
@@ -516,24 +506,52 @@ def get_pharmacies_available_medicine_city():
         return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento en esta ciudad"}), 404
 
 
-# Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy    (=> Actions: updateMedicineAvailability)
-@api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>/availability', methods=['GET', 'PUT'])
-def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
-    if request.method == 'GET':
-        response_body = {}
-        results = {}
-		# Fetch the availability record for the specified pharmacy and medicine
-        medicine_available = db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
-        if not medicine_available:
-            response_body['message'] = 'Esta disponibilidad no existe'
-            return response_body, 404
-		# Serialize and return the retrieved medicine_available
-        results['medicine_available'] = medicine_available.serialize()
-        response_body['message'] = "Disponibilidad de esta medicina seleccionada"
-        response_body['results'] = results
-        return jsonify(response_body), 200
+# # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy    (=> Actions: updateMedicineAvailability)
+# @api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>', methods=['GET', 'PUT'])
+# def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
+#     if request.method == 'GET':
+#         response_body = {}
+#         results = {}
+# 		# Fetch the availability record for the specified pharmacy and medicine
+#         medicine_available = db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
+#         if not medicine_available:
+#             response_body['message'] = 'Esta disponibilidad no existe'
+#             return response_body, 404
+# 		# Serialize and return the retrieved medicine_available
+#         results['medicine_available'] = medicine_available.serialize()
+#         response_body['message'] = "Disponibilidad de esta medicina seleccionada"
+#         response_body['results'] = results
+#         return jsonify(response_body), 200
 
-    if request.method == 'PUT':
+# Endpoint get availability records for a specific pharmacy    (=> Actions: getMedicineAvailabilityForPharmacy)
+@api.route('/pharmacy/availability', methods=['GET'])
+@jwt_required()
+def get_pharmacy_specific_availability():
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
+    # Get the pharmacy id:
+    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id  
+    if not current_user_pharmacy_id:
+        return jsonify({"message": "Farmacia no encontrada."}), 404
+    # Get availability records specifically for this pharmacy
+    availability_records = db.session.query(Availability).filter(Availability.pharmacy_id == current_user_pharmacy_id).all()
+    if availability_records:
+        # Serialize
+        serialized_records = [record.serialize() for record in availability_records]
+        return jsonify({
+            "message": "Lista de medicamentos y su disponibilidad para esa farmacia",
+            "availability": serialized_records
+        }), 200
+    else:
+        # No records found for this pharmacy
+        return jsonify({"message": "No hay informacion sobre la disponibilidad para esta farmacia."
+        }), 200
+    
+
+@api.route('/pharmacy/availability', methods=['PUT'])           # IN PROGRESS - TO BE DEFINED
+@jwt_required()
+def update_pharmacy_specific_availability():
         response_body = {}
         results = {}
         # Update availability record for the specified pharmacy and medicine attributes with data from the request
