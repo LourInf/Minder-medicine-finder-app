@@ -22,6 +22,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			user_id: "",
 			pharmacy_id: "",
 			patient_id: "",
+			email: "",
 			urlPostLogin:"/",
 			selectedCityName: "",
 			orderConfirmationDetails:[],
@@ -332,12 +333,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ medicinesPsum: updatedMedicinesPsum });
 				
 				const url = `${process.env.BACKEND_URL}/api/pharmacies/availability`; //removed: /${pharmacyId}/medicines/${medicineId}/availability
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: "PUT",
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`
+						'Authorization': `Bearer ${userLogged.token}`
 					},
 					body: JSON.stringify({ availability_status: availability })
 				};
@@ -360,13 +361,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const pharmacyId = selectedPharmacy.id;
 
 				const url = `${process.env.BACKEND_URL}/api/orders/`;
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
+				console.log("Creando reserva -> ",userLogged.token);
 				
 				const options = {
 					method: "POST",
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`
+						'Authorization': `Bearer ${userLogged.token}`
 					},
 					body: JSON.stringify({ 
 						medicine_id: medicineId, 
@@ -399,11 +401,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			getUserOrders: async () => {
 				const url = `${process.env.BACKEND_URL}/api/orders`;
-				const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+				const userLogged = JSON.parse(localStorage.getItem('userLogged')); // Retrieve the token from localStorage
+				console.log("Esto es el userLogged -> ",userLogged);
+				console.log("Esto es el token de userLogged -> ",userLogged.token);
 				const options = {
 					method: "GET",
 					headers: {
-						'Authorization': `Bearer ${token}`, // Include the JWT token in the authorization header
+						'Authorization': `Bearer ${userLogged.token}`, // Include the JWT token in the authorization header
 						'Content-Type': 'application/json'
 					  },
 				};
@@ -431,11 +435,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//const pharmacyId = getStore().user_id;
 				//const pharmacyId = 1
 				const url = `${process.env.BACKEND_URL}/api/orders/pharmacy/`;
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: "GET",
 					headers: {
-						'Authorization': `Bearer ${token}`,
+						'Authorization': `Bearer ${userLogged.token}`,
 						'Content-Type': 'application/json'
 					},
 				};
@@ -476,12 +480,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				console.log(`Sending ${method} request to ${url}`);
 
-				const token = localStorage.getItem('token');
+				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				const options = {
 					method: method,
 					headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${token}`,
+						'Authorization': `Bearer ${userLogged.token}`,
 					},
 				};
 				console.log('Request options:', options);

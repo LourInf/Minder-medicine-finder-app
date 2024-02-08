@@ -60,7 +60,7 @@ export const Login = () => {
                             "is_pharmacy": data.is_pharmacy,
                             "expire": currentTime.getTime() + 3600000,
                         };
-                        console.log("Esto es userLogged -> ",userLogged)
+                        console.log("Esto es userLogged desde Login -> ",userLogged)
 
 
                     }else{               //  patient
@@ -78,7 +78,7 @@ export const Login = () => {
                             "is_pharmacy": data.is_pharmacy,
                             "expire": currentTime.getTime() + 3600000,
                         };
-                        console.log("Esto es userLogged -> ",userLogged)
+                        console.log("Esto es userLogged desde Login -> ",userLogged)
 
 
                     }
