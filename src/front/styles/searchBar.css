@@ -78,3 +78,7 @@
 .input-group .form-control {
   padding-right: 2.5rem; /* to adjust the input padding to make space for the x' */
 }
+
+.text-psum{
+  color: var(--input);
+}
