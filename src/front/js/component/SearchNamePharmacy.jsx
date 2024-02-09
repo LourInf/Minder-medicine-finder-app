@@ -55,11 +55,11 @@ export const SearchNamePharmacy = () => {
                     <div className="mask" style={{ backgroundColor: 'rgba(251, 251, 251, 0.15)' }}>Continua</div>
                   </Link> */}
                 </div>
-                <div className="card-body p-2" style={{ background: "#84f4c5", }}>
-                  <h5 className="card-title">{item.description}</h5>
-                  <h7 className="card-title">{item.terms[2].value}</h7>
+                <div className="card-body p-2" style={{ background: "#007085", }}>
+                  <h5 className="card-title text-light">{item.description}</h5>
+                  <h7 className="card-title text-light">{item.terms[2].value}</h7>
                   {/* <p>{item.place_id}</p> */}
-                  <p className="card-text"></p>
+                  <p className="card-text text-light"></p>
                   {/* <button className="btn btn-primary" data-mdb-ripple-init> Continua para Registrarte</button> */}
                   <Link to={`/register/${item.place_id}`} style={{ color: "white", }}> {/*Formulario de login in, enviar id para poder rellenar campos(?)*/}
                     <div className="mask">Continua para registrarte</div>
