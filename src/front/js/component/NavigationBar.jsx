@@ -3,23 +3,21 @@ import { Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import logoImage from "../../img/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
+import "../../styles/navigationBar.css"
 
 
 
 
 export const NavigationBar = () => {
-
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
 	const [ registerOrHome, setRegisterOrHome ] = useState("/register");
-
 
 
 	useEffect(() => {
@@ -51,6 +49,12 @@ export const NavigationBar = () => {
 	}, [navigate]);
 
 
+	const handleLogout = () => {
+		actions.logout(); 
+		navigate("/login", {replace: true}); 
+	  }
+	  
+
 
 	return (
 		<Navbar expand="lg" className="bg-body-tertiary mt-3 mb-3">
@@ -59,8 +63,8 @@ export const NavigationBar = () => {
             <img
               alt=""
               src={logoImage}
-              width="100"
-              height="100"
+              width="130"
+              height="130"
               className="d-inline-block align-top"
 			/>{' '}
           </Navbar.Brand> </Link>
@@ -72,26 +76,16 @@ export const NavigationBar = () => {
 				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>
 				<Nav.Link as={Link} to="/maps">Maps</Nav.Link>
-				{/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-				  <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-				  <NavDropdown.Item href="#action/3.2">
-					Another action
-				  </NavDropdown.Item>
-				  <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-				  <NavDropdown.Divider />
-				  <NavDropdown.Item href="#action/3.4">
-					Separated link
-				  </NavDropdown.Item>
-				</NavDropdown> */}
 			  </Nav>
 			</Navbar.Collapse>
 			</div>
 			<div className="d-flex justify-content-end">
+			<button id="logoutBtn" className="btn btn-outline-danger me-3" onClick={handleLogout}> <FontAwesomeIcon icon={faSignOutAlt} /></button>
 			<Link to={registerOrHome}>
-				<Button variant="outline-light" id="register" className="me-2 border-light">Nuevo usuario</Button>
+				<Button variant="outline-light" id="register" className="btn-register border-light me-2">Nuevo usuario</Button>
 			</Link>
 			<Link to="/login">
-				<Button variant="outline-light"><FontAwesomeIcon icon = { faUser } style={{color: "#9ef6ac",}} className="" /></Button>
+				<Button variant="outline-light" className="btn-login"><FontAwesomeIcon icon = { faUser } /></Button>
 			</Link>
 			</div>
 		  </Container>

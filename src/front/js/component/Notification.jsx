@@ -17,7 +17,7 @@ export const Notification = () => {
 
   return (
       store.notification ? (
-          <Alert variant="warning" onClose={() => actions.clearNotification()} dismissible>
+          <Alert variant="warning" className="m-5" onClose={() => actions.clearNotification()} dismissible>
               {`${store.notification.type}: ${store.notification.message}`}
           </Alert>
       ) : null

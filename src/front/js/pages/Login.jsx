@@ -13,7 +13,7 @@ export const Login = () => {
     // redirect users based on their role if already logged in:
     useEffect(() => {
         if (store.isLoggedIn) {
-            let redirectTo = store.isPharmacy ? '/pharmacy' : '/patient';
+            let redirectTo = store.isPharmacy ? '/pharmacy/reservations' : '/';
             redirectTo = store.urlPostLogin.includes("result") ? store.urlPostLogin : redirectTo
             navigate(redirectTo);
             actions.resetUrlPostLogin();

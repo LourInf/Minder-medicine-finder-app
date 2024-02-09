@@ -37,20 +37,9 @@ export const PatientDashboard = () => {
 
 
 
-const handleLogout = () => {
-  actions.logout(); 
-  navigate("/login", {replace: true}); 
-}
-
-
-
 return (
-    <div className="">
-      <div className="d-flex justify-content-center text-center m-2">
-      <h1 className="p-2">Patient Dashboard</h1>  
-      <button id="logoutBtn" className="btn btn-danger m-3" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} />Log out</button>
-      </div>
-  
+    <div>
+      <h1>Patient Dashboard</h1>  
       <Nav variant="tabs" defaultActiveKey="/patient/orders">
         <LinkContainer to="/patient/orders"> 
           <Nav.Link className="border-light">Orders</Nav.Link>
