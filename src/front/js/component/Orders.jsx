@@ -7,6 +7,8 @@ export const Orders = () => {
   const { store, actions } = useContext(Context);
   const [filter, setFilter] = useState('');
 
+  actions.removeUnnecessaryItems();
+
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Pendiente':

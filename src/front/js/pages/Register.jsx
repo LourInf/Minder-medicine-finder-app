@@ -30,6 +30,9 @@ export const Register = () => {
 
 
     const checkExistingEmail = async (emailToCheck) => {
+        const { store, actions } = useContext(Context);
+
+        actions.removeUnnecessaryItems();
 
         console.log(`Qué es email -> ${emailToCheck}`);
 

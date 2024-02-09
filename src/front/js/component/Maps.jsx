@@ -18,16 +18,18 @@ export const Maps = () => {
   const [checked, setChecked] = useState(false)
   const navigate = useNavigate();
 
+	actions.removeUnnecessaryItems();
+
   const handleCityChange = (e) => {
     const newCity = e.target.value;
     setCity(newCity); // Update local state to reflect input
     actions.setSelectedCityName(newCity); // Store the city name in the Flux store
   };
-///-------DONE---------
-  
+  ///-------DONE---------
 
 
-///-------CHECKING---------
+
+  ///-------CHECKING---------
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
     if (store.pharmacies.length === 0) {
@@ -39,12 +41,12 @@ export const Maps = () => {
       // console.log('pharmacyFields:', pharmacy_fields);
       actions.getPharmaciesDetails(pharmacy_fields, currentPage);
     }
-  ///-------CHECKING---------
+    ///-------CHECKING---------
 
 
 
 
-///-------where to put it???---------
+    ///-------where to put it???---------
   };
   // Activar botón "enter"
   const handleKeyPress = (e) => {
@@ -53,14 +55,14 @@ export const Maps = () => {
       } else {
         handlePharmacies();
       }
-    } 
+    }
   };
-///-------where to put it???---------
+  ///-------where to put it???---------
 
 
 
 
-///-------CHECKING---------
+  ///-------CHECKING---------
   // Call getPharmaciesDetails function sennding the place_id (parameter)
   const handleOnClick = (place_id) => {
     actions.getPharmaciesDetails(place_id);
@@ -69,7 +71,7 @@ export const Maps = () => {
   }
 
 
-// To Pagination
+  // To Pagination
   // Index last y first calculan los indices del primer y último resultado. 
   const indexLastResult = currentPage * resultsPerPage;
   const indexFirstResult = indexLastResult - resultsPerPage; // Current es la actual. resultsPerPage es la cantidad: useState(5);
@@ -99,7 +101,7 @@ export const Maps = () => {
             onKeyPress={handleKeyPress}
           />
           <button className="m-1 py-1 btn transparent-button p-5 border-info" onClick={handlePharmacies}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
         </div>
       </div>
@@ -119,38 +121,38 @@ export const Maps = () => {
         ) : (
           // Mostrar Farmacias - Cambiamos el map a currentResults para que muestre los 5 resultados y no todos como hacía anteriormente.
           currentResults.map((item, index) =>
-          <div>
-            {/* Establecemos la lógica del filtro, si checked es true y opening_hours.open_now es true me muestras las que están abiertas*/}
-            {
-              checked ?
-                item.opening_hours.open_now ?
-                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085", }}>
-                    <h2 className=""  style={{ color: "##00bab9", }}>{item.name}</h2>
+            <div>
+              {/* Establecemos la lógica del filtro, si checked es true y opening_hours.open_now es true me muestras las que están abiertas*/}
+              {
+                checked ?
+                  item.opening_hours.open_now ?
+                    <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085", }}>
+                      <h2 className="" style={{ color: "##00bab9", }}>{item.name}</h2>
+                      {item.opening_hours && (
+                        <p className='text-light'>Abierto Ahora</p>
+                      )}
+                      <p className='text-light'>Dirección: {item.vicinity}</p>
+                      <p className='text-light'>Reseñas: {item.rating}</p>
+                      <button className="p-2 m-2 btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
+                    </div>
+                    : null
+                  :
+                  // Si el filtro checked es false, entonces me muestras todas las farmacias.
+                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085" }}>
+                    <h2 className="" style={{ color: "##00bab9", }}>{item.name}</h2>
+                    {/* Si open_now es true, entonces estableces "Abierto" si no "Cerrado" */}
                     {item.opening_hours && (
-                      <p className='text-light'>Abierto Ahora</p>
+                      <p className='text-light'>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
                     )}
                     <p className='text-light'>Dirección: {item.vicinity}</p>
                     <p className='text-light'>Reseñas: {item.rating}</p>
-                    <button className="p-2 m-2 btn btn-light" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
+                    <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
                   </div>
-                  : null
-                :
-                // Si el filtro checked es false, entonces me muestras todas las farmacias.
-                <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085"}}>
-                  <h2 className=""style={{ color: "##00bab9", }}>{item.name}</h2>
-                  {/* Si open_now es true, entonces estableces "Abierto" si no "Cerrado" */}
-                  {item.opening_hours && (
-                    <p className='text-light'>{item.opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
-                  )}
-                  <p className='text-light'>Dirección: {item.vicinity}</p>
-                  <p className='text-light'>Reseñas: {item.rating}</p>
-                  <button className="btn btn-light p-2 m-2" onClick={() => handleOnClick(item.place_id)}>Datos de Contacto</button>
-                </div>
-            }
-          </div>
-        )
-      )}     
- {/* Cambiar de página */}
+              }
+            </div>
+          )
+        )}
+        {/* Cambiar de página */}
         {/* Si el store es mayor que resultsperpage(establecido en 5) */}
         {store.pharmacies.length > resultsPerPage && (
           <ul className="pagination justify-content-center p-2 m-2">

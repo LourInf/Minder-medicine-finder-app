@@ -82,7 +82,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			logout: () => {
 				// setStore({isLoggedIn: false});
-				localStorage.removeItem("userLogged");		//	Este item contiene todos los datos necesarios, no es necesario crear nuevos items
+				if(localStorage.getItem("userLogged")){
+					localStorage.removeItem("userLogged");		//	Este item contiene los datos del usuario
+				}
+				if(localStorage.getItem("orders")){
+					localStorage.removeItem("orders"); 
+				}
+				if(localStorage.getItem("medicines")){
+					localStorage.removeItem("medicines"); 
+				}
+				if(localStorage.getItem("selectedMedicine")){
+					localStorage.removeItem("selectedMedicine"); 
+				}
+				if(localStorage.getItem("selectedCityName")){
+					localStorage.removeItem("selectedCityName"); 
+				}
+				if(localStorage.getItem("pharmacies")){
+					localStorage.removeItem("pharmacies"); 
+				}
+				if(localStorage.getItem("ordersToPharmacy")){
+					localStorage.removeItem("ordersToPharmacy"); 
+				}
 				setStore({
 					isLoggedIn: false,
 					user_id: null,
@@ -127,6 +147,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// }
 			},
 
+			removeUnnecessaryItems: () => {
+				if(localStorage.getItem("orders")){
+					localStorage.removeItem("orders"); 
+				}
+				if(localStorage.getItem("medicines")){
+					localStorage.removeItem("medicines"); 
+				}
+				if(localStorage.getItem("selectedMedicine")){
+					localStorage.removeItem("selectedMedicine"); 
+				}
+				if(localStorage.getItem("selectedCityName")){
+					localStorage.removeItem("selectedCityName"); 
+				}
+				if(localStorage.getItem("pharmacies")){
+					localStorage.removeItem("pharmacies"); 
+				}
+				if(localStorage.getItem("ordersToPharmacy")){
+					localStorage.removeItem("ordersToPharmacy"); 
+				}
+			},
+
+
 			setUrlLogin: (medicineId) => {
 				setStore({urlPostLogin:`/results/${medicineId}/${getStore().selectedCityName}`})
 					},
@@ -159,12 +201,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					// 5. If = ok; Tratamiento del OK - definimos el data
 					const data = await response.json();
 					// Grabar los datos en el store y en local Storage
-					setStore({ "pharmacies": data.results })
+					setStore({ pharmacies: data.results })
 					localStorage.setItem('pharmacies', JSON.stringify(data.results))
 					console.log(data)
 					console.log(data.results) // para ver qué trae
 				} else {
-					setStore({ "pharmacies": []})
+					setStore({ pharmacies: []})
 					localStorage.setItem('pharmacies', [])
 					console.log('Error:', "No encuentra Farmacias Cercanas")
 				}
@@ -326,27 +368,30 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getMedicinesAllDb: async (pharmacy_id) => {
 				const url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
-				const options = {
-					method: "GET",
-					headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${userLogged?.token}`
-					},
-				};
-				try {
-					const response = await fetch(url, options);
-					  if (response.ok) {
-					const data = await response.json();
-					setStore({
-						medicinesAll: [data.results.medicines],
-					});
-					} else {
-					console.error("Failed to fetch all medicines.");
+				if(userLogged != null && userLogged != undefined){
+
+					const options = {
+						method: "GET",
+						headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${userLogged?.token}`
+						},
+					};
+					try {
+						const response = await fetch(url, options);
+						if (response.ok) {
+						const data = await response.json();
+						setStore({
+							medicinesAll: [data.results.medicines],
+						});
+						} else {
+						console.error("Failed to fetch all medicines.");
+						}
+					} catch (error) {
+					console.error("Error fetching all medicines:", error);
 					}
-				} catch (error) {
-				  console.error("Error fetching all medicines:", error);
 				}
-				},
+			},
 
 				
 			getMedicineAvailabilityForPharmacy: async () => {
@@ -463,32 +508,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getUserOrders: async () => {
 				const url = `${process.env.BACKEND_URL}/api/orders`;
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); // Retrieve the token from localStorage
-				console.log("Esto es el userLogged -> ",userLogged);
-				console.log("Esto es el token de userLogged -> ",userLogged.token);
-				const options = {
-					method: "GET",
-					headers: {
-						'Authorization': `Bearer ${userLogged.token}`, // Include the JWT token in the authorization header
-						'Content-Type': 'application/json'
-					  },
-				};
-				const response = await fetch (url,options);
-				if (response.ok) {
-					const data = await response.json();
-					console.log(data);
-					// We ensure that we're accessing the orders array within the results object
-					if (data.results && data.results.orders) {
-						setStore({ orders: data.results.orders }); // Update store with the orders array
-						localStorage.setItem("orders", JSON.stringify(data.results.orders));
+				if(userLogged != null && userLogged != undefined){
+					console.log("Esto es el userLogged -> ",userLogged);
+					console.log("Esto es el token de userLogged -> ",userLogged.token);
+					const options = {
+						method: "GET",
+						headers: {
+							'Authorization': `Bearer ${userLogged.token}`, // Include the JWT token in the authorization header
+							'Content-Type': 'application/json'
+						  },
+					};
+					const response = await fetch (url,options);
+					if (response.ok) {
+						const data = await response.json();
+						console.log(data);
+						// We ensure that we're accessing the orders array within the results object
+						if (data.results && data.results.orders) {
+							setStore({ orders: data.results.orders }); // Update store with the orders array
+							localStorage.setItem("orders", JSON.stringify(data.results.orders));
+						} else {
+							console.log("No se han encontrado reservas o el formato es incorrecto");
+							setStore({ orders: [] });
+							localStorage.setItem("orders", JSON.stringify([]));
+						}
+				
+						return data;
 					} else {
-						console.log("No se han encontrado reservas o el formato es incorrecto");
-						setStore({ orders: [] });
-						localStorage.setItem("orders", JSON.stringify([]));
+						console.log("Error:", response.status, response.statusText);
 					}
-			
-					return data;
-				} else {
-					console.log("Error:", response.status, response.statusText);
 				}
 			},
 
@@ -497,26 +544,27 @@ const getState = ({ getStore, getActions, setStore }) => {
 				//const pharmacyId = 1
 				const url = `${process.env.BACKEND_URL}/api/orders/pharmacy/`;
 				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
-				const options = {
-					method: "GET",
-					headers: {
-						'Authorization': `Bearer ${userLogged.token}`,
-						'Content-Type': 'application/json'
-					},
-				};
-				const response = await fetch(url, options);
-				if (response.ok) {
-					const data = await response.json();
-					console.log(data);
-						setStore({ ordersToPharmacy: data});
-						localStorage.setItem("ordersToPharmacy", JSON.stringify(data));
-				} else {
-						console.log("No se han encontrado pedidos");
-						setStore({ ordersToPharmacy: [] });
-						localStorage.setItem("ordersToPharmacy", JSON.stringify([]));
-					}
-		
-			},		
+				if(userLogged != null && userLogged != undefined){
+					const options = {
+						method: "GET",
+						headers: {
+							'Authorization': `Bearer ${userLogged.token}`,
+							'Content-Type': 'application/json'
+						},
+					};
+					const response = await fetch(url, options);
+					if (response.ok) {
+						const data = await response.json();
+						console.log(data);
+							setStore({ ordersToPharmacy: data});
+							localStorage.setItem("ordersToPharmacy", JSON.stringify(data));
+					} else {
+							console.log("No se han encontrado pedidos");
+							setStore({ ordersToPharmacy: [] });
+							localStorage.setItem("ordersToPharmacy", JSON.stringify([]));
+						}
+				}
+			},		 
 			
 			updateOrderStatus: async (orderId, newStatus) => {
 				console.log(`Updating order status for order ${orderId} to ${newStatus}`);

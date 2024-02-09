@@ -8,6 +8,7 @@ export const PatientProfile = () => {
   const [ fetchPatient, setFetchPatient ] = useState(false);
   const navigate = useNavigate();
 
+	actions.removeUnnecessaryItems();
 
   const getPatientInfo = async () => {
 

@@ -6,7 +6,9 @@ import confetti from "../../img/confetti.png";
 import { Button } from 'react-bootstrap';
 
 export const OrderConfirmation = () => { 
-  const { store } = useContext(Context);
+  const { store, actions } = useContext(Context);
+
+	actions.removeUnnecessaryItems();
   const navigate = useNavigate();
 
   const orderDetails = store.orderConfirmationDetails;
