@@ -12,35 +12,37 @@ export const Availability = () => {
   const [filterPsum, setFilterPsum] = useState(true); // State to track if filter by distribution problems is selected
   const [availabilityFilter, setAvailabilityFilter] = useState(null); // State to hold the selected availability filter
 
+
   // Fetch all medicines
   useEffect(() => {
-    actions.getMedicinesAllDb();
-  }, [actions]);
+    actions.getMedicinesAllDb(store.pharmacy_id);
+  }, [store.pharmacy_id]);
+
+      // Assuming medicinesAll is correctly populated with an array of medicines
+      const allMedicines = store.medicinesAll[0] || [];
+
+      // Filter medicines based on search term, distribution problems, and availability filter
+      const filteredMedicines = allMedicines.filter(medicine =>
+        medicine.medicine_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (!filterPsum || store.medicinesPsum.some(psumMedicine => psumMedicine.id === medicine.id)) &&
+        (availabilityFilter === null || medicine.availability_status === availabilityFilter)
+      );
 
   // Fetch medicines with distribution problems
   useEffect(() => {
     actions.getMedicinesPsum();
-    actions.getMedicineAvailabilityForPharmacy();
+    //actions.getMedicineAvailabilityForPharmacy();
   }, []); // Only run once on component mount
 
-  const getAvailabilityStatus = (medicineId) => {
-    // Find availability data for the given medicineId
-    const availability = store.medicinesAvailability.find(availability => availability.id === medicineId);
-    console.log("Availability for medicine ID", medicineId, ":", availability ? availability.availability_status : "No disponible");
-    // If availability data is found, return the availability status
-    // Otherwise, return "No disponible"
-    return availability ? availability.availability_status : "No disponible";
-  };
+  // const getAvailabilityStatus = (medicineId) => {
+  //   // Find availability data for the given medicineId
+  //   const availability = store.medicinesAvailability.find(availability => availability.id === medicineId);
+  //   console.log("Availability for medicine ID", medicineId, ":", availability ? availability.availability_status : "No disponible");
+  //   // If availability data is found, return the availability status
+  //   // Otherwise, return "No disponible"
+  //   return availability ? availability.availability_status : "No disponible";
+  // };
 
-  // Assuming medicinesAll is correctly populated with an array of medicines
-  const allMedicines = store.medicinesAll[0] || [];
-
-/// Filter medicines based on search term, distribution problems, and availability filter
-const filteredMedicines = allMedicines.filter(medicine =>
-  (medicine.medicine_name.toLowerCase().includes(searchTerm.toLowerCase())) &&
-  (!filterPsum || store.medicinesPsum.some(psumMedicine => psumMedicine.id === medicine.id)) &&
-  (availabilityFilter === null || getAvailabilityStatus(medicine.id) === availabilityFilter)
-);
 
 console.log("Filtered Medicines:", filteredMedicines);
 
@@ -161,8 +163,8 @@ const availabilityText = filterPsum ? (
                   <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/> : 
                   <FontAwesomeIcon icon={faCheck} />
                 }</td>
-                <td> <Badge pill bg={getAvailabilityStatus(medicine.id) === "Disponible" ? "success" : "danger"}>
-                  {getAvailabilityStatus(medicine.id)}
+                <td> <Badge pill bg={medicine.availability_status === "Disponible" ? "success" : medicine.availability_status === "No disponible" ? "danger" : "secondary"}>
+                      {medicine.availability_status || "Desconocido"}
                 </Badge>
               </td>
               <td>

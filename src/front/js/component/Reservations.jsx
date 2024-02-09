@@ -59,7 +59,7 @@ export const Reservations = () => {
         <div className="d-flex justify-content-center mb-3">
         <Badge pill bg="warning" text="dark" className="mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
         <Badge pill bg="success" className="mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
-        <Badge pill bg="danger" className="mx-2 p-2" onClick={() => handleFilterClick('Cancelada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
+        <Badge pill bg="danger" className="mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
         <Badge pill bg="info" className="mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
         <Badge pill bg="secondary" className="mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
       </div>

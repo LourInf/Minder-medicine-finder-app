@@ -11,7 +11,7 @@ import math
 from sqlalchemy import select, or_, and_, func
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, aliased
 
 
 api = Blueprint('api', __name__)
@@ -548,6 +548,33 @@ def get_pharmacy_specific_availability():
         return jsonify({"message": "No hay informacion sobre la disponibilidad para esta farmacia."
         }), 200
     
+# Enpoint to get all medicines from our db for a Pharmacy  (=> Actions: getMedicinesAllDbForPharmacy) 
+@api.route('/medicines/<int:pharmacy_id>', methods=['GET'])
+@jwt_required()
+def get_all_medicines_for_pharmacy(pharmacy_id):
+    user_id = get_jwt_identity()
+
+    # Perform an outer join, including medicines regardless of availability record,
+    # but filter the availability by pharmacy_id when available.
+    results = db.session.query(Medicines, Availability)\
+        .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == pharmacy_id))\
+        .all()
+
+    if not results:
+        return jsonify({"message": "No medicines found for the specified pharmacy."}), 404
+
+    medicines_list = []
+    for medicine, availability in results:
+        medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}
+        
+        # Serialize the Availability data if it exists, otherwise use an empty dictionary
+        availability_data = availability.serialize() if availability and hasattr(availability, 'serialize') else {}
+        # Combine medicine data with availability data, if available
+        combined_data = {**medicine_data, **availability_data}
+        medicines_list.append(combined_data)
+
+    return jsonify({"results": {"medicines": medicines_list}}), 200
+ 
 
 @api.route('/pharmacy/availability', methods=['PUT'])           # IN PROGRESS - TO BE DEFINED
 @jwt_required()

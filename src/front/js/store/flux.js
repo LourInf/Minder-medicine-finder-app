@@ -323,12 +323,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async () => {
-				const url = `${process.env.BACKEND_URL}/api/medicines`;
+			getMedicinesAllDb: async (pharmacy_id) => {
+				const url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
+				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				const options = {
 					method: "GET",
 					headers: {
 					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${userLogged?.token}`
 					},
 				};
 				try {
@@ -346,10 +348,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				},
 
+
+
 			getMedicineAvailabilityForPharmacy: async () => {
-				const token = localStorage.getItem('token');
 				// const medicinesPsumIds = store.medicinesPsum.map(medicine => medicine.id); // Extract IDs of medicines with distribution problems
-				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`; 
+				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`;
+				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				const options = {
 					method: "GET",
 					headers: {
