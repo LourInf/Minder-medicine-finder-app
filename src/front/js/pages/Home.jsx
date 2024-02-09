@@ -10,7 +10,7 @@ export const Home = () => {
 
 	return (
 		<Container className="text-center mt-3 main-content-container">
-			<img src={minder} alt="minderletra" />
+			<img src={minder} alt="minderletra" className="w-50" />
 			<h1 className="text-light-50">Encuentra y reserva tu medicamento cerca de tí.</h1>
 			<SearchBar />
     	</Container>
