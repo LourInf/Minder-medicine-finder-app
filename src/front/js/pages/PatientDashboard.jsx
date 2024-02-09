@@ -5,6 +5,8 @@ import { Link, Outlet } from "react-router-dom"; //(React Outlet) 4.import Outle
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 export const PatientDashboard = () => {
   const { store, actions } = useContext(Context);
@@ -43,16 +45,18 @@ const handleLogout = () => {
 
 
 return (
-    <div>
-      <h1>Patient Dashboard</h1>  
-      <button id="logoutBtn" className="btn btn-danger mt-3" onClick={handleLogout}>Log out</button>
+    <div className="">
+      <div className="d-flex justify-content-center text-center m-2">
+      <h1 className="p-2">Patient Dashboard</h1>  
+      <button id="logoutBtn" className="btn btn-danger m-3" onClick={handleLogout}><FontAwesomeIcon icon={faArrowRightFromBracket} />Log out</button>
+      </div>
   
       <Nav variant="tabs" defaultActiveKey="/patient/orders">
         <LinkContainer to="/patient/orders"> 
-          <Nav.Link>Orders</Nav.Link>
+          <Nav.Link className="border-light">Orders</Nav.Link>
         </LinkContainer>
         <LinkContainer to="/patient/patient-profile">
-          <Nav.Link>PatientProfile</Nav.Link>
+          <Nav.Link className="border-info text-black">PatientProfile</Nav.Link>
         </LinkContainer>
       </Nav>
       <Outlet />

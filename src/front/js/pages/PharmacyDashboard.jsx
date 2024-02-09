@@ -27,8 +27,8 @@ export const PharmacyDashboard = () => {
 
   return (
  
-    <div>
-      <h1>Pharmacy Dashboard</h1>
+    <div className="container p-2 m-2">
+      <h1 className="p-1 m-1">Pharmacy Dashboard</h1>
       <button id="logoutBtn" className="btn btn-danger mt-3" onClick={handleLogout}>Log out</button>
     {/* These links let you navigate between the nested routes. (React-router-bootstrap) */}
       <Nav variant="tabs" defaultActiveKey="/pharmacy/availability">

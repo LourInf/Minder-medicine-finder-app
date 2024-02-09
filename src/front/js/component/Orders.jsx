@@ -44,20 +44,20 @@ export const Orders = () => {
         <h3 className="m-3 text-center">Estas son todas tus reservas</h3>
         {/*<p className="m-3 text-center">Total active orders: {store.orders.length}</p>*/}
         <div className="d-flex justify-content-center mb-3">
-          <Badge pill bg="warning" text="dark" className="mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
-          <Badge pill bg="success" className="mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
+          <Badge pill bg="" text="dark" className="mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
+          <Badge pill bg="success"className="mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer'}}>Aceptada</Badge>
           <Badge pill bg="danger" className="mx-2 p-2" onClick={() => handleFilterClick('Cancelada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
-          <Badge pill bg="info" className="mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
-          <Badge pill bg="secondary" className="mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+          <Badge pill bg="info" text="dark" className="mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
+          <Badge pill bg="light" text="dark" className="mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
         </div>
             <Table striped bordered hover>
-                <thead>
+                <thead className="text-center">
                     <tr>
-                        <th># Reserva</th>
-                        <th>Medicamento</th>
-                        <th>Farmacia</th>
-                        <th>Tiempo de reserva</th>
-                        <th>Order Status</th>
+                        <th style={{ color: "#00a5df", }}>Reserva</th>
+                        <th style={{ color: "#00c895", }}>Medicamento</th>
+                        <th style={{ color: "#00a747", }}>Farmacia</th>
+                        <th style={{ color: "#ffaf63", }}>Tiempo de reserva</th>
+                        <th style={{ color: "#007085", }}>Order Status</th>
                         <th>Acción</th> 
                     </tr>
                 </thead>

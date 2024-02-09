@@ -60,10 +60,10 @@ export const PatientProfile = () => {
 
 
   return (
-    <div>
+    <div className="container p-2 m-2">
 
       <h2>Patient information</h2>
-      <button className="btn btn-warning mb-3">Edit info</button>
+      <button className="btn btn-info mb-3">Edit info</button>
       {patient !== null ? (
         <div>
           <p><b>PatientID</b>: {patient.patient_id}</p>
