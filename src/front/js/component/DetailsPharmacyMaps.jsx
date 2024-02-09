@@ -1,18 +1,18 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 import Spinner from 'react-bootstrap/Spinner';
 
 export const DetailsPharmacyMaps = () => {
-    const { store, actions } = useContext(Context);
+    const { store } = useContext(Context);
     const { pharmacyDetails } = store;
 
     return (
         <div>
             <Link className="navbar-brand m-3 p-3" to="/maps">Volver</Link>
             <h1 className="text-center p-2 m-3">Consulta los datos de la Farmacia</h1>
-            {/* Si existe "pharmacydetails" entonces me extraes la info */}
+            {/* Si existe "pharmacyDetails" entonces extrae la información */}
             {pharmacyDetails ? (
                 <div className="container">
                     <div className="card mb-3">
@@ -26,7 +26,6 @@ export const DetailsPharmacyMaps = () => {
                             </div>
                             <div className="col-md-5 col-lg-6 col-xl-7">
                                 <div className="card-body w-75 text-center">
-                                    {/* <h1>{pharmacyDetails.place_id}</h1> */}
                                     <h3>{pharmacyDetails.name}</h3>
                                     <p> Dirección: {pharmacyDetails.formatted_address}</p>
                                     <p>
@@ -35,12 +34,16 @@ export const DetailsPharmacyMaps = () => {
                                             {pharmacyDetails.formatted_phone_number}
                                         </a>
                                     </p>
-                                    <ul>
-                                        {pharmacyDetails.current_opening_hours.weekday_text.map((day, index) => (
-                                            <li className="list-inline" key={index}>{day}</li>
-                                        ))}
-                                    </ul>
-                                    <p>Estado: {pharmacyDetails.current_opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
+                                    {pharmacyDetails.current_opening_hours ? (
+                                        <ul>
+                                            {pharmacyDetails.current_opening_hours.weekday_text.map((day, index) => (
+                                                <li className="list-inline" key={index}>{day}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>No hay horarios disponibles</p>
+                                    )}
+                                    <p>Estado: {pharmacyDetails.current_opening_hours && pharmacyDetails.current_opening_hours.open_now ? 'Abierto Ahora' : 'Cerrado'}</p>
                                 </div>
                             </div>
                         </div>

@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import injectContext from "./store/appContext";
 // Imports pages or views
 import { Home } from "./pages/Home.jsx";
-import { Demo } from "./pages/Demo.jsx";
+// import { Demo } from "./pages/Demo.jsx";
 import { Single } from "./pages/Single.jsx";
 // Import components
 import ScrollToTop from "./component/ScrollToTop.jsx";
@@ -31,7 +31,7 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Demo />} path="/demo" />
+                        {/* <Route element={<Demo />} path="/demo" /> */}
                         <Route element={<Maps />} path="/maps" />
                         <Route element={<SearchNamePharmacy />} path="/findyourpharmacy" />
                         <Route element={<DetailsPharmacyMaps />} path="/pharmacies-details/:place_id" component={DetailsPharmacyMaps} />
