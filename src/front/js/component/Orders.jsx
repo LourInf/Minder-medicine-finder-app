@@ -53,10 +53,10 @@ export const Orders = () => {
             <Table striped bordered hover>
                 <thead className="text-center">
                     <tr>
-                        <th style={{ color: "#00a5df", }}>Reserva</th>
+                        <th style={{ color: "#3ab0a7", }}>Reserva</th>
                         <th style={{ color: "#00c895", }}>Medicamento</th>
                         <th style={{ color: "#00a747", }}>Farmacia</th>
-                        <th style={{ color: "#ffaf63", }}>Tiempo de reserva</th>
+                        <th style={{ color: "#3ab0a7", }}>Tiempo de reserva</th>
                         <th style={{ color: "#007085", }}>Order Status</th>
                         <th>Acción</th> 
                     </tr>
