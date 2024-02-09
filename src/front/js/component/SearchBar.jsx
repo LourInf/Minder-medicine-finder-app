@@ -1,7 +1,7 @@
 import React,  { useContext, useState, useEffect }  from "react"; //1. Import hook useContext
 import { Context } from "../store/appContext.js"; //2. Import Context
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faSearch, faTimes, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
 import "../../styles/searchBar.css"
 import { Container, Row, Col, Form, Button, InputGroup } from 'react-bootstrap';
 import { SearchResultsList } from "./SearchResultsList.jsx";
@@ -13,6 +13,7 @@ export const SearchBar = () =>{
     const [selectedItem, setSelectedItem] = useState("");
     const [isMedicineSelected, setIsMedicineSelected] = useState(false);
     const [city, setCity] = useState("");
+    const [hasPsum, setHasPsum] = useState(false);
     const navigate = useNavigate();
 
     const handleMedicineChange = (value) => {
@@ -34,12 +35,14 @@ export const SearchBar = () =>{
         actions.getSelectedMedicine(item.medicine_name);
         localStorage.setItem('selectedMedicine', JSON.stringify(item))
         setIsMedicineSelected(true);
+        setHasPsum(item.has_psum)
     };
 
     const clearSelectionMedicine = () => {
       setInput("");
       setSelectedItem("");
       actions.clearMedicines(); 
+      setHasPsum(false);
     };
 
     const handleCityChange = (e) => {
@@ -101,6 +104,18 @@ export const SearchBar = () =>{
                     items={store.medicines} 
                     displayItem="medicine_name" 
                     onItemClick={handleMedicineSelect} />
+                   {selectedItem && (<p className="text-psum font-italic small"> {hasPsum ? (
+                    <>
+                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning pe-2" />
+                        Actualmente, este medicamento está en alta demanda o presenta problemas de suministro. 
+                      </>
+                      ) : (
+                    <>
+                        Actualmente, este medicamento no presenta problemas de suministro.
+                    </>
+                )}
+            </p>
+        )}
                 </Col>
                 <Col sm={12} md={1}>
                   <div className="vertical-line d-none d-md-block"></div>
