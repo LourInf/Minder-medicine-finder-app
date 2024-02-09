@@ -16,8 +16,11 @@ export const Navbar = () => {
 					<Link to="/maps">
 						<button className="btn btn-success m-1">Maps</button>
 					</Link>
+					<Link to="/citymap">
+						<button className="btn btn-success m-1">Maps</button>
+					</Link>
 					<Link to="/findyourpharmacy">
-						<button className="btn btn-info m-1">Find Your Pharmacy</button>
+						<button className="btn btn-info m-1">Búsqueda Farmacia Nombre</button>
 					</Link>
 					<Link to="/">
 						<button className="btn btn-warning">Home</button>

@@ -13,7 +13,7 @@ import { Footer } from "./component/Footer.jsx";
 import { Maps } from "./component/Maps.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
 import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
-DetailsPharmacyMaps
+import { Citymap } from "./component/CityMap.jsx";
 
 
 // Create your first component
@@ -32,6 +32,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Home />} path="/" />
                         {/* <Route element={<Demo />} path="/demo" /> */}
+                        <Route element={<Citymap />} path="/citymap" />
                         <Route element={<Maps />} path="/maps" />
                         <Route element={<SearchNamePharmacy />} path="/findyourpharmacy" />
                         <Route element={<DetailsPharmacyMaps />} path="/pharmacies-details/:place_id" component={DetailsPharmacyMaps} />
