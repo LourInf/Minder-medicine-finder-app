@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import { CardResults } from "../component/CardResults.jsx";
 import { useParams } from 'react-router-dom';
+import "../../styles/results.css";
 
 export const Results = () => {
   const { store, actions } = useContext(Context);
@@ -16,18 +17,6 @@ export const Results = () => {
 
   const selectedMedicine = localStorage.getItem('selectedMedicine');
   const selectedCityName = localStorage.getItem('selectedCityName');
-
-  // const handlePharmacies = async () => {
-  //     await actions.getPharmacies(city);
-  //     if (store.pharmacies.length === 0) {
-  //       setNoResults(true);
-  //     } else {
-  //       setNoResults(false);
-  //       setpharmacy_fields('name,formatted_address,current_opening_hours,formatted_phone_number');
-  //       // console.log('pharmacyFields:', pharmacy_fields);
-  //       actions.getPharmaciesDetails(pharmacy_fields, currentPage);
-  //     }
-  //   };
 
 
   // Para Paginar
@@ -44,7 +33,7 @@ export const Results = () => {
 
 
 
-  // fetches the pharmacies from our DB that have the selected medicine available (ADD FUNCTIONALITY: We need to somehow get from which city the pharmacy is --> How? In DB len lat?)
+  // fetches the pharmacies from our DB
   useEffect(() => {
     if (medicineId && cityName) {
       actions.getAvailablePharmacies(medicineId, cityName);
@@ -52,7 +41,7 @@ export const Results = () => {
   }, [medicineId, cityName, actions.getAvailablePharmacies]);
 
 
-  // fetches all the pharmacies from Google API in the city selected (For these we can just show the phone and show that we don't know the availability)
+  // fetches all the pharmacies from Google API in the city selected
   useEffect(() => {
     if (cityName) {
       actions.getPharmacies(cityName);
@@ -62,37 +51,37 @@ export const Results = () => {
 
   return (
     <div>
+      <div className=" container-main-text text-center">
       {/* Section 1: Pharmacies with selected medicine availability in our DB */}
-      {/* <h3>Section 1: (farmacias afiliadas y con stock de ese medicamento) 20 farmacias tienen disponibilidad de {store.selectedMedicine} en {store.selectedCityName}</h3> */}
-      <h4>¡Buenas noticias! Es posible que el medicamento que buscas ({store.selectedMedicine}) esté disponible en las siguientes farmacias de {store.selectedCityName}</h4>
+      <h4 className="selection-text-show text-center mb-5">
+      {localStorage.getItem('selectedMedicine') && localStorage.getItem('selectedCityName') && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
+      <>
+        ¡Buenas noticias! Es posible que {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)} esté disponible en las siguientes farmacias
+        {localStorage.getItem('selectedCityName')}
+      </>
+      ) : (
+      `Lo sentimos, ninguna de las farmacias con las que trabajamos tienen este medicamento. Aquí te dejamos otras farmacias a las que puedes llamar y consultar`
+      )}
+      </h4>
+      </div>
       {store.availablePharmacies && store.availablePharmacies.length > 0 ? (
         store.availablePharmacies.map((pharmacy, index) => (
           <CardResults key={index} buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} address={cityName} setSelectedPharmacy={actions.setSelectedPharmacy} />
         ))
       ) : (
-        <p>Lo sentimos, ninguna de las farmacias con las que trabajamos tienen este medicamento. Aqui te dejamos otras farmacias a las que puedes llamar y consultar</p>
+        <button className="return-btn mx-auto" onClick={() => navigate('/')}>Hacer una nueva Busqueda</button>
       )}
-      {/* Section 2: Pharmacies with selected medicine NOT available or unknown in our DB */}
-      {/* <h2>Section 2: (farmacias afiliadas y stock desconocido)</h2> */}
-
-
+      {/* Section 2: Pharmacies with selected medicine NOT available or unknown in our DB --> IF TIME*/}
       {/* Section 3: Pharmacies from google API based on searched city */}
-      {/* <h2>Section 3: ( farmacias no afiliadas - other pharmacies from google API in the area) Pharmacies in {cityName}</h2> */}
-      <p className="text-center mt-5"><i>Estan son otras farmacias de {cityName} a las que puedes llamar para preguntar por su disponibilidad</i></p>
+      <p className="selection-text-show text-center mt-5"><i>Estan son otras farmacias de {cityName} a las que puedes llamar para preguntar por su disponibilidad</i></p>
       <div className="p-3">
         {store.pharmacies && store.pharmacies.length > 0 ? (
           store.pharmacies.map((pharmacy, index) => (
-            <CardResults
-              key={index}
-              buttonType="details"
-              pharmacy={pharmacy}
-              medicineId={medicineId}
-            />
+            <CardResults key={index} buttonType="details" pharmacy={pharmacy} medicineId={medicineId} />
           ))
         ) : (
-          <p>No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</p>
+          <p className="selection-text-show text-center mt-5">No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</p>
         )}
-
         {/* Paginar */}
         {store.pharmacies.length > resultsPerPage && (
           <ul className="pagination justify-content-center p-2 m-2">

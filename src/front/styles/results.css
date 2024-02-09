@@ -2,3 +2,24 @@
 .results-container {
     position: absolute;
 }  */
+
+.container-main-text{
+    padding: 10px;
+}
+.selection-text-show{
+    color:var(--dar-blue);
+    font-style: italic;
+    font-size: 1.25rem;
+    
+}
+
+.return-btn{
+    color: var(--dar-blue);
+    background-color: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    padding:8px;
+    border-radius: 30px;
+    margin: auto;
+    
+}
+

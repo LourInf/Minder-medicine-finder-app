@@ -2,10 +2,27 @@
     General Styles used on every website (Don't Repeat Yourself)
 */
 
+:root {
+    --background: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #80ece2, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);;
+    --primary: #4ECCA3;
+    --secondary: #393E46;
+    --accent: #FFD460;
+    --accent-secondary:#9ef6ac;
+    --success: #32E0C4;
+    --danger: #E84545;
+    --text-primary: #333333;
+    --text-secondary: #555555;
+    --border-shadow: #D1D1D1;
+    --text-dark-orange: #C75B12;
+    --input: aliceblue;
+    --dark-blue:#082140;
+  }
+
+
 font-face {
     font-family: 'MinderFont';
     src: ('.././src/front/styles/fonts/Chalet.ttf') format('truetype'); 
 }
 body, header, footer {
-    background: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #80ece2, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
+    background-color: var(--background);
 }

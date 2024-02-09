@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Context } from "../store/appContext.js";
 import { useNavigate } from "react-router-dom";
-import "../../styles/cardResults.css";
+import "../../styles/orderConfirmation.css";
 import confetti from "../../img/confetti.png";
 import { Button } from 'react-bootstrap';
 
@@ -13,8 +13,8 @@ export const OrderConfirmation = () => {
 
   return (
     <div className="container text-center">
-    <img src={confetti} alt="Confetti" />
-      <h3>Pedido realizado ¡Gracias!</h3>
+    <img src={confetti} className="confetti-image" alt="Confetti" />
+      <h3 className="main-text m-5">Pedido realizado ¡Gracias!</h3>
       {orderDetails ? (
         <>
           <h3>Tu numero de reserva es: {orderDetails.id}</h3>

@@ -19,17 +19,11 @@ export const PharmacyDashboard = () => {
   }, [store.isLoggedIn, store.isPharmacy, navigate]);
 
 
-    const handleLogout = () => {
-      actions.logout(); 
-      navigate("/login", {replace: true}); 
-    }
-
 
   return (
  
     <div>
       <h1>Pharmacy Dashboard</h1>
-      <button id="logoutBtn" className="btn btn-danger mt-3" onClick={handleLogout}>Log out</button>
     {/* These links let you navigate between the nested routes. (React-router-bootstrap) */}
       <Nav variant="tabs" defaultActiveKey="/pharmacy/availability">
         <LinkContainer to="/pharmacy/availability"> 

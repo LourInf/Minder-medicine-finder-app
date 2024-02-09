@@ -1,0 +1,25 @@
+.badge-soft-warning {
+    background-color: #ffecb3;
+    color: #6a6a6a; 
+  }
+  
+  .badge-soft-success {
+    background-color: #b9f6ca;
+    color: #2a2a2a;
+  }
+  
+  .badge-soft-danger {
+    background-color: #ff9e80;
+    color: #2a2a2a;
+  }
+  
+  .badge-soft-info {
+    background-color: #81d4fa;
+    color: #2a2a2a;
+  }
+  
+  .badge-soft-secondary {
+    background-color: #e0e0e0;
+    color: #2a2a2a;
+  }
+  

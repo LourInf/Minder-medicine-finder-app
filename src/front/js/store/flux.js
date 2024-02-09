@@ -348,8 +348,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				},
 
-
-
+				
 			getMedicineAvailabilityForPharmacy: async () => {
 				// const medicinesPsumIds = store.medicinesPsum.map(medicine => medicine.id); // Extract IDs of medicines with distribution problems
 				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`;

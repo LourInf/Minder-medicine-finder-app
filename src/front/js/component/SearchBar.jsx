@@ -44,10 +44,11 @@ export const SearchBar = () =>{
 
     const handleCityChange = (e) => {
       const newCity = e.target.value;
-      setCity(newCity); 
-      actions.setSelectedCityName(newCity);
-      localStorage.setItem('selectedCityName', JSON.stringify(newCity));
-    };
+      const capitalizedCity = newCity.charAt(0).toUpperCase() + newCity.slice(1).toLowerCase();
+      setCity(capitalizedCity);
+      actions.setSelectedCityName(capitalizedCity);
+      localStorage.setItem('selectedCityName', JSON.stringify(capitalizedCity));
+};
 
     const handleCityKeyDown = (e) => {
       if (e.key === 'Enter') {
@@ -110,7 +111,7 @@ export const SearchBar = () =>{
                   <InputGroup className="mb-3">
                     <Form.Control
                       className="search-form-input"
-                      placeholder=" Dirección, Ciudad o Código Postal "
+                      placeholder=" Ej: Madrid"
                       aria-label="localizacion"
                       aria-describedby="localizacion"
                       value={city}

@@ -3,6 +3,7 @@ import { Context } from "../store/appContext.js";
 import { Table, Button, Pagination, Form, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCheck } from '@fortawesome/free-solid-svg-icons';
+import "../../styles/availability.css";
 
 export const Availability = () => {
   const { store, actions } = useContext(Context);
@@ -69,7 +70,7 @@ console.log("Filtered Medicines:", filteredMedicines);
 
   // Generate pagination items
   const paginationItems = [];
-  const pagesToShow = 5; // Adjust as needed
+  const pagesToShow = 10; 
 
   if (totalPages <= pagesToShow) {
     for (let number = 1; number <= totalPages; number++) {

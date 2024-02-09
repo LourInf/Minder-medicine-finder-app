@@ -20,14 +20,14 @@
     display: block;
     text-align: left;
     font-weight: bold;
-    color: black;
+    color:var(--text-primary);
     padding-left: 0.7rem;
 
   }
 
   .search-form-input {
     border: none;
-    background-color: #eeeeee;
+    background-color: var(--input);
   }
   
   .search-form-input:focus {
@@ -37,9 +37,19 @@
 }
   .search-form-button {
     border: none;
-    font-size: 2rem;
-    margin-top: 0.8rem;
+    font-size: 2.5rem;
+    margin-top: 0.4rem;
+    color: var(--accent-secondary);
   }
+
+  .search-form-button:hover {
+    border: none;
+   background: transparent;
+   transform: scale(1.20); 
+   color: var(--accent-secondary);
+  }
+
+
 
   .vertical-line {
     border-right: 2px solid #dee2e6;
@@ -61,8 +71,8 @@
 .btn-clear-selection:hover {
   border: none;
   background: transparent;
-  color: red;
-  font-size: larger;
+  color: var(--danger);
+  
 }
 
 .input-group .form-control {

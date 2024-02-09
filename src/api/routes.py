@@ -153,7 +153,7 @@ def refresh_medicines():
             response = requests.get(f"{base_url}/medicamentos?pagina={pagina}")
             data = response.json()
             for item in data.get('resultados', []):
-                medicine_name = item.get('nombre')
+                medicine_name = item.get('nombre').capitalize()
                 api_id = item.get('nregistro')
                 has_psum = item.get('psum')
 
@@ -173,7 +173,7 @@ def refresh_medicines():
     response_body['message'] = 'Los medicamentos se han añadido correctamente a la base de datos'
     return jsonify(response_body), 200
 
-# # Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)   --> FOR DEBUGGING ONLY <--
+# # Endpoint to delete all entries in the Medicines table (in case of errors refreshing/adding medicines happen)   --> FOR DEBUGGING <--
 # @api.route('/refresh-medicines', methods=['DELETE'])
 # def delete_medicines():
 #     response_body = {}
@@ -205,8 +205,13 @@ def search_medicines():
         medicines = db.session.execute(select(Medicines).where(Medicines.medicine_name.ilike(f'%{search_name}%'))).scalars().all()
     else:
         medicines = []
-    # Serialize the data and set it in the results dictionary
-    medicines_list = [medicine.serialize() for medicine in medicines]
+    # Serialize the data (but capitalized before) and set it in the results dictionary
+    medicines_list = [{
+        'id': medicine.id,
+        'medicine_name': medicine.medicine_name.capitalize(), 
+        'has_psum': medicine.has_psum,
+        'API_id': medicine.API_id
+    } for medicine in medicines]
     results['medicines'] = medicines_list
 
     if medicines:
@@ -477,16 +482,16 @@ def handle_availability():
         response_body ['availability'] = availability.serialize()
         return response_body, 201
 
-# # Endpoint to get all affiliated pharmacies (all pharmacies we have in our DB)
-# @api.route('/pharmacies', methods=['GET'])
-# def get_pharmacies():
-#     response_body = {}
-#     results = {}
-#     pharmacies = db.session.execute(db.select(Pharmacies)).scalars().all()
-#     results['pharmacies'] = [row.serialize() for row in pharmacies]
-#     response_body['message'] = 'Lista de farmacias afiliadas'
-#     response_body['results'] = results
-#     return response_body, 200
+# Endpoint to get all affiliated pharmacies (all pharmacies we have in our DB)
+@api.route('/pharmacies', methods=['GET'])
+def get_pharmacies():
+    response_body = {}
+    results = {}
+    pharmacies = db.session.execute(db.select(Pharmacies)).scalars().all()
+    results['pharmacies'] = [row.serialize() for row in pharmacies]
+    response_body['message'] = 'Lista de farmacias afiliadas'
+    response_body['results'] = results
+    return response_body, 200
 
 
 # Endpoint to get affiliated pharmacies which have available stock of the selected medicine in selected city (=> actions: getAvailablePharmacies)
