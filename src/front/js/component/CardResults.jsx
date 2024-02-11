@@ -7,14 +7,15 @@ import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard, faInfoCircle, faStoreAlt } from '@fortawesome/free-solid-svg-icons'
 import { ModalReservation } from './ModalReservation.jsx';
 import { useNavigate } from "react-router-dom";
+import logoImage from "../../img/logo.png"
 
 
-export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, buttonType }) => { 
+export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, buttonType, place_id }) => { 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleButtonClick = () => {
+  const handleButtonClick = (place_id) => {
     if (buttonType === 'reserve') {
       handleReserveOnline();
     } else if (buttonType === 'details') {
@@ -39,43 +40,6 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
   };
 
 
-//   return (
-//     <div>
-//       <div className="card-wrapper">
-//         <Card className="card-container">
-//         <Card.Body>
-//           <Card.Title>{pharmacy?.pharmacy_name || pharmacy?.name}</Card.Title>
-//           <ListGroup className="details list-group">
-//             <ListGroupItem className={`working-hours-item ${pharmacy?.opening_hours?.open_now ? 'text-success' : 'text-danger'}`}>
-//               <FontAwesomeIcon icon={faClock} className="pe-2" />
-//               {pharmacy?.opening_hours?.open_now ? "Abierta Ahora" : "Cerrada Ahora"}
-//             </ListGroupItem>
-//             {pharmacy?.is_24h && (
-//               <ListGroupItem className="text-success">
-//                 <FontAwesomeIcon icon={faStoreAlt} className="pe-2" />
-//                 Farmacia de 24 Horas
-//               </ListGroupItem>
-//             )}
-//           </ListGroup>
-//         </Card.Body>
-//             <Card.Footer className="text-muted">
-//                 <div className="card-actions">
-//                     <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleButtonClick}>
-//                         {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
-//                         {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
-//                     </Button>
-//                     <OverlayTrigger key="top" placement="top"
-//                       overlay={<Tooltip id={`tooltip-top`}> Teléfono: {pharmacy.phone}</Tooltip>}>
-//                       <Card.Link className="btn-reserve-phone" variant="outline-primary" size="sm"><FontAwesomeIcon icon={faPhone} /> Reservar por teléfono</Card.Link>
-//                     </OverlayTrigger>
-//                 </div>
-//             </Card.Footer>
-//         </Card>
-//       {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId}/>}
-//       </div>
-//     </div>
-//   );
-// }
 return (
   <div>
     <div className="card-wrapper custom-card-container">
@@ -96,7 +60,7 @@ return (
       </div>
       <div className="custom-card-footer text-muted">
         <div className="card-actions">
-          <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleButtonClick}>
+          <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={() => handleButtonClick(place_id)}>
                         {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
                         {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
                     </Button>

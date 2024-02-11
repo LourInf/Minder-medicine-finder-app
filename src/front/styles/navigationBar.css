@@ -1,14 +1,14 @@
-/* .btn-register:hover {
+      .btn-register:hover {
         color: var(--input);
-        background-color: var(--accent);
-        border-color: var(--accent);
+        background-color: #028a8a;
+        border-color: #028a8a;
       }
       
       .btn-register {
-        color: var(--accent);
-        border-color:var(--accent);
+        color: var(--input);
+        border-color:var(--secondary);
         background-color: transparent;
-      } */
+      } 
 
       .btn-login{
         color: var(--accent-secondary);

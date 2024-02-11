@@ -12,8 +12,6 @@ import { Context } from "../store/appContext";
 import "../../styles/navigationBar.css"
 
 
-
-
 export const NavigationBar = () => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate();
