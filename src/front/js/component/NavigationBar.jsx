@@ -6,7 +6,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import logoImage from "../../img/logo.png";
+import logoImage from "../../img/minderlogoimage.png";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../store/appContext";
 import "../../styles/navigationBar.css"
@@ -60,7 +60,7 @@ export const NavigationBar = () => {
 		  <Link to="/"><Navbar.Brand>
             <img
               alt=""
-              src={logoImage}
+			  src={logoImage}
               width="130"
               height="130"
               className="d-inline-block align-top"
@@ -69,7 +69,7 @@ export const NavigationBar = () => {
 		  	<div className="d-flex justify-content-center">
 			<Navbar.Toggle aria-controls="basic-navbar-nav" />
 			<Navbar.Collapse id="basic-navbar-nav">
-			  <Nav className="me-auto">
+			  <Nav className="me-auto h4">
 				<Nav.Link as={Link} to="/">Home</Nav.Link>
 				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>

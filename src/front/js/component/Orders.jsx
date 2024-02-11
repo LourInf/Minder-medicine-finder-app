@@ -52,13 +52,13 @@ export const Orders = () => {
           <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
         </div>
             <Table striped bordered hover>
-                <thead>
+                <thead className="text-center">
                     <tr>
-                        <th># Reserva</th>
-                        <th>Medicamento</th>
-                        <th>Farmacia</th>
-                        <th>Tiempo de reserva</th>
-                        <th>Order Status</th>
+                        <th style={{ color: "#3ab0a7", }}>Reserva</th>
+                        <th style={{ color: "#00c895", }}>Medicamento</th>
+                        <th style={{ color: "#00a747", }}>Farmacia</th>
+                        <th style={{ color: "#3ab0a7", }}>Tiempo de reserva</th>
+                        <th style={{ color: "#007085", }}>Order Status</th>
                         <th>Acción</th> 
                     </tr>
                 </thead>
