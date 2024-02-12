@@ -1,12 +1,12 @@
       .btn-register:hover {
         color: var(--input);
-        background-color: #028a8a;
-        border-color: #028a8a;
+        background-color: var(--minder-color);
+        border-color: var(--minder-color);
       }
       
       .btn-register {
-        color: var(--input);
-        border-color:var(--secondary);
+        color: var(--minder-color);
+        border-color:var(--minder-color);
         background-color: transparent;
       } 
 

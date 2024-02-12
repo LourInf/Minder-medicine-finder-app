@@ -1,6 +1,4 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 :root {
     --background: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #80ece2, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
@@ -8,6 +6,7 @@
     --secondary: #393E46;
     --accent: #FFD460;
     --accent-secondary:#9ef6ac;
+    
     --success: #32E0C4;
     --danger: #E84545;
     --text-primary: #333333;
@@ -16,6 +15,23 @@
     --text-dark-orange: #C75B12;
     --input: aliceblue;
     --dark-blue:#082140;
+    
+    --minder-color: #02797D;
+    --dark-minder: #0F3A3E;
+
+
+    --soft-warning: #fff2cc;
+    --soft-success:  #d0f8e4;
+    --soft-danger:  #ffd1b3;
+    --soft-info: #a3e0fa;
+    --soft-secondary: #f0f0f0;
+
+    --dark-warning: #b38100; 
+    --dark-success: #507f5c; 
+    --dark-danger:  #b3593a; 
+    --dark-info: #3173a3;  
+    --dark-secondary: #929292; 
+
   }
 
 
@@ -32,4 +48,5 @@ body {
     margin: 0;
     background-image: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #80ece2, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
     background-attachment: fixed;
+    font-family: 'MinderFont', 'Roboto', sans-serif;
   }

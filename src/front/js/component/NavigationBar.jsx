@@ -80,7 +80,7 @@ export const NavigationBar = () => {
 			<div className="d-flex justify-content-end">
 			<button id="logoutBtn" className="btn btn-outline-danger me-3" onClick={handleLogout}> <FontAwesomeIcon icon={faSignOutAlt} /></button>
 			<Link to={registerOrHome}>
-				<Button variant="outline-light" id="register" className="btn-register border-light me-2">Nuevo usuario</Button>
+				<Button variant="outline-light" id="register" className="btn-register me-2">Nuevo usuario</Button>
 			</Link>
 			<Link to="/login">
 				<Button variant="outline-light" className="btn-login"><FontAwesomeIcon icon = { faUser } /></Button>

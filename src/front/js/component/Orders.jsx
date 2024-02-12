@@ -10,7 +10,7 @@ export const Orders = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Pendiente':
-        return <Badge pill bg="" text="dark" className="badge-soft-warning p-2">Pendiente</Badge>;
+        return <Badge pill bg="" className="badge-soft-warning p-2">Pendiente</Badge>;
       case 'Aceptada':
         return <Badge pill bg="" className="badge-soft-success p-2">Aceptada</Badge>;
       case 'Rechazada':
@@ -41,40 +41,45 @@ export const Orders = () => {
   const filteredOrders = store.orders.filter(order => filter === '' || order.order_status === filter);
 
     return (
-      <div className="container">
-        <h3 className="m-3 text-center">Estas son todas tus reservas</h3>
-        {/*<p className="m-3 text-center">Total active orders: {store.orders.length}</p>*/}
-        <div className="d-flex justify-content-center mb-3">
-          <Badge pill bg="" text="dark" className="badge-soft-warning mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
-          <Badge pill bg="" className="badge-soft-success mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
-          <Badge pill bg="" className="badge-soft-danger mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
-          <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
-          <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+      <div className="orders-container">
+        <div className="filters-container d-flex flex-column align-items-center mb-3">
+          <span className="filter-text mb-2">Filtros:</span> 
+          <div className="pills-menu-style d-flex justify-content-center">
+            <Badge pill bg="" className="badge-soft-warning mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
+            <Badge pill bg="" className="badge-soft-success mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
+            <Badge pill bg="" className="badge-soft-danger mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
+            <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
+            <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+          </div>
         </div>
-            <Table striped bordered hover>
-                <thead className="text-center">
+        <div className="table-container hover-shadow">
+            <Table table-style>
+                <thead className="table-head-style">
                     <tr>
-                        <th style={{ color: "#3ab0a7", }}>Reserva</th>
-                        <th style={{ color: "#00c895", }}>Medicamento</th>
-                        <th style={{ color: "#00a747", }}>Farmacia</th>
-                        <th style={{ color: "#3ab0a7", }}>Tiempo de reserva</th>
-                        <th style={{ color: "#007085", }}>Order Status</th>
-                        <th>Acción</th> 
+                        <th className="table-cell header" style={{ color: "#3ab0a7", }}>Reserva</th>
+                        <th className="table-cell header" style={{ color: "#00c895", }}>Medicamento</th>
+                        <th className="table-cell header" style={{ color: "#00a747", }}>Farmacia</th>
+                        <th className="table-cell header" style={{ color: "#3ab0a7", }}>Tiempo de reserva</th>
+                        <th className="table-cell header" style={{ color: "#007085", }}>Estado</th>
+                        <th className="table-cell header">Acción</th> 
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="table-body">
                     {filteredOrders.map((order, index) => (
                         <tr key={index}>
-                            <td>{order.id}</td>
-                            <td>{order.medicine_name}</td> 
-                            <td>{order.pharmacy_name}</td> 
-                            <td>Tiene 24 h para recoger el medicamento</td>
-                            <td>{getStatusBadge(order.order_status)}</td>
-                            <td>{order.order_status === "Pendiente" && (<Button  variant="outline-danger"  className="rounded-pill"  onClick={() => handleCancelOrder(order.id)}>Cancelar</Button> )}</td> {/* REMOVED FOR NOW: <Button variant="outline-success" className="rounded-pill ">Ver Detalles</Button> */}
+                            <td className="table-cell body-row order-nr"># {order.id}</td>
+                            <td className="table-cell body-row">{order.medicine_name}</td> 
+                            <td className="table-cell body-row">{order.pharmacy_name}</td>
+                            <td className="table-cell body-row time">
+                              {order.order_status === "Aceptada" && "Dispone de 24 h para recogerlo"}
+                            </td>
+                            <td className="table-cell body-row">{getStatusBadge(order.order_status)}</td>
+                            <td className="table-cell body-row">{order.order_status === "Pendiente" && (<Button  variant="outline-danger"  className="rounded-pill"  onClick={() => handleCancelOrder(order.id)}>Cancelar</Button> )}</td> {/* REMOVED FOR NOW: <Button variant="outline-success" className="rounded-pill ">Ver Detalles</Button> */}
                         </tr>
                     ))}
                 </tbody>
             </Table>
+          </div>
         </div>
     );
 };

@@ -267,8 +267,8 @@ def get_user_orders():
     for order in orders:
         order_data = order.serialize()
         # Directly access medicine and pharmacy from the order due to joinedload
-        order_data['medicine_name'] = order.medicine.medicine_name if order.medicine else 'No disponible'
-        order_data['pharmacy_name'] = order.pharmacy.pharmacy_name if order.pharmacy else 'No disponible'
+        order_data['medicine_name'] = order.medicine.medicine_name.capitalize() if order.medicine else 'No disponible'
+        order_data['pharmacy_name'] = order.pharmacy.pharmacy_name.capitalize() if order.pharmacy else 'No disponible'
         all_user_orders.append(order_data)
     results['orders'] = all_user_orders
     response_body['message'] = "Reservas encontradas"

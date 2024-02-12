@@ -5,8 +5,7 @@ import { Link, Outlet } from "react-router-dom"; //(React Outlet) 4.import Outle
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import "../../styles/dashboard.css";
 
 export const PatientDashboard = () => {
   const { store, actions } = useContext(Context);
@@ -21,31 +20,16 @@ export const PatientDashboard = () => {
   }, [store.isLoggedIn, store.isPharmacy, navigate]);
 
 
-//LOGIC TRANSFERED TO FLUX:
-//   useEffect(() => {
-//     const userLogged = JSON.parse(localStorage.getItem("userLogged"));
-//     if(userLogged != null){
-//         if(userLogged.expire < new Date().getTime()){
-//             actions.logout();
-//             localStorage.removeItem("userLogged");
-//             navigate("/login");
-//          }
-//     // }else{
-//     //     navigate("/");
-//      }
-// }, [navigate])
-
-
 
 return (
-    <div>
-      <h1>Patient Dashboard</h1>  
+    <div className="dashboard">
+      <h1 className="title"> Área Paciente </h1>  
       <Nav variant="tabs" defaultActiveKey="/patient/orders">
         <LinkContainer to="/patient/orders"> 
-          <Nav.Link className="border-light">Orders</Nav.Link>
+          <Nav.Link className="dashboard-nav">Mis Reservas</Nav.Link>
         </LinkContainer>
         <LinkContainer to="/patient/patient-profile">
-          <Nav.Link className="border-info text-black">PatientProfile</Nav.Link>
+          <Nav.Link className="dashboard-nav">Mi Perfil</Nav.Link>
         </LinkContainer>
       </Nav>
       <Outlet />

@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
-import { Card, Button, ListGroup, ListGroupItem, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Card, Button, ListGroup, ListGroupItem, Tooltip, OverlayTrigger, Table, Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
 import { faPhone, faKeyboard, faInfoCircle, faStoreAlt } from '@fortawesome/free-solid-svg-icons'
@@ -73,6 +73,32 @@ return (
       </div>
     </div>
     {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
+   
+   
+   
+   
+    <Table striped bordered hover>
+      <tbody>
+        <tr>
+          <td> <h2 className="custom-card-title">{pharmacy?.pharmacy_name || pharmacy?.name}</h2><br/>Address</td>
+          <td> <div className={`working-hours-item ${pharmacy?.opening_hours?.open_now ? 'text-success' : 'text-danger'}`}>
+            <FontAwesomeIcon icon={faClock} className="pe-2" />
+            {pharmacy?.opening_hours?.open_now ? "Abierta Ahora" : "Cerrada Ahora"}
+          </div><br/> <FontAwesomeIcon icon={faStoreAlt} className="pe-2" />
+              Farmacia de 24 Horas</td>
+          <td>
+          <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={() => handleButtonClick(place_id)}>
+                        {buttonType === 'reserve' ? <FontAwesomeIcon icon={faKeyboard} /> : <FontAwesomeIcon icon={faInfoCircle} />}
+                        {buttonType === 'reserve' ? 'Reservar Online' : 'Datos de contacto'}
+                    </Button>
+                    <div><OverlayTrigger key="top" placement="top"
+                      overlay={<Tooltip id={`tooltip-top`}> Tel: {pharmacy.phone}</Tooltip>}>
+                    <Card.Link className="btn-reserve-phone" variant="outline-primary" size="sm"><FontAwesomeIcon icon={faPhone} /> Teléfono</Card.Link>
+                    </OverlayTrigger></div>
+          </td>
+        </tr>
+      </tbody>
+    </Table>
   </div>
 );
 };

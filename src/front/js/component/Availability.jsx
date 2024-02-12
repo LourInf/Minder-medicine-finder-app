@@ -114,18 +114,18 @@ const availabilityText = filterPsum ? (
 
 
   return (
-    <div className="container">
-      {availabilityText}
-
-      <Form.Check
-        type="checkbox"
-        id="filterPsum"
-        label="Ver solo los medicamentos con problemas de suministro"
-        checked={filterPsum}
-        onChange={() => setFilterPsum(!filterPsum)}
-      />
-
-       <div className="mb-3">
+    <div className="main-container">
+      <div className="filters-container d-flex flex-column align-items-center mb-3">
+        <div className="pills-menu-style d-flex justify-content-center">
+        {availabilityText}
+          <Form.Check
+            type="checkbox"
+            id="filterPsum"
+            label="Ver solo los medicamentos con problemas de suministro"
+            checked={filterPsum}
+            onChange={() => setFilterPsum(!filterPsum)}
+          />
+        <div className="mb-3">
         
         <Form.Group controlId="formSearch">
           <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/>
@@ -136,45 +136,50 @@ const availabilityText = filterPsum ? (
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Form.Group>
-        <div className="mt-3">
-          
-          <Badge pill className="p-2" bg={availabilityFilter === "Disponible" ? "success" : "secondary"} onClick={() => handleFilterSelection("Disponible")}>
+        <div className="filters-container d-flex flex-column align-items-center mb-3">
+          <span className="filter-text mb-2">Filtros:</span> 
+          <div className="pills-menu-style d-flex justify-content-center">
+            <Badge pill className="p-2" bg={availabilityFilter === "Disponible" ? "success" : "secondary"} onClick={() => handleFilterSelection("Disponible")}>
             Disponible
           </Badge>{' '}
           <Badge pill className="p-2" bg={availabilityFilter === "No disponible" ? "danger" : "secondary"} onClick={() => handleFilterSelection("No disponible")}>
             No disponible
           </Badge>
+          </div>
+          </div>
         </div>
       </div>
-
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Medicamento</th>
-            <th>Con problema de suministro</th>
-            <th>Disponibilidad Actual</th>
-            <th>Accion</th>
-          </tr>
+    </div>
+    <div className="table-container hover-shadow">
+    <Table table-style>
+      <thead className="table-head-style">
+        <tr>
+          <th className="table-cell header" style={{ color: "#3ab0a7", }}>Medicamento</th>
+          <th className="table-cell header" style={{ color: "#00c895", }}>Con problema de suministro</th>
+          <th className="table-cell header" style={{ color: "#00a747", }}>Disponibilidad Actual</th>
+          <th className="table-cell header" style={{ color: "#3ab0a7", }}>Cambiar mi Disponibilidad</th>
+        </tr>
         </thead>
-        <tbody>
+        <tbody className="table-body">
           {currentItems.map((medicine, index) => (
             <tr key={index}>
-              <td>{medicine.medicine_name}</td>
-              <td>{hasDistributionProblem(medicine.id) ? 
+              <td className="table-cell body-row">{medicine.medicine_name}</td>
+              <td className="table-cell body-row">{hasDistributionProblem(medicine.id) ? 
                   <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/> : 
                   <FontAwesomeIcon icon={faCheck} />
                 }</td>
-                <td> <Badge pill bg={medicine.availability_status === "Disponible" ? "success" : medicine.availability_status === "No disponible" ? "danger" : "secondary"}>
+                <td className="table-cell body-row"> <Badge pill bg={medicine.availability_status === "Disponible" ? "success" : medicine.availability_status === "No disponible" ? "danger" : "secondary"}>
                       {medicine.availability_status || "Desconocido"}
                 </Badge>
               </td>
-              <td>
-                <Button variant="primary">Action</Button> {/* Placeholder for actual action */}
+              <td className="table-cell body-row">
+                <Button className="btn-change-availability">Actualizar Disponibilidad</Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      </div>
       <Pagination>
         <Pagination.First onClick={() => setCurrentPage(1)} />
         <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} />

@@ -1,0 +1,76 @@
+.main-container{
+    border-radius: 15px;
+    margin:auto;
+}
+
+/* .filters-container{
+    color: var(--dark-secondary);
+    margin-top: 20px;
+    padding: 15px; 
+    background-color: #ffffff; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  } */
+
+  .pills-menu-style{ 
+    padding:10px 0;
+    background-color: #ffffff;
+    border-radius: 15px;
+  }
+
+  .table-container{
+    padding:20px 40px;
+    margin-top:50px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  
+.table-style{
+    border-radius: 15px;
+    border:none;
+  }
+  
+  .table-cell{
+    vertical-align: middle;
+    text-align: left;
+    
+  }
+  
+  .table-cell.header{
+    
+    padding: 10px 20px 35px 20px;
+  }
+  
+  .table-cell.body-row{
+    padding: 35px 20px;
+  }
+  
+  .table-cell.body-row.time{
+    color: var(--dark-success);
+  }
+  
+  .table-cell.body-row.order-nr{
+    font-weight:500;
+  }
+  
+  .hover-shadow tr:hover {
+    box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.4s;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+
+
+  .btn-change-availability {
+    color: var(--dark-info);
+    font-weight: 500;
+    border: 1px solid var(--dark-info);
+    background:#ffffff;
+  }
+
+  .btn-change-availability:hover {
+    color: #ffffff;
+    border: 1px solid var(--dark-info);
+    background:var(--dark-info);
+  }

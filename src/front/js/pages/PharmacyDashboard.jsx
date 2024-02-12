@@ -5,6 +5,7 @@ import { Link, Outlet } from "react-router-dom"; //(React Outlet) 4.import Outle
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useNavigate } from "react-router-dom";
+import "../../styles/dashboard.css";
 
 export const PharmacyDashboard = () => {
   const { store, actions } = useContext(Context);
@@ -22,21 +23,20 @@ export const PharmacyDashboard = () => {
 
   return (
  
-    <div>
-      <h1>Pharmacy Dashboard</h1>
-    {/* These links let you navigate between the nested routes. (React-router-bootstrap) */}
+    <div className="dashboard">
+      <h1 className="title">Área Farmacia</h1>
       <Nav variant="tabs" defaultActiveKey="/pharmacy/availability">
         <LinkContainer to="/pharmacy/availability"> 
-          <Nav.Link>Availability</Nav.Link>
+          <Nav.Link className="dashboard-nav">Disponibilidad</Nav.Link>
         </LinkContainer>
         <LinkContainer to="/pharmacy/reservations">
-          <Nav.Link>Reservations</Nav.Link>
+          <Nav.Link className="dashboard-nav">Reservas</Nav.Link>
         </LinkContainer>
         <LinkContainer to="/pharmacy/pharmacy-profile">
-          <Nav.Link>PharmacyProfile</Nav.Link>
+          <Nav.Link className="dashboard-nav">Mi perfil</Nav.Link>
         </LinkContainer>
       </Nav>
-      <Outlet /> {/* Here, the nested route components are rendered */}
+      <Outlet /> 
     </div>
   );
 };

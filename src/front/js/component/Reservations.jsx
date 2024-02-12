@@ -14,7 +14,7 @@ export const Reservations = () => {
     const getStatusBadge = (status) => {
       switch (status) {
         case 'Pendiente':
-          return <Badge pill bg="" text="dark" className="badge-soft-warning p-2">Pendiente</Badge>;
+          return <Badge pill bg="" className="badge-soft-warning p-2">Pendiente</Badge>;
         case 'Aceptada':
           return <Badge pill bg="" className="badge-soft-success p-2">Aceptada</Badge>;
         case 'Rechazada':
@@ -55,50 +55,53 @@ export const Reservations = () => {
   
     
     return (
-      <div className="container">
-        <h3 className="m-3 text-center">Total reservas:{store.ordersToPharmacy.length}</h3>
-        <div className="d-flex justify-content-center mb-3">
-        <Badge pill bg="" text="dark" className="badge-soft-warning mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
-        <Badge pill bg="" className="badge-soft-success mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
-        <Badge pill bg="" className="badge-soft-danger mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
-        <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
-        <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+      <div className="orders-container">
+        <div className="filters-container d-flex flex-column align-items-center mb-3">
+          <span className="filter-text mb-2">Filtros:</span> 
+          <div className="pills-menu-style d-flex justify-content-center">
+            <Badge pill bg="" className="badge-soft-warning mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
+            <Badge pill bg="" className="badge-soft-success mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
+            <Badge pill bg="" className="badge-soft-danger mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
+            <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
+            <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+          </div>
       </div>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th># Reserva</th>
-              <th>Medicamento</th> 
-              <th>Usuario</th> 
-              <th>Tiempo de reserva</th> {/*tienes hasta <fecha> para recoger el medicamento*/}
-              <th>Order Status</th> {/*Pendiente, Aceptada, Cancelada, Recogida*/}
-              <th>Acción</th> 
+        <div className="table-container hover-shadow">
+          <Table table-style>
+            <thead className="table-head-style">
+              <tr>
+                <th className="table-cell header" style={{ color: "#3ab0a7", }}>Reserva</th>
+                <th className="table-cell header" style={{ color: "#00c895", }}>Medicamento</th>
+                <th className="table-cell header" style={{ color: "#00a747", }}>Paciente</th>
+                {/* <th className="table-cell header" style={{ color: "#3ab0a7", }}>Tiempo de reserva</th> */}
+                <th className="table-cell header" style={{ color: "#3ab0a7", }}>Estado</th>
+                <th className="table-cell header" style={{ color: "#007085", }}>Acción</th> 
               </tr>
-          </thead>
-          
-          <tbody>
+            </thead>
+          <tbody className="table-body">
           {filteredOrders.map((reservation, index) => (
             <tr key={index}>
-              <td>{reservation.id}</td>
-              <td>{reservation.medicine.medicine_name}</td>
-              <td>{reservation.patient ? reservation.patient.name : 'N/A'}</td>
-              <td>Tiene 24h para recoger el medicamento</td>
-              <td>{getStatusBadge(reservation.order_status)}</td>
-              <td>
+              <td className="table-cell body-row order-nr"># {reservation.id}</td>
+              <td className="table-cell body-row">{reservation.medicine.medicine_name}</td>
+              <td className="table-cell body-row">{reservation.patient ? reservation.patient.name : 'N/A'}</td>
+              {/* <td className="table-cell body-row">Tiene 24h para recoger el medicamento</td> */}
+              <td className="table-cell body-row">{getStatusBadge(reservation.order_status)}</td>
+              <td className="table-cell body-row">
                 {reservation.order_status === 'Pendiente' && (
-                  <>
-                    <Button variant="outline-success" className="me-2" onClick={() => handleAcceptOrder(reservation.id, 'Aceptada')}>Aceptar</Button>
-                    <Button variant="outline-danger" onClick={() => handleCancelOrder(reservation.id, 'Rechazada')}>Cancelar</Button>
-                  </>
+                  <div className="btn-container d-flex flex-row align-items-center mb-3">
+                    <Button variant="" className="btn-accept me-2" onClick={() => handleAcceptOrder(reservation.id, 'Aceptada')}>Aceptar</Button>
+                    <Button variant="" className="btn-reject" onClick={() => handleCancelOrder(reservation.id, 'Rechazada')}>Cancelar</Button>
+                  </div>
                 )}
                 {reservation.order_status === 'Aceptada' && (
-                  <Button variant="outline-info" onClick={() => handlePickupOrder(reservation.id, 'Recogida')}>Recogida?</Button>
+                  <Button variant=""  className="btn-pickup" onClick={() => handlePickupOrder(reservation.id, 'Recogida')}>Recogida?</Button>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
+      </div>
     </div>
   );
 };
