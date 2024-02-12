@@ -64,7 +64,7 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
             </OverlayTrigger>
           </div>
         </div>
-        {showModal && <ModalReservation show={showModal} handleClose={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
+        {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
       </div>
     </div>
   );

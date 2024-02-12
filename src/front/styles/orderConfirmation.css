@@ -1,5 +1,49 @@
 .confetti-image {
     border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+  }
+
+  .container-order-confirmation{
+    color: var(--dark-secondary);
+    padding: 50px; 
+    background-color: #ffffff; 
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin:auto;
+    width: 80%;
+  
+    
+  }
+
+  .btn-search-again{
+    color: var(--accent-secondary);
+    font-size: 20px;
+    font-weight:800;
+    width:280px;
+    border-color: var(--accent-secondary);
+    background-color: transparent;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+
+  }
+
+  .btn-goto-reservations {
+    color:var(--input);
+    font-size: 20px;
+    font-weight:800;
+    width:280px;
+    background-color:  var(--accent-secondary);
+    border-color:  var(--accent-secondary);
+    margin-right:20px;
+  }
+
+  .btn-search-again:hover{
+    color:var(--input);
+    background-color:  var(--accent-secondary);
+
+  }
+
+  .btn-goto-reservations:hover {
+    background-color:var(--input);
+    color: var(--accent-secondary);
+    
   }

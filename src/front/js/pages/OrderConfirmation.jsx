@@ -12,15 +12,15 @@ export const OrderConfirmation = () => {
   const orderDetails = store.orderConfirmationDetails;
 
   return (
-    <div className="container text-center">
+    <div className="container-order-confirmation text-center">
     <img src={confetti} className="confetti-image" alt="Confetti" />
-      <h3 className="main-text m-5">Pedido realizado ¡Gracias!</h3>
+      <h3 className="main-text m-3">Pedido realizado ¡Gracias!</h3>
       {orderDetails ? (
         <>
           <h3>Tu numero de reserva es: {orderDetails.id}</h3>
-          <p>En breve recibirá la confirmación por parte de la farmacia</p>
-          <Button variant="info" onClick={() => navigate('/patient/orders')}>Ver mis reservas</Button>
-          <Button variant="outline-info" onClick={() => navigate('/')} className="ms-2">Buscar otro medicamento</Button>
+          <p className="pb-3 pt-3">En breve recibirá la confirmación por parte de la farmacia</p>
+          <Button variant="" onClick={() => navigate('/patient/orders')} className="btn-goto-reservations">Ver mis reservas</Button>
+          <Button variant="" onClick={() => navigate('/')} className="btn-search-again ms-2">Buscar otro medicamento</Button>
         </>
       ) : (
         <p>No hay ninguna reserva.</p>

@@ -53,7 +53,7 @@ export const Results = () => {
     <div>
      <section className="container-main-text text-center mb-5">
       {/* Section 1: Pharmacies with selected medicine availability in our DB */}
-      <h1 className="heading-db-pharmacies">
+      <h1 className="heading-db-pharmacies pb-4">
       {localStorage.getItem('selectedMedicine') && localStorage.getItem('selectedCityName') && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
       // <>
       //   ¡Buenas noticias! Es posible que {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)} esté disponible en las siguientes farmacias
@@ -63,7 +63,13 @@ export const Results = () => {
         Farmacias con disponibilidad de <span className="medicine-text"> {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}</span> en tu zona:
       </>
       ) : (
-        `Lo sentimos, no encontramos disponibilidad de ${localStorage.getItem('selectedMedicine')} en las farmacias asociadas.`
+        <div>
+        {"Lo sentimos, no encontramos disponibilidad de "}
+        <span className="medicine-text">
+          {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}
+        </span>
+        {" en las farmacias asociadas."}
+      </div>
       )}
       </h1>
       {store.availablePharmacies?.map((pharmacy, index) => (

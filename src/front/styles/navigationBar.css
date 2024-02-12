@@ -6,14 +6,17 @@
       
       .btn-register {
         color: var(--minder-color);
+        font-weight: 500;
         border-color:var(--minder-color);
         background-color: transparent;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
       } 
 
       .btn-login{
         color: var(--accent-secondary);
         border-color:  var(--accent-secondary);
         background-color: transparent;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
  
       }
 
