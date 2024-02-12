@@ -9,3 +9,11 @@ h1 {
     font-family: 'Minderfont', sans-serif;
     color: aliceblue;
 }
+
+Footer {
+    height: 10rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+  }

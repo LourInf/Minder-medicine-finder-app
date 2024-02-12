@@ -32,6 +32,9 @@
     --dark-info: #3173a3;  
     --dark-secondary: #929292; 
 
+    min-height: 100%;
+    position: relative;
+
   }
 
 
@@ -49,4 +52,7 @@ body {
     background-image: linear-gradient(to bottom, #00a4ba, #24b1c3, #3abfcb, #4cccd4, #5edadc, #64e1dc, #80ece2, #76f0db, #7bf2d1, #84f4c5, #90f5b9, #9ef6ac);
     background-attachment: fixed;
     font-family: 'MinderFont', 'Roboto', sans-serif;
+    margin-bottom: 60px;
   }
+
+

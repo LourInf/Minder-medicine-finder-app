@@ -1,8 +1,8 @@
+import "../../styles/footer.css"
 import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import logoImage from "../../img/minderlogoimage.png";
-import "../../styles/footer.css"
 import fourgeek from "../../img/4geek.png";
 
 export const Footer = () => {
@@ -11,6 +11,7 @@ export const Footer = () => {
 	return (
 		<>
 
+			<br/>
 			<br/>
 			<div className="footer text-center border-top">
 				<br />

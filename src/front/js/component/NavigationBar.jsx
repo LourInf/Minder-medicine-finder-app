@@ -73,14 +73,17 @@ export const NavigationBar = () => {
 				<Nav.Link as={Link} to="/">Home</Nav.Link>
 				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>
-				<Nav.Link as={Link} to="/maps">Maps</Nav.Link>
+				{/* <Nav.Link as={Link} to="/maps">Maps</Nav.Link> */}
 			  </Nav>
 			</Navbar.Collapse>
 			</div>
 			<div className="d-flex justify-content-end">
+				{store.isLoggedIn && 
 			<button id="logoutBtn" className="btn btn-outline-danger me-3" onClick={handleLogout}> <FontAwesomeIcon icon={faSignOutAlt} /></button>
-			<Link to={registerOrHome}>
-				<Button variant="outline-light" id="register" className="btn-register me-2">Nuevo usuario</Button>
+				}
+			<Link to={store.isLoggedIn ? "/" : "/register"}>
+				<Button variant="outline-light" id="register" className="btn-register me-2">
+				{store.isLoggedIn ? "Usuario logado" : "Nuevo Usuario"} </Button>
 			</Link>
 			<Link to="/login">
 				<Button variant="outline-light" className="btn-login"><FontAwesomeIcon icon = { faUser } /></Button>
