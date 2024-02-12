@@ -10,6 +10,7 @@ export const SearchNamePharmacy = () => {
   const { store, actions } = useContext(Context);
   const [name, setName] = useState('');
 
+  actions.removeUnnecessaryItems();
 
   const handleSearchYourPharmacies = async () => {
     console.log("handleSearchYourPharmacies")

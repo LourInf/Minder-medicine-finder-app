@@ -1,5 +1,4 @@
-import React from "react";
-import "../../styles/home.css";
+import React, { useContext, useState, useEffect } from "react"
 import { SearchBar } from ".././component/SearchBar.jsx";
 import { Container } from 'react-bootstrap';
 import minder from "../../img/minder.png"

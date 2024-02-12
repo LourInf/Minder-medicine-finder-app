@@ -9,6 +9,7 @@ import "../../styles/dashboard.css";
 
 export const PatientDashboard = () => {
   const { store, actions } = useContext(Context);
+	actions.removeUnnecessaryItems();
   const navigate = useNavigate();
 
   useEffect(() => {

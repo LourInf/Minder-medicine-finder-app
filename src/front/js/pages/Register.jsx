@@ -30,6 +30,9 @@ export const Register = () => {
 
 
     const checkExistingEmail = async (emailToCheck) => {
+        const { store, actions } = useContext(Context);
+
+        actions.removeUnnecessaryItems();
 
         console.log(`Qué es email -> ${emailToCheck}`);
 
@@ -243,19 +246,18 @@ export const Register = () => {
 
                 <form onSubmit={handleSubmit} className="form-group col-md-6 py-5 px-md-5 mx-auto">
                     <h1 className="text-center">Regístrate Aquí</h1>
-                    <p id="allDoneMessage" className="p-3" style={{ color: "green", borderRadius: "10px", border: "solid green 3px", display: "none" }}>Register completed</p>
-                    <p id="errorMessage" className="p-3" style={{ color: "red", borderRadius: "10px", border: "solid red 3px", display: "none" }}>Error during the register of new user</p>
-                    <p id="errorExistingEmail" className="p-3" style={{ color: "orange", borderRadius: "10px", border: "solid red 3px", display: "none" }}>This User already exist <a href="/login">Would you like to login?</a></p>
-                    {/* <p id="errorAlreadyExists" className="p-3" style={{ color: "brown", borderRadius: "10px", border: "solid red 3px", display: "none" }}></a></p> */}
+                    <p id="allDoneMessage" className="p-3" style={{ color: "green", borderRadius: "10px", border: "solid green 3px", display: "none" }}>Registro completado</p>
+                    <p id="errorMessage" className="p-3" style={{ color: "red", borderRadius: "10px", border: "solid red 3px", display: "none" }}>Ha ocurrido un problema durante la creación del usuario</p>
+                    <p id="errorExistingEmail" className="p-3" style={{ color: "orange", borderRadius: "10px", border: "solid red 3px", display: "none" }}>Este usuario ya existe <a href="/login">¿Te gustaría iniciar sesión?</a></p>
                     <div className="form-outline mb-4">
                         <input type="email" id="registerForm1" className="form-control"
                             value={email} onChange={async (e) => await checkEmail(e.target.value)} required />
-                        <label className="form-label" htmlFor="registerForm1">Email address</label>
+                        <label className="form-label" htmlFor="registerForm1">Dirección de correo electrónico</label>
                     </div>
                     <div className="form-outline mb-4">
                         <input type="password" id="registerForm2" className="form-control"
                             value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        <label className="form-label" htmlFor="registerForm2">Password</label>
+                        <label className="form-label" htmlFor="registerForm2">Contraseña</label>
                     </div>
                     <div className="form-outline mb-4">
                         <input type="checkbox" id="registerForm3" className="form-check-input"
@@ -268,20 +270,20 @@ export const Register = () => {
                             <h3>¿Eres un paciente?</h3>
                             <input type="text" id="registerForm4" className="form-control"
                                 value={name} onChange={(e) => setName(e.target.value)} required />
-                            <label className="form-label" htmlFor="registerForm4">Name</label>
+                            <label className="form-label" htmlFor="registerForm4">Nombre</label>
                         </div>
                     )}
 
                     {is_pharmacy && (
 
                         <div>
-                            <h3>You are a pharmacy</h3>
+                            <h3>¿Eres una Farmacia?</h3>
 
                             <div className="form-outline mb-4">
 
                                 <input type="text" id="registerForm5" className="form-control"
                                     value={pharmacy_name} onChange={(e) => handleSuggestPharma(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm5">Pharmacy name</label>
+                                <label className="form-label" htmlFor="registerForm5">Nombre de la Farmacia</label>
                                 {suggestedPharma.length > 0 && (
                                     <ul>
                                         {suggestedPharma.map((suggestion, index) => (
@@ -301,27 +303,27 @@ export const Register = () => {
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm7" className="form-control"
                                     value={soe_number} onChange={(e) => setSoe_number(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm6">SOE number</label>
+                                <label className="form-label" htmlFor="registerForm6">Número SOE</label>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm8" className="form-control"
                                     value={address} onChange={(e) => setAddress(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm7">Address</label>
+                                <label className="form-label" htmlFor="registerForm7">Dirección</label>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="checkbox" id="registerForm9" className="form-check-input"
                                     onChange={(e) => setIs24(e.target.checked)} checked={is24} />
-                                <label className="form-label" htmlFor="registerForm3">Is 24 hours?</label>
+                                <label className="form-label" htmlFor="registerForm3">¿Servicio 24H?</label>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm10" className="form-control"
                                     value={phone} onChange={(e) => setPhone(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm11">Phone</label>
+                                <label className="form-label" htmlFor="registerForm11">Teléfono</label>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm11" className="form-control"
                                     value={working_hours} onChange={(e) => setWorking_Hours(e.target.value)} required />
-                                <label className="form-label" htmlFor="registerForm12">Working hours</label>
+                                    <label className="form-label" htmlFor="registerForm12">Horario</label>
                             </div>
 
 
@@ -332,7 +334,7 @@ export const Register = () => {
 
                     <div className="text-center">
                         <button id="send" type="submit" className="btn btn-info btn-block mb-4">
-                            Sign up
+                            Registrase
                         </button>
                     </div>
                 </form>

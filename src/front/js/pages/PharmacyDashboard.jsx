@@ -10,6 +10,7 @@ import "../../styles/dashboard.css";
 export const PharmacyDashboard = () => {
   const { store, actions } = useContext(Context);
   const navigate = useNavigate();
+	actions.removeUnnecessaryItems();
 
    // Redirect if not logged in or not a pharmacy
    useEffect(() => {

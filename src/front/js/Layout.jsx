@@ -20,9 +20,6 @@ import { Orders } from "./component/Orders.jsx";
 import { Maps } from "./component/Maps.jsx"
 import { Login } from "./pages/Login.jsx";
 import { Register } from "./pages/Register.jsx";
-import { PatientHome } from "./pages/PatientHome.jsx";
-import { PatientInfo } from "./pages/PatientInfo.jsx";
-import { PatientOrders } from "./pages/PatientOrders.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
 import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
 import { Notification } from "./component/Notification.jsx";
@@ -64,10 +61,6 @@ const Layout = () => {
                             <Route index element={<Orders />} />
                             <Route path="orders" element={<Orders />} />
                             <Route path="patient-profile" element={<PatientProfile />} />
-                        </Route>
-                        <Route element={<PatientHome />} path="/patientHome" >      {/* patient-home */}
-                            <Route element={<PatientInfo />} path="info" />   
-                            <Route element={<PatientOrders />} path="orders" />                 
                         </Route>
                         <Route element={<h1>Not found!</h1>} path="*"/>
                     </Routes>
