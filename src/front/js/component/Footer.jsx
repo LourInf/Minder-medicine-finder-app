@@ -13,7 +13,7 @@ export const Footer = () => {
 
 			<br/>
 			<br/>
-			<div className="footer text-center border-top">
+			<div className="footer text-center border-top ">
 				<br />
 				<br />
 				<div className="">
@@ -62,6 +62,7 @@ export const Footer = () => {
 					</p>
 					<img src={fourgeek} alt="4geeklogo" width={75} />
 				</div>
+				
 			</div>
 
 		</>

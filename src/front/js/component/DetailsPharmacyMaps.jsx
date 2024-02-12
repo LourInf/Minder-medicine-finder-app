@@ -14,7 +14,7 @@ export const DetailsPharmacyMaps = () => {
             <h1 className="text-center p-2 m-3">Consulta los datos de la Farmacia</h1>
             {/* Si existe "pharmacyDetails" entonces extrae la información */}
             {pharmacyDetails ? (
-                <div className="container">
+                <div className="container p-2" style={{borderRadius: "10px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)"}}>
                     <div className="card mb-3">
                         <div className="row g-0">
                             <div className="col-md-7 col-lg-6 col-xl-5">

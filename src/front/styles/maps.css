@@ -7,7 +7,7 @@ h2 {
     font-family: 'Minderfont', sans-serif;
     color: white;
 }
-.transparent-button {
+/* .transparent-button {
     background-color: transparent;
     border-color:transparent;
 }
@@ -16,5 +16,8 @@ h2 {
 }
 .custom-transparentcard {
     background-color:aliceblue
-}
+} */
 
+.div {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1)
+}
