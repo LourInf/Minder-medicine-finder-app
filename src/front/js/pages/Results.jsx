@@ -15,7 +15,7 @@ export const Results = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-	actions.removeUnnecessaryItems();
+	// actions.removeUnnecessaryItems();
 
   const selectedMedicine = localStorage.getItem('selectedMedicine');
   const selectedCityName = localStorage.getItem('selectedCityName');

@@ -121,7 +121,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			
 			isLogged : () => {
-				const userLogged = localStorage.getItem("userLogged");
+				const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+				console.log("Esto es userLogged des isLogged -> ",userLogged);
 				if(userLogged != null){
 					if(userLogged.is_pharmacy || !userLogged.is_pharmacy){
 						setStore({
@@ -135,8 +136,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}else{
 						console.log("No eres ni pharmacy ni paciente, entonces, qué eres?");
 					}
-
-
 				}
 
 				// if(localStorage.getItem("token")){

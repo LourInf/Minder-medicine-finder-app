@@ -101,18 +101,18 @@ export const Login = () => {
     return (
         <div className="text-center">
             <form onSubmit={handleSubmit} className="form-group col-md-6 py-5 px-md-5 d-inline-block">
-                <h1 className="text-center">Login</h1>
+                <h1 className="text-center">Inicia sesión</h1>
                 {errorMessage && <p className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px"}}>{errorMessage}</p>}
                 {errorMessageRole && <p className="p-3" style={{color: "red", borderRadius: "10px", border: "solid red 3px"}}>{errorMessageRole}</p>}
                 <div className="form-group form-outline mb-4">
                     <input type="email" id="form2Example1" className="form-control"
-                        value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address" />
+                        value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Dirección de correo electrónico" />
                 </div>
                 <div className="form-group form-outline mb-4">
                     <input type="password" id="form2Example2" className="form-control"
-                        value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
+                        value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" />
                 </div>
-                <button type="submit" className="btn btn-info btn-block mb-4" >Sign in</button>
+                <button type="submit" className="btn btn-info btn-block mb-4" >Iniciar sesión</button>
             </form>
         </div>
     );

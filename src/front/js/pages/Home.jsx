@@ -9,8 +9,8 @@ import "../../styles/home.css";
 export const Home = () => {
     const { store, actions } = useContext(Context);
 
-	actions.removeUnnecessaryItems();
-
+	// actions.removeUnnecessaryItems();
+	
 	return (
 		<Container className="text-center mt-3 main-content-container">
 			<img src={minder} alt="minderletra" />

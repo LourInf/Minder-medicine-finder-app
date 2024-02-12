@@ -21,6 +21,7 @@ typing-extensions = "*"
 googlemaps = "*"
 requests = "*"
 flask-jwt-extended = "*"
+datetime = "*"
 
 [requires]
 python_version = "3.10"

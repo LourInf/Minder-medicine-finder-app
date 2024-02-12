@@ -17,6 +17,7 @@ export const Availability = () => {
 
   // Fetch all medicines
   useEffect(() => {
+    console.log("Pharmacy_id desde store -> ",store.pharmacy_id)
     actions.getMedicinesAllDb(store.pharmacy_id);
   }, [store.pharmacy_id]);
 
