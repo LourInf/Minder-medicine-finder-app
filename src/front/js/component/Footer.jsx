@@ -9,27 +9,20 @@ export const Footer = () => {
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<>
-
-			<br/>
-			<br/>
-			<div className="footer text-center border-top ">
-				<br />
-				<br />
-				<div className="">
+			<div className="footer mt-auto text-center border-top ">
+				<div>
 					{/* <Link to="/" className="d-flex align-items-center text-dark text-decoration-none ms-5 mt-5 ps-5">
 						<img src={logoImage} alt="logo" width="70px" />
 						<span className=" h5 font-weight-bold">Minder</span>
 					</Link> */}
-					<p className="my-2 ms-5 text-center">
+					
+					<div className="container text-center">
 						Nuestra misión es asistir a los usuarios en la búsqueda rápida y sencilla de los medicamentos que necesitan,
 						especialmente aquellos con problemas de abastecimiento, conectándolos con las farmacias que tienen disponibles esos medicamentos.
-					</p>
-					<div className="mt-4 justify-content-center">
 					</div>
-		<br/>
-						<h5 className="strong">Conócenos</h5>
-					<li>
+					
+				
+					<h5 className="strong">Conócenos</h5>
 						Lourdes
 						<Button variant="outline-light" className="m-1" href="https://github.com/LourInf" role="button">
 							<i className="fab fa-github"></i>
@@ -53,18 +46,12 @@ export const Footer = () => {
 						<Button variant="outline-light" className="m-1" href="https://www.linkedin.com/in/andr%C3%A9s-abadia-heredia-686039b9/" role="button">
 							<i className="fab fa-linkedin-in"></i>
 						</Button>
-					</li>
 				</div>
-				<div className="text-center pt-5 mt-5">
+				<div className="text-center">
 					© {currentYear} Copyright:
-					<p className="text-white p-2" to="/">
-						Lourdes, Evelyn, Andrés
-					</p>
 					<img src={fourgeek} alt="4geeklogo" width={75} />
 				</div>
-				
-			</div>
 
-		</>
+			</div>
 	);
 }

@@ -24,9 +24,9 @@
     }
 
 .explore-more-btn {
-    color: var(--accent-secondary);
+    color: var(--dark-minder);
     font-weight: 500;
-    border: 1px solid var(--accent-secondary);
+    border: 1px solid var(--dark-minder);
     background:#ffffff;
     font-size:28px;
     text-decoration: none;
@@ -34,12 +34,13 @@
     border-radius: 8px;
     box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
     color: #ffffff;
-    border: 1px solid var(--accent-secondary);
-    background:var(--accent-secondary);
+    border: 1px solid var(--dark-minder);
+    background:var(--dark-minder);
 
   }
 
   .explore-more-btn:hover {
-    color: var(--accent-secondary);
-    border: 1px solid var(--accent-secondary);
+    color: var(--dark-minder);
+    border: 1px solid var(--dark-minder);
+    font-weight: 500;
     background:#ffffff;  }

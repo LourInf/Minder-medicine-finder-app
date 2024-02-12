@@ -24,9 +24,18 @@
 
 
 .btn-reserve-online {
-    color: var(--input);
-    background-color: var(--dark-blue);
-    border-color: var(--dark-blue);
+    color: var(--dark-minder);
+    background-color: var(--accent-secondary);
+    border-color:  var(--accent-secondary);
+    padding:8px;
+    border-radius: 30px;
+    margin: auto;
+}
+
+.btn-reserve-online:hover {
+    color: var(--dark-minder);
+    background-color:#ffffff;
+    border-color:  var(--accent-secondary);
     padding:8px;
     border-radius: 30px;
     margin: auto;
@@ -34,12 +43,23 @@
 }
 
 .btn-reserve-phone {
-    color: var(--dark-blue);
+    color: var(--dark-minder);
     cursor: pointer; 
     text-decoration: none;
     border: none;
     padding-left:15px;
 }
+
+.btn-reserve-phone:hover {
+    color: var(--accent-secondary);
+    background-color: transparent;
+    cursor: pointer; 
+    text-decoration: none;
+    border: none;
+    padding-left:15px;
+}
+
+
 
 .pharmacy-logo {
     width: 50px;

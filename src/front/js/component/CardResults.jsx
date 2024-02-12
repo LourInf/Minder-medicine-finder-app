@@ -57,11 +57,9 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
             <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleReserveOnline}>
               <FontAwesomeIcon icon={faKeyboard} /> Reservar Online 
             </Button>
-            <OverlayTrigger key="top" placement="top" overlay={<Tooltip id={`tooltip-top`}>Tel: {pharmacy?.phone || 'No disponible'}</Tooltip>}>
-              <Button variant="outline-primary" size="sm" className="btn-reserve-phone">
-                <FontAwesomeIcon icon={faPhone} /> Teléfono
-              </Button>
-            </OverlayTrigger>
+            <OverlayTrigger key="top" placement="top"  delay={{ show: 250, hide: 400 }} overlay={<Tooltip id={`tooltip-top`}> Tel: {pharmacy?.phone}</Tooltip>}>
+                    <Card.Link className="btn-reserve-phone" variant="outline-primary" size="sm"><FontAwesomeIcon icon={faPhone} /> Teléfono</Card.Link>
+                    </OverlayTrigger>
           </div>
         </div>
         {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}

@@ -16,11 +16,11 @@
   }
 
   .btn-search-again{
-    color: var(--accent-secondary);
+    color:var(--primary);
     font-size: 20px;
     font-weight:800;
     width:280px;
-    border-color: var(--accent-secondary);
+    border-color: var(--primary);
     background-color: transparent;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 
@@ -31,19 +31,19 @@
     font-size: 20px;
     font-weight:800;
     width:280px;
-    background-color:  var(--accent-secondary);
-    border-color:  var(--accent-secondary);
+    background-color:  var(--primary);
+    border-color:  var(--primary);
     margin-right:20px;
   }
 
   .btn-search-again:hover{
     color:var(--input);
-    background-color:  var(--accent-secondary);
+    background-color:  var(--primary);
 
   }
 
   .btn-goto-reservations:hover {
     background-color:var(--input);
-    color: var(--accent-secondary);
+    color: var(--primary);
     
   }
