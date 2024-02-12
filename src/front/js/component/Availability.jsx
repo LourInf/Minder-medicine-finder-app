@@ -13,6 +13,9 @@ export const Availability = () => {
   const [filterPsum, setFilterPsum] = useState(true); // State to track if filter by distribution problems is selected
   const [availabilityFilter, setAvailabilityFilter] = useState(""); // State to hold the selected availability filter
 
+	actions.removeUnnecessaryItems();
+
+
   // Fetch medicines with distribution problems
   useEffect(() => {
     actions.getMedicinesPsum();

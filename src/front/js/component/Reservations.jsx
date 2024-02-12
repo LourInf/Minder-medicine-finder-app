@@ -7,6 +7,9 @@ export const Reservations = () => {
   const { store, actions } = useContext(Context);
   const [filter, setFilter] = useState('');
 
+
+  actions.removeUnnecessaryItems();
+
   useEffect(() => {
     actions.getPharmacyOrders();
     }, [actions.getPharmacyOrders]);

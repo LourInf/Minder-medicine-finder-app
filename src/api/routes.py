@@ -1,6 +1,12 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints.
 """
+
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+
+
 from flask import Flask, request, jsonify, Blueprint, session
 from api.models import db, Users, Medicines, Orders, Availability, Pharmacies, Patients, OrderStatus, AvailabilityStatus
 from api.utils import generate_sitemap, APIException
@@ -10,12 +16,53 @@ import os
 import math
 from sqlalchemy import select, or_, and_, func
 from datetime import datetime, timedelta
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt, jwt_required, JWTManager, set_access_cookies, unset_access_cookies
 from sqlalchemy.orm import joinedload, aliased
 
+app = Flask(__name__)
 
 api = Blueprint('api', __name__)
 CORS(api)  # Allow CORS requests to this API
+# print("")
+# print("")
+# print("")
+# print("Esto es app -> ",app)
+# print("")
+# print("")
+# print("")
+
+
+app.config["JWT_COOKIE_SECURE"] = False
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
+jwt = JWTManager(app)
+
+
+# print("")
+# print("")
+# print("")
+# print("Esto es app access_token_expires -> ",app.config["JWT_ACCESS_TOKEN_EXPIRES"])
+# print("")
+# print("")
+# print("")
+
+@app.after_request
+def refresh_token(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        return response
+
+if __name__ == "__main__":
+    app.run()
 
 
 
@@ -114,6 +161,13 @@ def handle_pharmacies_details():
     api_url_places_details = os.environ.get('URL_GOOGLE_PLACES_DETAILS')
     api_key = os.environ.get('GOOGLE_API_KEY')
     data = request.json
+    print("")
+    print("")
+    print("")
+    print("Esto es data -> ",data)
+    print("")
+    print("")
+    print("")
     # Este dato debe venir del Front
     pharmacy_id = data['place_id']
     # Estos campos son los seleccioandos para extraer, se pueden modificar. Consultar Documentación API. 
@@ -288,6 +342,16 @@ def create_patient_order():
     
     response_body = {}
     data = request.json
+    
+    print("")
+    print("")
+    print("")
+    print("Esto es data -> ",data)
+    print("")
+    print("")
+    print("")
+    
+    
     # here we write the logic to save the new order registry in our DB:
     pharmacy_id = data.get('pharmacy_id')
     medicine_id = data.get('medicine_id')  
@@ -723,21 +787,23 @@ def login_user():
     password = request.json.get("password", None)
     
     user = Users.query.filter_by(email=email, password=password).first()
-    pharmacy_id = 2
     
     # if user is None:
     if user is None:
         return jsonify({"message":"User not found"}), 404
     
 
-    if user.is_pharmacy is True:
+    if user.is_pharmacy == True:
         token = create_access_token(identity = user.id , additional_claims = {"role": True})
-    elif user.is_pharmacy is False:
+    elif user.is_pharmacy == False:
         token = create_access_token(identity = user.id , additional_claims = {"role": False})
     else:
         return jsonify({"message":"This user is not correctly created"}), 503
     
-    return jsonify({"message":"Login Successful", "token":token, "is_pharmacy":user.is_pharmacy, "user_id": user.id, "email":email}) , 200
+    response = jsonify({"message":"Login Successful", "token":token, "is_pharmacy":user.is_pharmacy, "user_id": user.id, "email":email})
+    
+    set_access_cookies(response, token)
+    return response, 200
 
 
 @api.route('signup', methods=['POST'])

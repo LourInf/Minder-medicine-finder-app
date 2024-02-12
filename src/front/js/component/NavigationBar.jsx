@@ -20,6 +20,7 @@ export const NavigationBar = () => {
 
 	useEffect(() => {
         const userLogged = JSON.parse(localStorage.getItem("userLogged"));
+		const btnLogout = document.getElementById("logoutBtn");
         if(userLogged != null){
             if(userLogged.expire < new Date().getTime()){
                 actions.logout();
@@ -30,12 +31,14 @@ export const NavigationBar = () => {
 				const register = document.getElementById("register");
 				register.innerHTML = "Usuario logado";
 				register.className += " bg-success bg-gradient text-white";
+				btnLogout.style.display = "block"
 				setRegisterOrHome("/");
 			}
 
         }else{
 			const register = document.getElementById("register");
 			register.innerHTML = "Nuevo usuario";
+			btnLogout.style.display = "none"
 			// register.className = "btn btn-outline-light me-2";
 			setRegisterOrHome("/register");
 		}
