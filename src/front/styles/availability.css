@@ -3,14 +3,14 @@
     margin:auto;
 }
 
-/* .filters-container{
+.filters-container{
     color: var(--dark-secondary);
     margin-top: 20px;
     padding: 15px; 
     background-color: #ffffff; 
     border-radius: 15px; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  } */
+  }
 
   .pills-menu-style{ 
     padding:10px 0;
@@ -62,15 +62,71 @@
   }
 
 
-  .btn-change-availability {
-    color: var(--dark-info);
+  .btn-available {
+    color: var(--dark-success);
     font-weight: 500;
-    border: 1px solid var(--dark-info);
+    border: 1px solid var(--dark-success);
     background:#ffffff;
   }
 
-  .btn-change-availability:hover {
+  .btn-available:hover {
     color: #ffffff;
-    border: 1px solid var(--dark-info);
-    background:var(--dark-info);
+    border: 1px solid var(--dark-success);
+    background:var(--dark-success);
+  }
+
+  .btn-not-available {
+    color: var(--dark-danger);
+    font-weight: 500;
+    border: 1px solid var(--dark-danger);
+    background:#ffffff;
+  }
+
+  .btn-not-available:hover {
+    color: #ffffff;
+    border: 1px solid var(--dark-danger);
+    background:var(--dark-danger);
+  }
+
+
+  .badge-soft-success-avail {
+    background-color: var(--soft-success);
+    padding: 4px;
+    width: 125px;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dark-success);
+    border: 1px solid var(--dark-success);
+  }
+  
+  .badge-soft-danger-avail {
+    background-color: var(--soft-danger);
+    color: var(--secondary);
+    padding: 4px;
+    width: 125px;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dark-danger);
+    border: 1px solid var(--dark-danger);
+  }
+
+  .badge-soft-warning-avail {
+    background-color:var(--soft-warning);
+    padding: 4px;
+    width: 125px;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dark-warning);  
+    border: 1px solid var(--dark-warning);
+  }
+
+  .badge-soft-secondary-avail {
+    background-color: var(--soft-secondary);
+    color: var(--secondary);
+    padding: 4px;
+    width: 125px;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--dark-secondary);
+    border: 1px solid var(--dark-secondary);
   }

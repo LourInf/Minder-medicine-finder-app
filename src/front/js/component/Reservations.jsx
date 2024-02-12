@@ -65,7 +65,7 @@ export const Reservations = () => {
             <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
             <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
           </div>
-      </div>
+        </div>
         <div className="table-container hover-shadow">
           <Table table-style>
             <thead className="table-head-style">
@@ -94,7 +94,7 @@ export const Reservations = () => {
                   </div>
                 )}
                 {reservation.order_status === 'Aceptada' && (
-                  <Button variant=""  className="btn-pickup" onClick={() => handlePickupOrder(reservation.id, 'Recogida')}>Recogida?</Button>
+                  <Button variant=""  className="btn-pickup" onClick={() => handlePickupOrder(reservation.id, 'Recogida')}>¿Recogida?</Button>
                 )}
               </td>
             </tr>

@@ -1,24 +1,45 @@
-/* 
-.results-container {
-    position: absolute;
-}  */
-
 .container-main-text{
     padding: 10px;
 }
-.selection-text-show{
-    color:var(--dar-blue);
-    font-style: italic;
-    font-size: 1.25rem;
+
+.heading-db-pharmacies{
+    color:#FFFF;
+    font-weight:800;
+    width: 80%;
+    text-align: center;
+    margin:auto;
     
 }
 
-.return-btn{
-    color: var(--dar-blue);
-    background-color: var(--accent-secondary);
-    border-color: var(--accent-secondary);
-    padding:8px;
-    border-radius: 30px;
-    margin: auto;
-    
-}
+.medicine-text{
+    color: var(--accent-secondary);
+    }
+
+.heading-google-pharmacies{
+    color:var(--dark-minder);
+    font-weight:800;
+    width: 80%;
+    text-align: center;
+    margin:auto; 
+    }
+
+.explore-more-btn {
+    color: var(--accent-secondary);
+    font-weight: 500;
+    border: 1px solid var(--accent-secondary);
+    background:#ffffff;
+    font-size:28px;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    border: 1px solid var(--accent-secondary);
+    background:var(--accent-secondary);
+
+  }
+
+  .explore-more-btn:hover {
+    color: var(--accent-secondary);
+    border: 1px solid var(--accent-secondary);
+    background:#ffffff;  }

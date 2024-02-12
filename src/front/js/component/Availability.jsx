@@ -11,29 +11,28 @@ export const Availability = () => {
   const itemsPerPage = 10; // Adjust as needed
   const [searchTerm, setSearchTerm] = useState(""); // State to hold the search term
   const [filterPsum, setFilterPsum] = useState(true); // State to track if filter by distribution problems is selected
-  const [availabilityFilter, setAvailabilityFilter] = useState(null); // State to hold the selected availability filter
-
-
-  // Fetch all medicines
-  useEffect(() => {
-    actions.getMedicinesAllDb(store.pharmacy_id);
-  }, [store.pharmacy_id]);
-
-      // Assuming medicinesAll is correctly populated with an array of medicines
-      const allMedicines = store.medicinesAll[0] || [];
-
-      // Filter medicines based on search term, distribution problems, and availability filter
-      const filteredMedicines = allMedicines.filter(medicine =>
-        medicine.medicine_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        (!filterPsum || store.medicinesPsum.some(psumMedicine => psumMedicine.id === medicine.id)) &&
-        (availabilityFilter === null || medicine.availability_status === availabilityFilter)
-      );
+  const [availabilityFilter, setAvailabilityFilter] = useState(""); // State to hold the selected availability filter
 
   // Fetch medicines with distribution problems
   useEffect(() => {
     actions.getMedicinesPsum();
     //actions.getMedicineAvailabilityForPharmacy();
   }, []); // Only run once on component mount
+
+  // Fetch all medicines
+  useEffect(() => {
+    actions.getMedicinesAllDb(store.pharmacy_id);
+  }, [store.pharmacy_id]);
+
+    const allMedicines = store.medicinesAll[0] || [];
+
+    // Filters
+    const filteredMedicines = allMedicines.filter(medicine =>
+      medicine.medicine_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (!filterPsum || store.medicinesPsum.some(psumMedicine => psumMedicine.id === medicine.id))
+       && (availabilityFilter === "" || medicine.availability_status === availabilityFilter)
+    );
+
 
   // const getAvailabilityStatus = (medicineId) => {
   //   // Find availability data for the given medicineId
@@ -44,12 +43,8 @@ export const Availability = () => {
   //   return availability ? availability.availability_status : "No disponible";
   // };
 
-
-console.log("Filtered Medicines:", filteredMedicines);
-
   // Calculate total pages for filtered medicines
   const totalPages = Math.ceil(filteredMedicines.length / itemsPerPage);
-
   // Calculate the current items to display
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -59,12 +54,20 @@ console.log("Filtered Medicines:", filteredMedicines);
   const hasDistributionProblem = (medicineId) => {
     return store.medicinesPsum.some(medicine => medicine.id === medicineId);
   };
-
   
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Disponible':
+        return <Badge pill bg="" className="badge-soft-success-avail p-2">Disponible</Badge>;
+      case 'No Disponible':
+        return <Badge pill bg="" className="badge-soft-danger-avail p-2">No disponible</Badge>;
+      default:
+        return <Badge pill bg="" className="badge-soft-warning-avail p-2">Desconocido</Badge>;
+    }
+  };
 
-   // Handle filter selection
-   const handleFilterSelection = (availability) => {
-    setAvailabilityFilter(availability === availabilityFilter ? null : availability);
+  const handleFilterClick = (status) => {
+    setAvailabilityFilter(status);
   };
 
 
@@ -102,91 +105,97 @@ console.log("Filtered Medicines:", filteredMedicines);
     }
   }
 
-  // Define the text to display above the table based on the filterPsum state
-const availabilityText = filterPsum ? (
-  <div>
-    <h3 className="m-3 text-center">Estos medicamentos actualmente presentan <span className="text-danger fw-bold">problemas de suministro</span>. Por favor, indique si su farmacia dispone de inventario:</h3>
-    <p className="m-3 text-center">Total medicamentos con problemas de suministro: <span className="text-danger fs-2 fw-bold">{store.totalMedicinesPsum}</span></p>
-  </div>
-) : (
-  <h3 className="m-3 text-center">Disponibilidad de medicamentos</h3>
-);
+
+  // text to display above the table based on the filterPsum state
+  const availabilityText = filterPsum ? (
+    <h4 className="m-3 text-center">Actualmente, <span className="text-danger fs-2 fw-bold">{store.totalMedicinesPsum}</span> medicamentos presentan problemas de suministro. Por favor, indique si su farmacia dispone de inventario</h4>
+    ) : (
+      <h3 className="m-3 text-center">Disponibilidad de medicamentos</h3>
+    );
 
 
   return (
     <div className="main-container">
+      
       <div className="filters-container d-flex flex-column align-items-center mb-3">
+      {availabilityText}
         <div className="pills-menu-style d-flex justify-content-center">
-        {availabilityText}
           <Form.Check
             type="checkbox"
             id="filterPsum"
-            label="Ver solo los medicamentos con problemas de suministro"
+            label="Mostrar sólo los medicamentos con problemas de suministro"
             checked={filterPsum}
             onChange={() => setFilterPsum(!filterPsum)}
           />
+          <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning ps-2 pt-1"/>
         <div className="mb-3">
+      </div>
         
-        <Form.Group controlId="formSearch">
-          <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/>
-          <Form.Control
-            type="text"
-            placeholder="Search by medicine name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </Form.Group>
+      </div>
+      </div>
+       
         <div className="filters-container d-flex flex-column align-items-center mb-3">
           <span className="filter-text mb-2">Filtros:</span> 
           <div className="pills-menu-style d-flex justify-content-center">
-            <Badge pill className="p-2" bg={availabilityFilter === "Disponible" ? "success" : "secondary"} onClick={() => handleFilterSelection("Disponible")}>
-            Disponible
-          </Badge>{' '}
-          <Badge pill className="p-2" bg={availabilityFilter === "No disponible" ? "danger" : "secondary"} onClick={() => handleFilterSelection("No disponible")}>
-            No disponible
-          </Badge>
-          </div>
+            <Badge pill bg="" className="badge-soft-success-avail mx-2 p-2" onClick={() => handleFilterClick('Disponible')} style={{ cursor: 'pointer' }}>Disponible</Badge>
+            <Badge pill bg="" className="badge-soft-danger-avail mx-2 p-2" onClick={() => handleFilterClick('No Disponible')} style={{ cursor: 'pointer' }}>No Disponible</Badge>
+            <Badge pill bg="" className="badge-soft-secondary-avail mx-2 p-2" onClick={() => setAvailabilityFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
           </div>
         </div>
+   
+      
+      <div className="table-container hover-shadow">
+      <Table table-style>
+        <thead className="table-head-style">
+          <tr>
+            <th className="table-cell header" style={{ color: "#00c895", }}>Problema de suministro</th>
+            <th className="table-cell header" style={{ color: "#3ab0a7", }}>Medicamento <Form.Control
+              type="text"
+              placeholder="Busca por su nombre"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            /></th>
+            <th className="table-cell header" style={{ color: "#00a747", }}>Disponibilidad Actual</th>
+            <th className="table-cell header" style={{ color: "#3ab0a7", }}>Actualizar Disponibilidad</th>
+          </tr>
+          </thead>
+          <tbody className="table-body">
+            {currentItems.map((medicine, index) => (
+              <tr key={index}>
+                 <td className="table-cell body-row cell-icon">{hasDistributionProblem(medicine.id) ? 
+                    <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/> : 
+                   ""
+                  }</td>
+                <td className="table-cell body-row">{medicine.medicine_name}</td>
+                <td className="table-cell body-row">{getStatusBadge(medicine.availability_status)}</td>
+                <td className="table-cell body-row">
+                {medicine.availability_status === 'Disponible' && (
+                 <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable()}>Cambiar a No Disponible</Button> 
+                )}
+                {medicine.availability_status === 'No Disponible' && (
+                <Button variant="" className="btn-available btn-sm" onClick={() => handleAvailable()}>Cambiar a Disponible</Button>
+                )}
+                {(medicine.availability_status !== 'Disponible' && medicine.availability_status !== 'No Disponible') && (
+                <div className="btn-container-avail d-flex flex-row align-items-center mb-3">
+                <Button variant="" className="btn-available btn-sm me-2" onClick={() => handleAvailable()}>Cambiar a Disponible</Button>
+                <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable()}>Cambiar a No Disponible</Button>
+                </div>
+                )}
+                    
+                 
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
       </div>
-    </div>
-    <div className="table-container hover-shadow">
-    <Table table-style>
-      <thead className="table-head-style">
-        <tr>
-          <th className="table-cell header" style={{ color: "#3ab0a7", }}>Medicamento</th>
-          <th className="table-cell header" style={{ color: "#00c895", }}>Con problema de suministro</th>
-          <th className="table-cell header" style={{ color: "#00a747", }}>Disponibilidad Actual</th>
-          <th className="table-cell header" style={{ color: "#3ab0a7", }}>Cambiar mi Disponibilidad</th>
-        </tr>
-        </thead>
-        <tbody className="table-body">
-          {currentItems.map((medicine, index) => (
-            <tr key={index}>
-              <td className="table-cell body-row">{medicine.medicine_name}</td>
-              <td className="table-cell body-row">{hasDistributionProblem(medicine.id) ? 
-                  <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning"/> : 
-                  <FontAwesomeIcon icon={faCheck} />
-                }</td>
-                <td className="table-cell body-row"> <Badge pill bg={medicine.availability_status === "Disponible" ? "success" : medicine.availability_status === "No disponible" ? "danger" : "secondary"}>
-                      {medicine.availability_status || "Desconocido"}
-                </Badge>
-              </td>
-              <td className="table-cell body-row">
-                <Button className="btn-change-availability">Actualizar Disponibilidad</Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-      </div>
-      <Pagination>
-        <Pagination.First onClick={() => setCurrentPage(1)} />
-        <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} />
-        {paginationItems}
-        <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} />
-        <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
-      </Pagination>
+        <Pagination className="pagination-style d-flex justify-content-center">
+          <Pagination.First onClick={() => setCurrentPage(1)} />
+          <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} />
+          {paginationItems}
+          <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} />
+          <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
+        </Pagination>
     </div>
   );
 };

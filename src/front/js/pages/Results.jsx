@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import { CardResults } from "../component/CardResults.jsx";
 import { useParams } from 'react-router-dom';
@@ -51,50 +51,35 @@ export const Results = () => {
 
   return (
     <div>
-      <div className=" container-main-text text-center">
+     <section className="container-main-text text-center mb-5">
       {/* Section 1: Pharmacies with selected medicine availability in our DB */}
-      <h4 className="selection-text-show text-center mb-5">
+      <h1 className="heading-db-pharmacies">
       {localStorage.getItem('selectedMedicine') && localStorage.getItem('selectedCityName') && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
-      <>
-        ¡Buenas noticias! Es posible que {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)} esté disponible en las siguientes farmacias
-        {localStorage.getItem('selectedCityName')}
+      // <>
+      //   ¡Buenas noticias! Es posible que {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)} esté disponible en las siguientes farmacias
+      //   {localStorage.getItem('selectedCityName')}
+      // </>
+       <>
+        Farmacias con disponibilidad de <span className="medicine-text"> {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}</span> en tu zona:
       </>
       ) : (
-      `Lo sentimos, ninguna de las farmacias con las que trabajamos tienen este medicamento. Aquí te dejamos otras farmacias a las que puedes llamar y consultar`
+        `Lo sentimos, no encontramos disponibilidad de ${localStorage.getItem('selectedMedicine')} en las farmacias asociadas.`
       )}
-      </h4>
-      </div>
-      {store.availablePharmacies && store.availablePharmacies.length > 0 ? (
-        store.availablePharmacies.map((pharmacy, index) => (
-          <CardResults key={index} buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} address={cityName} setSelectedPharmacy={actions.setSelectedPharmacy} />
-        ))
-      ) : (
-        <button className="return-btn mx-auto" onClick={() => navigate('/')}>Hacer una nueva Busqueda</button>
-      )}
-      {/* Section 2: Pharmacies with selected medicine NOT available or unknown in our DB --> IF TIME*/}
-      {/* Section 3: Pharmacies from google API based on searched city */}
-      <p className="selection-text-show text-center mt-5"><i>Estan son otras farmacias de {cityName} a las que puedes llamar para preguntar por su disponibilidad</i></p>
-      <div className="p-3">
-        {store.pharmacies && store.pharmacies.length > 0 ? (
-          store.pharmacies.map((pharmacy, index) => (
-            <CardResults key={index} buttonType="details" pharmacy={pharmacy} medicineId={medicineId} />
-          ))
-        ) : (
-          <p className="selection-text-show text-center mt-5">No encuentra Farmacias Cercanas, por favor, ingrese otra dirección</p>
+      </h1>
+      {store.availablePharmacies?.map((pharmacy, index) => (
+          <CardResults key={index} buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} cityName={cityName} />
+        ))}
+
+        {!store.availablePharmacies?.length && (
+          <Link to="/" className="return-btn mx-auto">Intentar una nueva búsqueda</Link>
         )}
-        {/* Paginar */}
-        {store.pharmacies.length > resultsPerPage && (
-          <ul className="pagination justify-content-center p-2 m-2">
-            {Array.from({ length: Math.ceil(store.pharmacies.length / resultsPerPage) }, (_, index) => (
-              <li key={index} className={`page-item & {index + 1 === currentPage ? 'active' : ''}`}>
-                <button className="page-link" onClick={() => paginate(index + 1)}>
-                  {index + 1}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      </section>
+      
+      <section className="text-center mt-5 p-3">
+        <h2 className="heading-google-pharmacies p-3">¿No has encuentrado lo que buscas?</h2>
+        <p className="p-3">Explora otras farmacias en tu área para más opciones.</p>
+        <Link to="/maps" className="explore-more-btn p-3">Buscar más farmacias</Link>
+      </section>
     </div>
   );
 };

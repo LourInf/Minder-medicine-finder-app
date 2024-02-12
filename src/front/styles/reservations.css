@@ -55,6 +55,11 @@
   font-weight:500;
 }
 
+.table-cell.body-row.cell-icon{
+  text-align: center;
+}
+
+
 .hover-shadow tr:hover {
   box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.4s;
@@ -151,4 +156,8 @@
     color: #ffffff;
     border: 1px solid var(--dark-info);
     background:var(--dark-info);
+  }
+
+  .pagination-style{
+    padding: 50px;
   }
