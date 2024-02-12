@@ -126,7 +126,7 @@ export const Maps = () => {
               {
                 checked ?
                   item.opening_hours.open_now ?
-                    <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085", }}>
+                    <div className="container w-50 custom-transparentcard card-container my-3" key={index} style={{ background: "#007085", borderRadius: "10px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)" }}>
                       <h2 className="" style={{ color: "##00bab9", }}>{item.name}</h2>
                       {item.opening_hours && (
                         <p className='text-light'>Abierto Ahora</p>
@@ -138,7 +138,7 @@ export const Maps = () => {
                     : null
                   :
                   // Si el filtro checked es false, entonces me muestras todas las farmacias.
-                  <div className="container w-50 custom-transparentcard card-container" key={index} style={{ background: "#007085" }}>
+                  <div className="container w-50 custom-transparentcard card-container my-3" key={index} style={{ background: "#007085", borderRadius: "10px", boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)" }}>
                     <h2 className="" style={{ color: "##00bab9", }}>{item.name}</h2>
                     {/* Si open_now es true, entonces estableces "Abierto" si no "Cerrado" */}
                     {item.opening_hours && (
