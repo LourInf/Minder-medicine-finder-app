@@ -26,7 +26,6 @@ export const Maps = () => {
 ///-------DONE---------
   
 
-
 ///-------CHECKING---------
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
@@ -40,7 +39,6 @@ export const Maps = () => {
       actions.getPharmaciesDetails(pharmacy_fields, currentPage);
     }
   ///-------CHECKING---------
-
 
 
 
@@ -59,7 +57,6 @@ export const Maps = () => {
 
 
 
-
 ///-------CHECKING---------
   // Call getPharmaciesDetails function sennding the place_id (parameter)
   const handleOnClick = (place_id) => {
@@ -67,7 +64,6 @@ export const Maps = () => {
     // Go to new component to see de pharmacy details (fields)
     navigate(`/pharmacies-details/${place_id}`)
   }
-
 
 // To Pagination
   // Index last y first calculan los indices del primer y último resultado. 
