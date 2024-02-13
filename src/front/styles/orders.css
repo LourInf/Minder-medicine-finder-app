@@ -70,6 +70,7 @@
     font-weight: 400;
     color: var(--dark-warning);  
     border: 1px solid var(--dark-warning);
+    position: relative;
   }
   
   .badge-soft-success {
@@ -115,4 +116,30 @@
     border: 1px solid var(--dark-secondary);
   }
 
+  .badge-soft-warning.filter-badge,
+  .badge-soft-success.filter-badge,
+  .badge-soft-danger.filter-badge,
+  .badge-soft-info.filter-badge,
+  .badge-soft-secondary.filter-badge {
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .badge-soft-warning.filter-badge:hover,
+  .badge-soft-success.filter-badge:hover,
+  .badge-soft-danger.filter-badge:hover,
+  .badge-soft-info.filter-badge:hover,
+  .badge-soft-secondary.filter-badge:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .badge-notification {
+    position: absolute;
+    top: -10px; 
+    right: -10px; 
+    border-radius: 50%;
+    padding: 0.25em 0.6em; 
+    font-size: 75%; 
+  }
   

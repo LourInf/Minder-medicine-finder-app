@@ -130,3 +130,20 @@
     color: var(--dark-secondary);
     border: 1px solid var(--dark-secondary);
   }
+
+  
+  .badge-soft-warning-avail.filter-badge,
+  .badge-soft-success-avail.filter-badge,
+  .badge-soft-danger-avail.filter-badge,
+  .badge-soft-secondary-avail.filter-badge {
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .badge-soft-warning-avail.filter-badge:hover,
+  .badge-soft-success-avail.filter-badge:hover,
+  .badge-soft-danger-avail.filter-badge:hover,
+  .badge-soft-secondary-avail.filter-badge:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }

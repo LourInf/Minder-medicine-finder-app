@@ -10,9 +10,13 @@ export const Reservations = () => {
 
   actions.removeUnnecessaryItems();
 
+
   useEffect(() => {
     actions.getPharmacyOrders();
     }, [actions.getPharmacyOrders]);
+
+    //count Pendientes to show as badge
+    const pendienteCount = store.ordersToPharmacy.filter(order => order.order_status === 'Pendiente').length;
 
     const getStatusBadge = (status) => {
       switch (status) {
@@ -62,11 +66,12 @@ export const Reservations = () => {
         <div className="filters-container d-flex flex-column align-items-center mb-3">
           <span className="filter-text mb-2">Filtros:</span> 
           <div className="pills-menu-style d-flex justify-content-center">
-            <Badge pill bg="" className="badge-soft-warning mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}>Pendiente</Badge>
-            <Badge pill bg="" className="badge-soft-success mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
-            <Badge pill bg="" className="badge-soft-danger mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
-            <Badge pill bg="" className="badge-soft-info mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
-            <Badge pill bg="" className="badge-soft-secondary mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+            <Badge pill bg="" className="badge-soft-warning filter-badge mx-2 p-2" onClick={() => handleFilterClick('Pendiente')} style={{ cursor: 'pointer' }}> Pendiente {pendienteCount > 0 && (
+              <Badge pill bg="danger" className="position-absolute badge-notification">{pendienteCount}</Badge>)}</Badge>
+            <Badge pill bg="" className="badge-soft-success filter-badge mx-2 p-2" onClick={() => handleFilterClick('Aceptada')} style={{ cursor: 'pointer' }}>Aceptada</Badge>
+            <Badge pill bg="" className="badge-soft-danger filter-badge mx-2 p-2" onClick={() => handleFilterClick('Rechazada')} style={{ cursor: 'pointer' }}>Cancelada</Badge>
+            <Badge pill bg="" className="badge-soft-info filter-badge mx-2 p-2" onClick={() => handleFilterClick('Recogida')} style={{ cursor: 'pointer' }}>Recogida</Badge>
+            <Badge pill bg="" className="badge-soft-secondary filter-badge mx-2 p-2" onClick={() => setFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
           </div>
         </div>
         <div className="table-container hover-shadow">

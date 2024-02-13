@@ -140,9 +140,9 @@ export const Availability = () => {
         <div className="filters-container d-flex flex-column align-items-center mb-3">
           <span className="filter-text mb-2">Filtros:</span> 
           <div className="pills-menu-style d-flex justify-content-center">
-            <Badge pill bg="" className="badge-soft-success-avail mx-2 p-2" onClick={() => handleFilterClick('Disponible')} style={{ cursor: 'pointer' }}>Disponible</Badge>
-            <Badge pill bg="" className="badge-soft-danger-avail mx-2 p-2" onClick={() => handleFilterClick('No Disponible')} style={{ cursor: 'pointer' }}>No Disponible</Badge>
-            <Badge pill bg="" className="badge-soft-secondary-avail mx-2 p-2" onClick={() => setAvailabilityFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+            <Badge pill bg="" className="badge-soft-success-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('Disponible')} style={{ cursor: 'pointer' }}>Disponible</Badge>
+            <Badge pill bg="" className="badge-soft-danger-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('No Disponible')} style={{ cursor: 'pointer' }}>No Disponible</Badge>
+            <Badge pill bg="" className="badge-soft-secondary-avail filter-badge mx-2 p-2" onClick={() => setAvailabilityFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
           </div>
         </div>
    
@@ -180,8 +180,8 @@ export const Availability = () => {
                 )}
                 {(medicine.availability_status !== 'Disponible' && medicine.availability_status !== 'No Disponible') && (
                 <div className="btn-container-avail d-flex flex-row align-items-center mb-3">
-                <Button variant="" className="btn-available btn-sm me-2" onClick={() => handleAvailable()}>Cambiar a Disponible</Button>
-                <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable()}>Cambiar a No Disponible</Button>
+                <Button variant="" className="btn-available btn-sm me-2" onClick={() => handleAvailable(medicine.id)}>Cambiar a Disponible</Button>
+                <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable(medicine.id)}>Cambiar a No Disponible</Button>
                 </div>
                 )}
                     

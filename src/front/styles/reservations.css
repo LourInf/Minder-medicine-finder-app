@@ -74,6 +74,7 @@
     font-weight: 400;
     color: var(--dark-warning);  
     border: 1px solid var(--dark-warning);
+    position: relative;
   }
   
   .badge-soft-success {
@@ -117,7 +118,27 @@
     font-weight: 400;
     color: var(--dark-secondary);
     border: 1px solid var(--dark-secondary);
+    
   }
+
+  .badge-soft-warning.filter-badge,
+  .badge-soft-success.filter-badge,
+  .badge-soft-danger.filter-badge,
+  .badge-soft-info.filter-badge,
+  .badge-soft-secondary.filter-badge {
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
+  .badge-soft-warning.filter-badge:hover,
+  .badge-soft-success.filter-badge:hover,
+  .badge-soft-danger.filter-badge:hover,
+  .badge-soft-info.filter-badge:hover,
+  .badge-soft-secondary.filter-badge:hover {
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+
 
   .btn-accept {
     color: var(--dark-success);
@@ -160,4 +181,14 @@
 
   .pagination-style{
     padding: 50px;
+  }
+
+
+  .badge-notification {
+    position: absolute;
+    top: -10px; /* Adjust as necessary */
+    right: -10px; /* Adjust as necessary */
+    border-radius: 50%; /* Make it round */
+    padding: 0.25em 0.6em; /* Adjust padding to make sure the content fits */
+    font-size: 75%; /* Smaller font size for the badge count */
   }
