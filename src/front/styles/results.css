@@ -31,9 +31,9 @@
     font-size:28px;
     text-decoration: none;
     padding: 10px;
-    border-radius: 8px;
+    border-radius: 30px;
     box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
-    color: #ffffff;
+    color: var(--accent-secondary);
     border: 1px solid var(--dark-minder);
     background:var(--dark-minder);
 
@@ -43,4 +43,5 @@
     color: var(--dark-minder);
     border: 1px solid var(--dark-minder);
     font-weight: 500;
-    background:#ffffff;  }
+    background: var(--accent-secondary);
+  }

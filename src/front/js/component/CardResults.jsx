@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import "../../styles/cardResults.css";
-import { Card, Button, ListGroup, ListGroupItem, Tooltip, OverlayTrigger, Table, Badge } from 'react-bootstrap';
+import { Card, Button, Tooltip, OverlayTrigger, Collapse } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClock } from '@fortawesome/free-regular-svg-icons'
-import { faPhone, faKeyboard, faInfoCircle, faStoreAlt } from '@fortawesome/free-solid-svg-icons'
+import { faPhone, faKeyboard, faInfoCircle, faStoreAlt, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { ModalReservation } from './ModalReservation.jsx';
 import { useNavigate } from "react-router-dom";
 import logoImage from "../../img/logo.png"
@@ -13,6 +13,8 @@ import logoImage from "../../img/logo.png"
 export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, buttonType }) => { 
   const { store, actions } = useContext(Context);
   const [showModal, setShowModal] = useState(false);
+  const [openWorkingHours, setOpenWorkingHours] = useState(false);
+  const [openPhone, setOpenPhone] = useState(false);
   const navigate = useNavigate();
 
 
@@ -26,7 +28,6 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
       setShowModal(true);
     }
   };
-
   
   const closeModal = () => {
     setShowModal(false);
@@ -34,36 +35,52 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
 
 
   return (
-    <div>
-      <div className="card-wrapper">
-        <div className="custom-card-body">
+      <div className="card-wrapper d-flex flex-row justify-content-between">
+        
+        <div className="custom-card-body d-flex align-items-center">
           <img src={logoImage} alt="Pharmacy Logo" className="pharmacy-logo" /> 
-          <h2 className="custom-card-title">{pharmacy?.pharmacy_name || 'Nombre de la Farmacia'}</h2>
-          <div className="details">
-            <div className="working-hours">
-              <FontAwesomeIcon icon={faClock} className="pe-2" />
-              {pharmacy?.working_hours || 'Horario no disponible'}
-            </div>
-            {pharmacy?.is_24h && (
-              <div className="text-success">
-                <FontAwesomeIcon icon={faStoreAlt} className="pe-2" />
-                Farmacia de 24 Horas
-              </div>
-            )}
+          <div className="d-flex flex-column">
+          <h3 className="custom-card-title">{pharmacy?.pharmacy_name || 'Nombre de la Farmacia'}</h3>
+          {pharmacy?.is_24h && (
+          <div className="text-24h d-flex flex-column-start">
+            Abierta 24h
           </div>
-        </div>
-        <div className="custom-card-footer">
-          <div className="card-actions">
-            <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleReserveOnline}>
-              <FontAwesomeIcon icon={faKeyboard} /> Reservar Online 
+        )}
+      </div>
+      </div>
+          <div className="details d-flex flex-column align-items-start">
+            <Button variant= "" onClick={() => setOpenWorkingHours(!openWorkingHours)} aria-controls="working-hours-collapse" aria-expanded={openWorkingHours} className="btn-details d-flex justify-content-start p-0 text-decoration-none"> <FontAwesomeIcon icon={faClock} className="me-2" />
+              Horario de trabajo
+              <FontAwesomeIcon icon={openWorkingHours ? faChevronUp : faChevronDown} className="ms-auto" />
             </Button>
-            <OverlayTrigger key="top" placement="top"  delay={{ show: 250, hide: 400 }} overlay={<Tooltip id={`tooltip-top`}> Tel: {pharmacy?.phone}</Tooltip>}>
-                    <Card.Link className="btn-reserve-phone" variant="outline-primary" size="sm"><FontAwesomeIcon icon={faPhone} /> Teléfono</Card.Link>
-                    </OverlayTrigger>
+            <Collapse in={openWorkingHours}>
+              <ul id="working-hours-collapse" className="list-unstyled mt-4">
+                {pharmacy?.working_hours && typeof pharmacy.working_hours === 'string' ? (
+                  pharmacy.working_hours.split(';').map((hour, index) => (
+                    <li key={index}>{hour.trim()}</li>))
+                ) : (
+                  <li>Horario no disponible</li>)}
+              </ul>
+            </Collapse>
+            <Button variant= "" onClick={() => setOpenPhone(!openPhone)} aria-controls="phone-collapse" aria-expanded={openPhone} className="btn-details d-flex justify-content-start p-0 text-decoration-none mt-2">
+              <FontAwesomeIcon icon={faPhone} className="me-2" />Teléfono
+              <FontAwesomeIcon icon={openPhone ? faChevronUp : faChevronDown} className="ms-auto" />
+            </Button>
+            <Collapse in={openPhone}>
+              <div id="phone-collapse" className="m-2">
+               {pharmacy?.phone ? (
+                <a href={`tel:${pharmacy.phone}`} className="phone-link">
+                  {pharmacy.phone}
+                </a>
+              ) : 'Teléfono no disponible'}
+            </div>
+            </Collapse>
           </div>
-        </div>
+          <div className="card-actions d-flex align-items-center">
+            <Button variant={buttonType === 'reserve' ? 'outline-success' : 'outline-warning'} size="sm" className="btn-reserve-online" onClick={handleReserveOnline}>
+              <FontAwesomeIcon icon={faKeyboard} /> Reservar Online </Button>
+          </div>
         {showModal && <ModalReservation show={showModal} handleCloseModal={closeModal} pharmacy={pharmacy} medicineId={medicineId} pharmacyId={pharmacyId} />}
       </div>
-    </div>
   );
 };

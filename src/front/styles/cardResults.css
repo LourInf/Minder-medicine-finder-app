@@ -1,69 +1,77 @@
 .card-wrapper {
     width: 70%;
-    margin: 1rem auto;
-    padding-bottom: 5rem;  
+    margin: 30px auto;
     text-align: center;
-        color: var(--dark-secondary);
-        margin-top: 20px;
-        padding: 15px; 
-        background-color: #ffffff; 
-        border-radius: 15px; 
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    color: var(--dark-secondary);
+    margin-top: 20px;
+    padding: 15px; 
+    background-color: #FFFFFF;
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    
 }
 
 .custom-card-title{
-    color:var(--dark-blue);
+    color:var(--dark-minder);
+    text-align: left;
+    font-family: 'Roboto'
+    
 }
 
 .details {
-    background-color: inherit; /* Inherits the background color from the card-container */
-    border: 0; /* Removes the border around the ListGroup if you don't want it */
-    color:var(--dark-blue);
+    width: 30%;
+    border: none; 
+    color: var(--minder-color);
     padding: 20px;
+    cursor: pointer;   
 }
 
+.details:hover {
+    color: var(--minder-color);
+}
+
+.btn-details{
+    color: var(--dark-minder);
+}
+
+.btn-details:hover{
+    color: var(--minder-color);
+}
+
+.details :focus {
+    outline: none;
+    border:none;
+    box-shadow: 0 0px 0px rgba(0,0,0,0.1);
+  }
 
 .btn-reserve-online {
+    font-size: 18px;
+    font-weight: 500;
     color: var(--dark-minder);
     background-color: var(--accent-secondary);
     border-color:  var(--accent-secondary);
-    padding:8px;
+    padding:12px;
     border-radius: 30px;
     margin: auto;
+    transition: 0.5s ease;
 }
 
 .btn-reserve-online:hover {
-    color: var(--dark-minder);
-    background-color:#ffffff;
-    border-color:  var(--accent-secondary);
-    padding:8px;
-    border-radius: 30px;
-    margin: auto;
-
-}
-
-.btn-reserve-phone {
-    color: var(--dark-minder);
-    cursor: pointer; 
-    text-decoration: none;
-    border: none;
-    padding-left:15px;
-}
-
-.btn-reserve-phone:hover {
     color: var(--accent-secondary);
-    background-color: transparent;
-    cursor: pointer; 
-    text-decoration: none;
-    border: none;
-    padding-left:15px;
+    background-color:var(--dark-minder);
+    border-color: var(--accent-secondary);
+
 }
-
-
 
 .pharmacy-logo {
     width: 50px;
     height: auto;
-    margin-right: 10px;
-    vertical-align: middle;
+    margin-right: 5px;
+    margin-bottom: 25px;
+   
   }
+
+.text-24h {
+    font-size:14px;
+    color: var(--primary);
+}

@@ -70,7 +70,7 @@ export const NavigationBar = () => {
 			<Navbar.Collapse id="basic-navbar-nav">
 			  <Nav className="me-auto h4">
 				<Nav.Link as={Link} to="/">Inicio</Nav.Link>
-				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
+				<Nav.Link as={Link} to="/pharmacy" style={{ paddingLeft:"30px", paddingRight: "30px" }}>Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>
 				{/* <Nav.Link as={Link} to="/maps">Maps</Nav.Link> */}
 			  </Nav>

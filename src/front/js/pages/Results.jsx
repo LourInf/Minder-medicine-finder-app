@@ -54,15 +54,10 @@ export const Results = () => {
   return (
     <div>
      <section className="container-main-text text-center mb-5">
-      {/* Section 1: Pharmacies with selected medicine availability in our DB */}
       <h1 className="heading-db-pharmacies pb-4">
-      {localStorage.getItem('selectedMedicine') && localStorage.getItem('selectedCityName') && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
-      // <>
-      //   ¡Buenas noticias! Es posible que {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)} esté disponible en las siguientes farmacias
-      //   {localStorage.getItem('selectedCityName')}
-      // </>
+      {selectedMedicine && selectedCityName && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
        <>
-        Farmacias con disponibilidad de <span className="medicine-text"> {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}</span> en tu zona:
+        Farmacias con disponibilidad de <span className="medicine-text"> {JSON.parse(selectedMedicine).medicine_name.slice(0, 30)}</span> en <span className="medicine-text">{JSON.parse(selectedCityName)}</span>
       </>
       ) : (
         <div>
@@ -84,9 +79,8 @@ export const Results = () => {
       </section>
       
       <section className="text-center mt-5 p-3">
-        <h2 className="heading-google-pharmacies p-3">¿No has encuentrado lo que buscas?</h2>
-        <p className="p-3">Explora otras farmacias en tu área para más opciones.</p>
-        <Link to="/maps" className="explore-more-btn p-3">Buscar más farmacias</Link>
+        <h2 className="heading-google-pharmacies p-3 mb-3">¿No has encuentrado lo que buscas?</h2>
+        <Link to="/maps" className="explore-more-btn p-3">Explora más farmacias</Link>
       </section>
     </div>
   );
