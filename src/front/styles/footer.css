@@ -5,3 +5,11 @@
     width: 100%;
     height: 40px;
 } */
+
+.btn {
+    color: var(--dark-minder);
+    font-weight: 500;
+    border-color:var(--primary);
+    background-color: transparent;
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  */
+  } 
