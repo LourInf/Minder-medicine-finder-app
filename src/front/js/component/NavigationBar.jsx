@@ -72,7 +72,7 @@ export const NavigationBar = () => {
 				<Nav.Link as={Link} to="/">Inicio</Nav.Link>
 				<Nav.Link as={Link} to="/pharmacy">Farmacias</Nav.Link>
 				<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>
-				{/* <Nav.Link as={Link} to="/maps">Maps</Nav.Link> */}
+				<Nav.Link as={Link} to="/mapaciudad">Mapa</Nav.Link>
 			  </Nav>
 			</Navbar.Collapse>
 			</div>
