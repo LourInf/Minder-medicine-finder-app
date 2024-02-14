@@ -6,12 +6,12 @@ import "../../styles/maptouse.css";
 
 export const MapToUse = () => {
     const [map, setMap] = useState(null);
-    const [center, setCenter] = useState({ lat: 40.463667, lng: -3.74922 }); // Coordenadas de España
+    const [center, setCenter] = useState({ lat: 40.463667, lng: -3.74922 }); // Coordenadas de España centro por defecto.
     const { store, actions } = useContext(Context);
     const [zoom, setZoom] = useState(8);
     const [markers, setMarkers] = useState([]);
     const [city, setCity] = useState('');
-    const [selectedPharmacyLocation, setSelectedPharmacyLocation] = useState(null);
+    // const [selectedPharmacyLocation, setSelectedPharmacyLocation] = useState(null);
     const [selectedPharmacy, setSelectedPharmacy] = useState(null);
     const navigate = useNavigate();
 
@@ -21,6 +21,25 @@ export const MapToUse = () => {
     //     handlePharmacies();
     // }, []); // Se ejecuta solo al montar el componente
 
+        
+        // Obtener las farmacias según la ciudad
+        const handlePharmacies = async () => {
+            await actions.getPharmacies(city);
+            // Actualiza los marcadores en el mapa
+            updateMarkers();
+            // Establece la ubicación de la farmacia seleccionada como la ubicación central del mapa (la primera)
+            if (store.pharmacies.length > 0) {
+                const selectedPharmacy = store.pharmacies[0];
+                const lat = selectedPharmacy.geometry.location.lat;
+                const lng = selectedPharmacy.geometry.location.lng;
+                // Establece el centro del mapa en la ubicación de la primera farmacia encontrada
+                setCenter({ lat, lng });
+                // console.log("Center Updated:", center);
+            }
+        };
+
+
+    // Actualizar Marcadores
     const updateMarkers = () => {
         // Obtener las farmacias del store
         const pharmacies = store.pharmacies;
@@ -38,33 +57,27 @@ export const MapToUse = () => {
         setMarkers(newMarkers);
     };
 
-    const handlePharmacies = async () => {
-        // Obtener las farmacias según la ciudad
-        await actions.getPharmacies(city);
-        // Actualiza los marcadores en el mapa
-        updateMarkers();
-        // Establece la ubicación de la farmacia seleccionada como la ubicación central del mapa
-        if (store.pharmacies.length > 0) {
-            const selectedPharmacy = store.pharmacies[0];
-            console.log("Selected Pharmacy Location:", selectedPharmacy.geometry.location.lat, selectedPharmacy.geometry.location.lng);
-            const lat = selectedPharmacy.geometry.location.lat;
-            const lng = selectedPharmacy.geometry.location.lng;
-            // Establece el centro del mapa en la ubicación de la primera farmacia encontrada
-            setCenter({ lat, lng });
-            console.log("Center Updated:", center);
-        }
-    };
+
+    // Call getPharmaciesDetails function sennding the place_id (parameter)
+    const handleOnClick = (place_id) => {
+        actions.getPharmaciesDetails(place_id);
+        // Go to new component to see de pharmacy details (fields)
+        navigate(`/pharmacies-details/${place_id}`)
+    }
     
 
-
+    // Muestra info de la farmacia seleccionada (PharmaciesDetails)
     const handleMarkerClick = (marker) => {
         setSelectedPharmacy(marker.pharmacy);
     };
-
+    
+    
+    // Al cerrar, el estado de selectedPharmacy vuelve a Null. 
     const handleMarkerClose = () => {
         setSelectedPharmacy(null);
     };
 
+    
     // Activar botón "enter"
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -74,13 +87,8 @@ export const MapToUse = () => {
             }
         }
     };
-    // Call getPharmaciesDetails function sennding the place_id (parameter)
-    const handleOnClick = (place_id) => {
-        actions.getPharmaciesDetails(place_id);
-        // Go to new component to see de pharmacy details (fields)
-        navigate(`/pharmacies-details/${place_id}`)
-    }
 
+    
     return (
         <div className="container" style={{ height: '400px', width: '80%' }}>
             <input
@@ -90,14 +98,12 @@ export const MapToUse = () => {
                 value={city}
                 placeholder="Ciudad: Madrid"
                 onChange={(e) => setCity(e.target.value)}
-                onKeyPress={handleKeyPress}
-            />
+                onKeyPress={handleKeyPress}/>
             <LoadScript googleMapsApiKey={process.env.GOOGLE_API_KEY}>
                 <GoogleMap
                     mapContainerStyle={{ height: '100%', width: '100%' }}
                     center={center}
-                    zoom={zoom}
-                >
+                    zoom={zoom}>
                     {markers.map((marker, index) => (
                         <Marker key={index} position={marker.position} 
                         icon={{
@@ -106,6 +112,7 @@ export const MapToUse = () => {
                             origin: new window.google.maps.Point(0, 0), // Origen del icono
                             anchor: new window.google.maps.Point(15, 15) // Ancla del icono
                         }}
+                        // Detalles de la Farmacia (abre ventana)
                         onClick={() => handleMarkerClick(marker)}>
                             {selectedPharmacy === marker.pharmacy && (
                                 <InfoWindow onCloseClick={handleMarkerClose}>
