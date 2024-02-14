@@ -23,7 +23,7 @@ import { Register } from "./pages/Register.jsx";
 import { SearchNamePharmacy } from "./component/SearchNamePharmacy.jsx";
 import { DetailsPharmacyMaps } from "./component/DetailsPharmacyMaps.jsx";
 import { Notification } from "./component/Notification.jsx";
-
+import { MapToUse } from "./pages/MapToUse.jsx";
 
 // Create your first component
 const Layout = () => {
@@ -46,6 +46,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Register />} path="/register" />
                         <Route element={<Maps />} path="/maps" />
+                        <Route element={<MapToUse />} path="/mapaciudad" />
                         <Route element={<SearchNamePharmacy />} path="/findyourpharmacy" />
                         <Route element={<DetailsPharmacyMaps />} path="/pharmacies-details/:place_id" component={DetailsPharmacyMaps} />
                          {/* React Router Outlet: 1.Define the parent route for the pharmacy dashboard */}

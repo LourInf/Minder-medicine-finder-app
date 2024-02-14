@@ -10,7 +10,10 @@ export const DetailsPharmacyMaps = () => {
 
     return (
         <div>
-            <Link className="navbar-brand m-3 p-3" to="/maps">Volver</Link>
+            <span>
+            <Link className="btn btn-soft-success bg-light m-2 p-1" variant="outline-light" to="/maps">Lista de Farmacias</Link>
+            <Link className="btn btn-info bg-gradient text-white m-2 p-1" variant="outline-light" to="/mapaciudad">Ir al Mapa</Link>
+            </span>
             <h1 className="text-center p-2 m-3">Consulta los datos de la Farmacia</h1>
             {/* Si existe "pharmacyDetails" entonces extrae la información */}
             {pharmacyDetails ? (
