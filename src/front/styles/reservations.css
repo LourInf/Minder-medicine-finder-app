@@ -7,7 +7,7 @@
   color: var(--dark-secondary);
   margin-top: 20px;
   padding: 15px; 
-  background-color: #ffffff; 
+  background-color: var(--input); 
   border-radius: 15px; 
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -15,14 +15,14 @@
 
 .pills-menu-style{ 
   padding:10px 0;
-  background-color: #ffffff;
+  background-color: var(--input); 
   border-radius: 15px;
 }
 
 .table-container{
   padding:20px 40px;
   margin-top:50px;
-  background-color: #ffffff;
+  background-color: var(--input); 
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -144,11 +144,11 @@
     color: var(--dark-success);
     font-weight: 500;
     border: 1px solid var(--dark-success);
-    background:#ffffff;
+    background: var(--input); 
   }
 
   .btn-accept:hover {
-    color: #ffffff;
+    color: var(--input); 
     border: 1px solid var(--dark-success);
     background:var(--dark-success);
   }
@@ -157,11 +157,11 @@
     color: var(--dark-danger);
     font-weight: 500;
     border: 1px solid var(--dark-danger);
-    background:#ffffff;
+    background:var(--input);
   }
 
   .btn-reject:hover {
-    color: #ffffff;
+    color: var(--input); 
     border: 1px solid var(--dark-danger);
     background:var(--dark-danger);
   }
@@ -170,11 +170,11 @@
     color: var(--dark-info);
     font-weight: 500;
     border: 1px solid var(--dark-info);
-    background:#ffffff;
+    background:var(--input); 
   }
 
   .btn-pickup:hover {
-    color: #ffffff;
+    color: var(--input); 
     border: 1px solid var(--dark-info);
     background:var(--dark-info);
   }

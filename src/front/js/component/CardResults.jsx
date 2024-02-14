@@ -15,6 +15,7 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
   const [showModal, setShowModal] = useState(false);
   const [openWorkingHours, setOpenWorkingHours] = useState(false);
   const [openPhone, setOpenPhone] = useState(false);
+  const [openAddress, setOpenAddress] = useState(false);
   const navigate = useNavigate();
 
 
@@ -48,8 +49,8 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
         )}
       </div>
       </div>
-          <div className="details d-flex flex-column align-items-start">
-            <Button variant= "" onClick={() => setOpenWorkingHours(!openWorkingHours)} aria-controls="working-hours-collapse" aria-expanded={openWorkingHours} className="btn-details d-flex justify-content-start p-0 text-decoration-none"> <FontAwesomeIcon icon={faClock} className="me-2" />
+          <div className="details-style d-flex flex-column align-items-start">
+            <Button variant= "" onClick={() => setOpenWorkingHours(!openWorkingHours)} aria-controls="working-hours-collapse" aria-expanded={openWorkingHours} className="btn-details-style d-flex justify-content-start p-0 text-decoration-none"> <FontAwesomeIcon icon={faClock} className="me-2" />
               Horario de trabajo
               <FontAwesomeIcon icon={openWorkingHours ? faChevronUp : faChevronDown} className="ms-auto" />
             </Button>
@@ -62,7 +63,7 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
                   <li>Horario no disponible</li>)}
               </ul>
             </Collapse>
-            <Button variant= "" onClick={() => setOpenPhone(!openPhone)} aria-controls="phone-collapse" aria-expanded={openPhone} className="btn-details d-flex justify-content-start p-0 text-decoration-none mt-2">
+            <Button variant= "" onClick={() => setOpenPhone(!openPhone)} aria-controls="phone-collapse" aria-expanded={openPhone} className="btn-details-style d-flex justify-content-start p-0 text-decoration-none mt-2">
               <FontAwesomeIcon icon={faPhone} className="me-2" />Teléfono
               <FontAwesomeIcon icon={openPhone ? faChevronUp : faChevronDown} className="ms-auto" />
             </Button>
@@ -74,6 +75,18 @@ export const CardResults = ({ medicineId, cityName, pharmacyId, pharmacy, button
                 </a>
               ) : 'Teléfono no disponible'}
             </div>
+            </Collapse>
+            <Button variant= "" onClick={() => setOpenAddress(!openAddress)} aria-controls="address-collapse" aria-expanded={openAddress} className="btn-details-style d-flex justify-content-start p-0 text-decoration-none mt-2"> <FontAwesomeIcon icon={faStoreAlt} className="me-2" />
+              Dirección
+              <FontAwesomeIcon icon={openAddress ? faChevronUp : faChevronDown} className="ms-auto" />
+            </Button>
+            <Collapse in={openAddress}>
+              <div id="address-collapse" className="m-2">
+                {pharmacy?.address ? (
+                  <p>{pharmacy.address}</p>
+                ) : (
+                  <p>Dirección no disponible</p>)}
+              </div>
             </Collapse>
           </div>
           <div className="card-actions d-flex align-items-center">

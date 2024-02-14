@@ -1,0 +1,20 @@
+.btn-confirm{
+    background-color:var(--primary); 
+    border: var(--primary); 
+    color:var(--input);
+}
+
+.btn-confirm:hover {
+    background-color:var(--minder-color); 
+    border: var(--minder-color);
+    color:var(--input);
+}
+
+.body-modal, .header-modal, .footer-modal{
+font-weight: 500;
+}
+
+.nr-pedido{
+    color: var(--primary); 
+  
+}

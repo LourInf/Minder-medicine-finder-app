@@ -5,7 +5,7 @@
     color: var(--dark-secondary);
     margin-top: 20px;
     padding: 15px; 
-    background-color: #FFFFFF;
+    background-color: var(--input);
     border-radius: 15px; 
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     
@@ -18,27 +18,29 @@
     
 }
 
-.details {
+.details-style {
     width: 30%;
     border: none; 
     color: var(--minder-color);
     padding: 20px;
-    cursor: pointer;   
+    cursor: pointer;
+    font-size:18px;
+    font-weight:500;   
 }
 
-.details:hover {
+.details-style:hover {
     color: var(--minder-color);
 }
 
-.btn-details{
+.btn-details-style{
     color: var(--dark-minder);
 }
 
-.btn-details:hover{
+.btn-details-style:hover{
     color: var(--minder-color);
 }
 
-.details :focus {
+.details-style :focus {
     outline: none;
     border:none;
     box-shadow: 0 0px 0px rgba(0,0,0,0.1);
@@ -74,4 +76,5 @@
 .text-24h {
     font-size:14px;
     color: var(--primary);
+    font-weight: 500;
 }

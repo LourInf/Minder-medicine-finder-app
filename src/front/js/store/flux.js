@@ -177,8 +177,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 
 			setNotification: (message, type) => {
-				setStore({notification: { message, type } // 'type' could be 'error', 'info', 'success', etc.
-						});
+				setStore({notification: { message, type } // type: 'error', 'info', 'success', etc.
+				});
 			},
 					  
 			clearNotification: () => {
@@ -539,8 +539,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getPharmacyOrders: async () => {
-				//const pharmacyId = getStore().user_id;
-				//const pharmacyId = 1
 				const url = `${process.env.BACKEND_URL}/api/orders/pharmacy/`;
 				const userLogged = JSON.parse(localStorage.getItem('userLogged'));
 				if(userLogged != null && userLogged != undefined){

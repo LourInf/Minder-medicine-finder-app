@@ -11,14 +11,14 @@
 .dashboard-nav:active{
     font-size: 20px;
     font-weight:500;
-    color: #ffffff;  
+    color: var(--input);  
 }
 
 .dashboard-nav{
     font-size: 20px;
     font-weight:500;
-    color: #ffffff;  
-    border:  #ffffff; 
+    color: var(--input);  
+    border: var(--input); 
 }
 
 .dashboard-nav:hover{

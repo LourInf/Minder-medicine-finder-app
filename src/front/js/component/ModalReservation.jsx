@@ -2,27 +2,11 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Modal, Button, Form, Toast } from 'react-bootstrap';
 import { Context } from '../store/appContext';
 import { useNavigate } from 'react-router-dom';
+import "../../styles/modalReservation.css"
 
 export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, pharmacyId }) => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    // const [show, setShow] = useState(false); -->added to CardResults
-    // const [reservationNumber, setReservationNumber] = useState(""); --> removed: we'll use the order.id
-
-     // generate a unique reservation number only when the modal is opened, and runs whenever show changes  --> removed: we'll use the order.id
-    // useEffect(() => {
-    //     if (show) {
-    //         const uniqueNumber = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    //         setReservationNumber(uniqueNumber);
-    //     }
-    // }, [show]);
-
-    // useEffect(() => {
-    //     if (store.lastCreatedOrder) {
-    //         setToastMessage("Reserva realizada con éxito.");
-    //         setShowToast(true);
-    //     }
-    // }, [store.lastCreatedOrder]);
 
     const handleReserve = async () => {
         const result = await actions.createOrderReservation(medicineId, pharmacyId); 
@@ -30,45 +14,41 @@ export const ModalReservation =({ show, handleCloseModal, pharmacy, medicineId, 
             handleCloseModal();
             navigate('/order-confirmation');
         }
-        //displayToast(`Reserva realizada con éxito.Su numero de reserva es: ${order.id}`);
-        // setToastMessage("Reserva realizada con éxito.");
-        // setShowToast(true);
- 
-        
     };
 
     return (
         <>
         <Modal show={show} onHide={handleCloseModal} animation={false}>
-        <Modal.Header closeButton>
-        <Modal.Title>Haz tu Reserva</Modal.Title>
+        <Modal.Header  className="header-modal" closeButton>
+        <Modal.Title>Completa tu Pedido</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="body-modal">
         <Form>
             <Form.Group className="mb-3">
             <Form.Label>Usuario</Form.Label>
-            <Form.Control type="text" placeholder={store.email} readOnly /> {/*ADD email to store!! or take it from session?*/}
+            <Form.Control type="text" placeholder={store.email} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
             <Form.Label>Medicamento</Form.Label>
             <Form.Control type="text" placeholder={store.selectedMedicine} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
-            <Form.Label>Pharmacy</Form.Label>
-            <Form.Control type="text" placeholder={pharmacy.pharmacy_name} readOnly />           {/*CHECK/ADD pharmacy to store? or take it from session?*/}
+            <Form.Label>Farmacia</Form.Label>
+            <Form.Control type="text" placeholder={pharmacy.pharmacy_name} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
-            <Form.Label>Numero de reserva</Form.Label>
-            <Form.Control type="text" placeholder="Confirme para generar su numero de reserva" readOnly />
+            <Form.Label>Número de Pedido</Form.Label>
+            <p className="nr-pedido">Confirme para generar su numero de Pedido</p>
+            {/* <Form.Control type="text" placeholder="Confirme para generar su numero de Pedido" readOnly /> */}
             </Form.Group>
         </Form>
         </Modal.Body>
-        <Modal.Footer>
-        <Button variant="secondary" onClick={handleCloseModal}>
+        <Modal.Footer className="footer-modal">
+        <Button variant="secondary" className="btn-close-lower" onClick={handleCloseModal}>
             Cerrar
         </Button>
-        <Button variant="primary" onClick={handleReserve}>
-            Confirmar Reserva
+        <Button variant="" className="btn-confirm" onClick={handleReserve}>
+            Confirmar Pedido
         </Button>
         </Modal.Footer>
     </Modal>

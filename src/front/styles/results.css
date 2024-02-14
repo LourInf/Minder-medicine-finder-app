@@ -5,7 +5,7 @@
 .heading-db-pharmacies{
     color:#FFFF;
     font-weight:800;
-    width: 80%;
+    width: 90%;
     text-align: center;
     margin:auto;
     
@@ -18,30 +18,53 @@
 .heading-google-pharmacies{
     color:var(--dark-minder);
     font-weight:800;
-    width: 80%;
+    width: 90%;
     text-align: center;
     margin:auto; 
     }
 
 .explore-more-btn {
-    color: var(--dark-minder);
     font-weight: 500;
     border: 1px solid var(--dark-minder);
-    background:#ffffff;
-    font-size:28px;
+    font-size:24px;
     text-decoration: none;
-    padding: 10px;
+    padding: 18px 24px;
     border-radius: 30px;
     box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
     color: var(--accent-secondary);
-    border: 1px solid var(--dark-minder);
     background:var(--dark-minder);
+    transition: transform 0.5s ease, background-color 0.5s ease;
 
   }
-
-  .explore-more-btn:hover {
+  
+  
+.explore-more-btn:hover {
     color: var(--dark-minder);
-    border: 1px solid var(--dark-minder);
+    border: 1px solid var(--accent-secondary);
     font-weight: 500;
     background: var(--accent-secondary);
+    
   }
+
+.return-btn {
+    font-weight: 500;
+    border: 1px solid var(--dark-minder);
+    font-size:24px;
+    text-decoration: none;
+    padding: 18px 24px;
+    border-radius: 30px;
+    box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.2);
+    color: var(--dark-minder);
+    background:var(--input);
+    transition: transform 0.5s ease, background-color 0.5s ease;
+    margin-right: 20px;
+  }
+
+.return-btn:hover {
+   color: var(--dark-minder);
+   border: 1px solid var(--dark-minder);
+   font-weight: 500;
+   background: var(--accent-secondary);
+   
+  }
+

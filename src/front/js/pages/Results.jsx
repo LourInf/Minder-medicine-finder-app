@@ -8,32 +8,12 @@ import "../../styles/results.css";
 export const Results = () => {
   const { store, actions } = useContext(Context);
   const { medicineId, address, cityName } = useParams();
-  // const [name, setName] = useState('');
-  // const [noResults, setNoResults] = useState(false);
-  const [pharmacy_fields, setpharmacy_fields] = useState('');
-  const [resultsPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-	// actions.removeUnnecessaryItems();
+  // actions.removeUnnecessaryItems();
 
   const selectedMedicine = localStorage.getItem('selectedMedicine');
   const selectedCityName = localStorage.getItem('selectedCityName');
-
-
-  // Para Paginar
-  // Index last y first calculan los indices del primer y último resultado. 
-  const indexLastResult = currentPage * resultsPerPage;
-  const indexFirstResult = indexLastResult - resultsPerPage; // Current es la actual. resultsPerPage es la cantidad: useState(5);
-  const currentResults = store.pharmacies.slice(indexFirstResult, indexLastResult);
-  // Función para cambiar de página
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber); // Actualiza el estado de currentPage
-    actions.getPharmaciesDetails(pharmacy_fields, pageNumber); // hace llamada con el nuevo nº de página
-  };
-
-
-
 
   // fetches the pharmacies from our DB
   useEffect(() => {
@@ -53,34 +33,33 @@ export const Results = () => {
 
   return (
     <div>
-     <section className="container-main-text text-center mb-5">
-      <h1 className="heading-db-pharmacies pb-4">
-      {selectedMedicine && selectedCityName && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
-       <>
-        Farmacias con disponibilidad de <span className="medicine-text"> {JSON.parse(selectedMedicine).medicine_name.slice(0, 30)}</span> en <span className="medicine-text">{JSON.parse(selectedCityName)}</span>
-      </>
-      ) : (
-        <div>
-        {"Lo sentimos, no encontramos disponibilidad de "}
-        <span className="medicine-text">
-          {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}
-        </span>
-        {" en las farmacias asociadas."}
-      </div>
-      )}
-      </h1>
-      {store.availablePharmacies?.map((pharmacy, index) => (
-          <CardResults key={index} buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} cityName={cityName} />
-        ))}
-
-        {!store.availablePharmacies?.length && (
-          <Link to="/" className="return-btn mx-auto">Intentar una nueva búsqueda</Link>
-        )}
-      </section>
-      
-      <section className="text-center mt-5 p-3">
-        <h2 className="heading-google-pharmacies p-3 mb-3">¿No has encuentrado lo que buscas?</h2>
-        <Link to="/maps" className="explore-more-btn p-3">Explora más farmacias</Link>
+      <section className="container-main-text text-center mb-5">
+        <h1 className="heading-db-pharmacies pb-4">
+          {selectedMedicine && selectedCityName && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
+            <>
+              Farmacias con disponibilidad de <span className="medicine-text">{JSON.parse(selectedMedicine).medicine_name.slice(0, 30)}</span> en {JSON.parse(selectedCityName)}
+              {store.availablePharmacies?.map((pharmacy, index) => (
+                <CardResults key={index} buttonType="reserve" pharmacy={pharmacy} medicineId={medicineId} cityName={cityName} />
+              ))}
+              <section className="text-center mt-5 p-3">
+                <h2 className="heading-google-pharmacies p-3 mb-3">¿No has encontrado lo que buscas?</h2>
+                <Link to="/maps" className="explore-more-btn">Explorar más farmacias</Link>
+              </section>
+            </>
+          ) : (
+            <div>
+              {"Lo sentimos, no encontramos disponibilidad de "}
+              <span className="medicine-text">
+                {JSON.parse(localStorage.getItem('selectedMedicine')).medicine_name.slice(0, 20)}
+              </span>
+              {" en las farmacias asociadas."}
+              <section className="text-center mt-5 p-3">
+                <Link to="/" className="return-btn">Intentar nueva búsqueda</Link>
+                <Link to="/maps" className="explore-more-btn">Explorar más farmacias</Link>
+              </section>
+            </div>
+          )}
+        </h1>
       </section>
     </div>
   );
