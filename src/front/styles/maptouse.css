@@ -1,0 +1,31 @@
+.info-window-content {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}
+
+.info-window-content h5 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.info-window-content p {
+    margin-bottom: 5px;
+}
+
+.info-window-content button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.info-window-content button:hover {
+    background-color: #0056b3;
+}
