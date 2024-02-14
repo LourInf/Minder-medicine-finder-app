@@ -20,22 +20,22 @@ export const Footer = () => {
 					<div className=" strong text-center">
 						© {currentYear} Copyright:
 					</div>
-					<Button variant="outline-light" className="btn m-1" href="https://github.com/LourInf" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://github.com/LourInf" role="button">
 						<i className="fab fa-github text-dark"></i> Lourdes
 					</Button>
-					<Button variant="outline-light" className="btn m-1" href="https://www.linkedin.com/in/lourdes-infber/" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://www.linkedin.com/in/lourdes-infber/" role="button">
 						<i className="fab fa-linkedin-in text-linkedin"></i>
 					</Button>
-					<Button variant="outline-light" className="btn m-1" href="https://github.com/EveyZeram" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://github.com/EveyZeram" role="button">
 						<i className="fab fa-github text-dark"></i> Evelyn
 					</Button>
-					<Button variant="outline-light" className="btn m-1" href="https://www.linkedin.com/in/evelyn-g%C3%B3mez-900a06114/" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://www.linkedin.com/in/evelyn-g%C3%B3mez-900a06114/" role="button">
 						<i className="fab fa-linkedin-in text-linkedin"></i>
 					</Button>
-					<Button variant="outline-light" className="btn m-1" href="https://github.com/andleus" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://github.com/andleus" role="button">
 						<i className="fab fa-github text-dark"></i> Andrés
 					</Button>
-					<Button variant="outline-light" className="btn m-1" href="https://www.linkedin.com/in/andr%C3%A9s-abadia-heredia-686039b9/" role="button">
+					<Button variant="outline-light" className="btn-footer m-1" href="https://www.linkedin.com/in/andr%C3%A9s-abadia-heredia-686039b9/" role="button">
 						<i className="fab fa-linkedin-in text-linkedin"></i>
 					</Button>
 				<div>

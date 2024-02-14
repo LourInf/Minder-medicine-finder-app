@@ -6,7 +6,7 @@
     height: 40px;
 } */
 
-.btn {
+.btn-footer {
     color: var(--dark-minder);
     font-weight: 500;
     border-color:var(--primary);
