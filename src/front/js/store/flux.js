@@ -23,6 +23,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			pharmacy_id: "",
 			patient_id: "",
 			email: "",
+			patient_name: "",
 			urlPostLogin:"/",
 			selectedCityName: "",
 			orderConfirmationDetails:[],
@@ -621,7 +622,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if(response.ok){
 					const data = await response.json();
 					console.log("ESTO QUE ES -> ",data);
-					setStore({patient_id: data.patient_id});
+					setStore({
+						user_id: data.user_id,
+						patient_id: data.patient_id,
+						patient_name: data.name,
+						email: data.email
+					});
 				}else{
 					console.log("Error fetching the patient ID");
 				}
@@ -641,6 +647,47 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({pharmacy_id: data.pharmacy_id});
 				}else{
 					console.log("Error fetching the pharmacy ID");
+				}
+			},
+
+
+			updatePatient: async (patient_id, newData) => {
+				const url = `${process.env.BACKEND_URL}/update-patient/${patient_id}`;
+				console.log("La url -> ",url);
+				const options = {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(newData)
+				};
+				console.log(`Esto son las options -> ${JSON.stringify(options)}`);
+				const response = await fetch(url, options);
+		
+				if(response.ok){
+					const data = await response.json();
+					setStore({
+						patient_name: data.name
+					});
+					console.log("Patient updated correctly");
+				}else{
+					console.log("Error updating the patient");
+				}
+			},
+
+
+			deletePatient_User: async (user_id) => {
+				const url = `${process.env.BACKEND_URL}/delete-patient-user/${user_id}`;
+				const options = {
+					method: "DELETE",
+				};
+				const response = await fetch(url, options);
+		
+				if(response.ok){
+					console.log("The user and patient has been deleted");
+					this.logout();
+				}else{
+					console.log("Error deleting the user and patient");
 				}
 			}
 			

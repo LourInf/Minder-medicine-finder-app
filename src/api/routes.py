@@ -18,6 +18,8 @@ from sqlalchemy import select, or_, and_, func
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt, jwt_required, JWTManager, set_access_cookies, unset_access_cookies
 from sqlalchemy.orm import joinedload, aliased
+# from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask(__name__)
 
@@ -31,14 +33,14 @@ CORS(api)  # Allow CORS requests to this API
 # print("")
 # print("")
 
-
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('BACKEND_URL')
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
-
+# db = SQLAlchemy(app)
 
 # print("")
 # print("")
@@ -732,7 +734,7 @@ def getPharmacyById(user_id):
 
     
     
-    
+# By user ID not by patient ID
 @api.route('/getPatientById/<int:user_id>', methods=['GET'])
 def getPatientById(user_id):
     try:
@@ -778,6 +780,48 @@ def getUser(email):
     except Exception as e:
         print(str(e))
         return jsonify({"message": "Error during the search of the User"}),500    
+    
+    
+    
+@api.route("/update-patient/<int:patient_id>", methods=["PUT"])
+def update_patient(patient_id):
+    patient = Patients.query.get(patient_id)
+    if patient is None:
+        return jsonify({"ERROR": "Patient not found", "updated": False}), 404
+    
+    data = request.json
+    
+    print("")
+    print("")
+    print("")
+    print("Esto es data cuando se actualiza un patient -> ",data)
+    print("")
+    print("")
+    print("")
+    
+    
+    if 'name' in data:
+        patient.name = data["name"]
+        
+    db.session.commit()
+    
+    return jsonify({"message": "Patient updated successfully", "updated": True, "name": data["name"]}), 200
+
+
+
+@api.route("delete-patient-user/<int:patient_id>", methods=["DELETE"])
+def delete_patient(patient_id):
+    patient = Patients.query.get(patient_id)
+    if patient is None:
+        return jsonify({"ERROR": "Patient not found", "deleted": False})
+    
+    user = patient.users
+    
+    db.session.delete(patient)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return jsonify({"message": "User and Patient deleted successfully", "deleted": True}), 200
 
 
 
