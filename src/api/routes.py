@@ -585,13 +585,15 @@ def get_pharmacies_available_medicine_city():
 @jwt_required()
 def get_all_medicines_for_pharmacy(pharmacy_id):
     current_user_id = get_jwt_identity()
-    # Get availability status filter from query parameters
-    availability_status = request.args.get('status', default=None, type=str)  # Correct placement
+    # Get availability status filter and pagination parameters from query parameters
+    availability_status = request.args.get('status', default=None, type=str)
+    page = request.args.get('page', 1, type=int)  # Pagination current page
+    limit = request.args.get('limit', 10, type=int)  # Pagination limit per page
 
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
 
-    # Get the pharmacy ID from the current user, not from the path variable
+    # Get the pharmacy id from the current user
     user_pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
     if not user_pharmacy_id:
         return jsonify({"message": "Pharmacy not found."}), 404
@@ -600,22 +602,23 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
     query = db.session.query(Medicines, Availability)\
         .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == user_pharmacy_id))
 
-    # Apply filter if availability_status is provided
+    # Apply filter when availability_status is provided
     if availability_status:
         query = query.filter(Availability.availability_status == availability_status)
 
-    # Execute the query
-    results = query.limit(50).all()
+    # Apply pagination to the query
+    paginated_results = query.paginate(page=page, per_page=limit, error_out=False)
+    items = paginated_results.items  # Fetch the results for the current page
 
-    if not results:
+    if not items:
         return jsonify({"message": "No medicines found for the specified pharmacy."}), 404
 
     medicines_list = []
-    for medicine, availability in results:
+    for medicine, availability in items:
         medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}
         availability_data = availability.serialize() if availability and hasattr(availability, 'serialize') else {}
         
-        # Rename IDs to avoid conflict
+        # Rename IDs to avoid conflict (ids from medicine and availability were mixing)
         medicine_data['medicine_id'] = medicine_data.pop('id')
         if 'id' in availability_data:
             availability_data['availability_id'] = availability_data.pop('id')
@@ -624,7 +627,15 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
         combined_data = {**medicine_data, **availability_data}
         medicines_list.append(combined_data)
 
-    return jsonify({"results": {"medicines": medicines_list}}), 200
+    # Add pagination information in the response
+    return jsonify({
+        "results": {"medicines": medicines_list},
+        "pagination": {
+            "page": paginated_results.page,
+            "pages": paginated_results.pages,
+            "total": paginated_results.total
+        }
+    }), 200
 
 
 @api.route('/medicines/<int:pharmacy_id>/<int:medicine_id>/available', methods=['PUT'])      # (=> Actions: updateMedicineAvailability)

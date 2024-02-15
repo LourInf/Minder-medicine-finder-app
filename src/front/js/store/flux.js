@@ -28,7 +28,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			orderConfirmationDetails:[],
 			notification:null,
 			medicinesAvailability:[],
-			medicinesAll:[]
+			medicinesAll:[],
+			paginationInfo:{}
 
 		},
 		
@@ -352,14 +353,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async (status) => {															//THIS ONE!!
+			getMedicinesAllDb: async (status, currentPage = 1, pageSize = 10) => {							//THIS ONE!!
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				if (userLogged != null && userLogged.pharmacy_id != undefined) {
 					const pharmacy_id = userLogged.pharmacy_id; 
-					let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
+					// let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`; //before pagination
+					let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}?page=${currentPage}&pageSize=${pageSize}`;
 
 					if (status) {
-						url += `?status=${encodeURIComponent(status)}`;  // we append status as a query parameter
+						url += `&status=${encodeURIComponent(status)}`;   // we append status as a query parameter ot the url
 					}
 
 					const options = {
@@ -374,12 +376,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 						if (response.ok) {
 						const data = await response.json();
 						console.log("Fetched medicines:", data.results.medicines);
+						console.log("Fetched medicines with pagination:", data);
 						setStore({
-							medicinesAll: data.results.medicines,
+							medicinesAll: data.results.medicines, // Update with fetched medicines
+							paginationInfo: { // Extract pagination details from the response
+								currentPage: data.pagination.page,
+								totalPages: data.pagination.pages,
+								totalItems: data.pagination.total,
+							},
 						});
-						} else {
-						console.error("Failed to fetch all medicines.");
-						}
+					} else {
+						console.error("Failed to fetch all medicines with pagination.");
+					}
 				}
 			},
 

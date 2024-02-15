@@ -1,13 +1,15 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
-import { Table, Button, Pagination, Form, Badge } from 'react-bootstrap';
+import { Table, Button, Badge, Pagination } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { CustomPagination } from "./CustomPagination.jsx";
 import "../../styles/availability.css";
 
 export const Availability = () => {
   const { store, actions } = useContext(Context);
   const [filterStatus, setFilterStatus] = useState('');
+  const [currentPage, setCurrentPage] = useState(1); //for page state
  
 	actions.removeUnnecessaryItems();
 
@@ -19,6 +21,7 @@ export const Availability = () => {
 
   //1. To bring from store all data available inside medicinesAll to my component to later access it to render it in the table using map. 
   const allMedicines = store.medicinesAll || [];
+  const paginationInfo = store.paginationInfo || {};
   
   
   const getStatusBadge = (status) => {
@@ -40,7 +43,7 @@ export const Availability = () => {
     if (success) {
       console.log(`Status changed to "Disponible" for medicineId: ${medicineId}`);
       //Re-fetch the medicines list to get the updated statuses
-      actions.getMedicinesAllDb();
+      actions.getMedicinesAllDb(filterStatus, currentPage);
     } else {
       console.error(`Failed to change status to "Disponible" for medicineId: ${medicineId}`);
     }
@@ -54,7 +57,7 @@ export const Availability = () => {
     if (success) {
       console.log(`Status changed to "No disponible" for medicineId: ${medicineId}`);
       // Re-fetch the medicines list to get the updated statuses
-      actions.getMedicinesAllDb();
+      actions.getMedicinesAllDb(filterStatus, currentPage);
     } else {
       console.error(`Failed to change status to "No disponible" for medicineId: ${medicineId}`);
     }
@@ -63,7 +66,12 @@ export const Availability = () => {
 
   const handleFilterClick = (status) => {
     setFilterStatus(status); // filter status update which will trigger the useEffect to refetch medicines
+    setCurrentPage(1);
   }
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
 
   return (
@@ -113,6 +121,18 @@ export const Availability = () => {
           </tbody>
         </Table>
       </div>
+      <CustomPagination
+        totalPages={paginationInfo.totalPages}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
+      {/* <Pagination className="justify-content-center">
+        {Array.from({ length: paginationInfo.totalPages }, (_, i) => (
+          <Pagination.Item key={i + 1} active={i + 1 === currentPage} onClick={() => handlePageChange(i + 1)}>
+            {i + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination> */}
     </div>
   );
 };
