@@ -555,57 +555,75 @@ def get_pharmacies_available_medicine_city():
 
 
 
-# Endpoint get availability records for a specific pharmacy    (=> Actions: getMedicineAvailabilityForPharmacy)
-@api.route('/pharmacy/availability', methods=['GET'])
-@jwt_required()
-def get_pharmacy_specific_availability():
-    current_user_id = get_jwt_identity()
-    if not current_user_id:
-        return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
-    # Get the pharmacy id:
-    current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id  
-    if not current_user_pharmacy_id:
-        return jsonify({"message": "Farmacia no encontrada."}), 404
-    # Get availability records specifically for this pharmacy
-    availability_records = db.session.query(Availability).filter(Availability.pharmacy_id == current_user_pharmacy_id).all()
-    if availability_records:
-        # Serialize
-        serialized_records = [record.serialize() for record in availability_records]
-        return jsonify({
-            "message": "Lista de medicamentos y su disponibilidad para esa farmacia",
-            "availability": serialized_records
-        }), 200
-    else:
-        # No records found for this pharmacy
-        return jsonify({"message": "No hay informacion sobre la disponibilidad para esta farmacia."
-        }), 200
+# # Endpoint get availability records for a specific pharmacy    (=> Actions: getMedicineAvailabilityForPharmacy)
+# @api.route('/pharmacy/availability', methods=['GET'])
+# @jwt_required()
+# def get_pharmacy_specific_availability():
+#     current_user_id = get_jwt_identity()
+#     if not current_user_id:
+#         return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
+#     # Get the pharmacy id:
+#     current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id  
+#     if not current_user_pharmacy_id:
+#         return jsonify({"message": "Farmacia no encontrada."}), 404
+#     # Get availability records specifically for this pharmacy
+#     availability_records = db.session.query(Availability).filter(Availability.pharmacy_id == current_user_pharmacy_id).all()
+#     if availability_records:
+#         # Serialize
+#         serialized_records = [record.serialize() for record in availability_records]
+#         return jsonify({
+#             "message": "Lista de medicamentos y su disponibilidad para esa farmacia",
+#             "availability": serialized_records
+#         }), 200
+#     else:
+#         # No records found for this pharmacy
+#         return jsonify({"message": "No hay informacion sobre la disponibilidad para esta farmacia."
+#         }), 200
     
 # Enpoint to get all medicines from our db for a Pharmacy  (=> Actions: getMedicinesAllDb --> ForPharmacy: /api/medicines/${pharmacy_id}`;) THIS ONE!!
 @api.route('/medicines/<int:pharmacy_id>', methods=['GET'])
 @jwt_required()
 def get_all_medicines_for_pharmacy(pharmacy_id):
     current_user_id = get_jwt_identity()
+    # Get availability status filter from query parameters
+    availability_status = request.args.get('status', default=None, type=str)  # Correct placement
+
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
-    
-    pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
-    if not pharmacy_id:
-            return jsonify({"message": "Pharmacy not found."}), 404
-    # Perform an outer join, including medicines regardless of availability record,
-    # but filter the availability by pharmacy_id when available.
-    results = db.session.query(Medicines, Availability)\
-        .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == pharmacy_id))\
-        .all()
+
+    # Get the pharmacy ID from the current user, not from the path variable
+    user_pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
+    if not user_pharmacy_id:
+        return jsonify({"message": "Pharmacy not found."}), 404
+
+    # Start building the query
+    query = db.session.query(Medicines, Availability)\
+        .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == user_pharmacy_id))
+
+    # Apply filter if availability_status is provided
+    if availability_status:
+        query = query.filter(Availability.availability_status == availability_status)
+
+    # Execute the query
+    results = query.limit(50).all()
+
     if not results:
         return jsonify({"message": "No medicines found for the specified pharmacy."}), 404
+
     medicines_list = []
     for medicine, availability in results:
-        medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}    
-        # Serialize
+        medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}
         availability_data = availability.serialize() if availability and hasattr(availability, 'serialize') else {}
-        # Combine medicine data with availability data, if available
+        
+        # Rename IDs to avoid conflict
+        medicine_data['medicine_id'] = medicine_data.pop('id')
+        if 'id' in availability_data:
+            availability_data['availability_id'] = availability_data.pop('id')
+        
+        # Combine data
         combined_data = {**medicine_data, **availability_data}
         medicines_list.append(combined_data)
+
     return jsonify({"results": {"medicines": medicines_list}}), 200
 
 
@@ -643,6 +661,7 @@ def update_availability_to_available(pharmacy_id, medicine_id):
         }), 200
     else:
         return jsonify({"message": "Error updating availability."}), 500
+
 
 @api.route('/medicines/<int:pharmacy_id>/<int:medicine_id>/not_available', methods=['PUT'])    # (=> Actions: updateMedicineAvailability)
 @jwt_required()

@@ -23,12 +23,12 @@ export const NavigationBar = () => {
 	const [hover, setHover] = useState(false);
 
 	const buttonStyle = {
-		background: hover ? 'linear-gradient(to right, #FF7E67, #FFB183)' : 'linear-gradient(to right, #FF5F6D, #FFC371)',
-		borderColor: 'transparent',
+		background: hover ? 'linear-gradient(90deg, rgb(255, 157, 129) 24.3%, rgb(255, 78, 78) 78.3%)' : '',
+		borderColor: 'none',
 		borderRadius: '8px',
-		color: 'white',
+		color: hover ? 'white' : '#E84545',
 		fontWeight: 'bold',
-		padding: '10px 18px',
+		padding: '8px 12px',
 		display: 'flex',
 		alignItems: 'center',
 		justifyContent: 'center',

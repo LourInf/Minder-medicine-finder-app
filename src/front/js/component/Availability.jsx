@@ -7,35 +7,25 @@ import "../../styles/availability.css";
 
 export const Availability = () => {
   const { store, actions } = useContext(Context);
+  const [filterStatus, setFilterStatus] = useState('');
  
 	actions.removeUnnecessaryItems();
 
-
-  // Fetch all medicines
+   // Fetch all medicines based on the current filter status
   useEffect(() => {
-    actions.getMedicinesAllDb();
-  }, []);
+    actions.getMedicinesAllDb(filterStatus); 
+  }, [filterStatus]);
+
 
   //1. To bring from store all data available inside medicinesAll to my component to later access it to render it in the table using map. 
   const allMedicines = store.medicinesAll || [];
-
-//FOR DEBUFFING ONLY:
-// useEffect(() => {
-//   console.log("Store medicinesAll:", store.medicinesAll); // This will show you the complete structure of medicinesAll
-//   if (store.medicinesAll.length > 0 && Array.isArray(store.medicinesAll[0])) {
-//     console.log('First medicine object:', store.medicinesAll[0][0]);
-//   } else {
-//     console.log('medicinesAll may not be an array of arrays, check the structure');
-//   }
-// }, [store.medicinesAll]);
-
-
+  
   
   const getStatusBadge = (status) => {
     switch (status) {
       case 'Disponible':
         return <Badge pill bg="" className="badge-soft-success-avail p-2">Disponible</Badge>;
-      case 'No Disponible':
+      case 'No disponible':
         return <Badge pill bg="" className="badge-soft-danger-avail p-2">No disponible</Badge>;
       default:
         return <Badge pill bg="" className="badge-soft-warning-avail p-2">Desconocido</Badge>;
@@ -49,7 +39,7 @@ export const Availability = () => {
     
     if (success) {
       console.log(`Status changed to "Disponible" for medicineId: ${medicineId}`);
-      // Re-fetch the medicines list to get the updated statuses
+      //Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb();
     } else {
       console.error(`Failed to change status to "Disponible" for medicineId: ${medicineId}`);
@@ -58,51 +48,32 @@ export const Availability = () => {
   
   const handleNotAvailable = async (medicineId) => {
     console.log(`handleNotAvailable called for medicineId: ${medicineId}`);
-    console.log(`Changing status to: "No Disponible" for medicineId: ${medicineId}`);
+    console.log(`Changing status to: "No disponible" for medicineId: ${medicineId}`);
     const success = await actions.updateMedicineAvailability(store.pharmacy_id, medicineId, "NOT_AVAILABLE");
     
     if (success) {
-      console.log(`Status changed to "No Disponible" for medicineId: ${medicineId}`);
+      console.log(`Status changed to "No disponible" for medicineId: ${medicineId}`);
       // Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb();
     } else {
-      console.error(`Failed to change status to "No Disponible" for medicineId: ${medicineId}`);
+      console.error(`Failed to change status to "No disponible" for medicineId: ${medicineId}`);
     }
   };
 
 
   const handleFilterClick = (status) => {
-    setAvailabilityFilter(status);
-    
-  };
+    setFilterStatus(status); // filter status update which will trigger the useEffect to refetch medicines
+  }
 
 
   return (
-    <div className="main-container">
-      
-      <div className="filters-container d-flex flex-column align-items-center mb-3">
-      <h4 className="m-3 text-center">Actualmente, <span className="text-danger fs-2 fw-bold">NUMBER</span> medicamentos presentan problemas de suministro. Por favor, indique si su farmacia dispone de inventario</h4>
-        <div className="pills-menu-style d-flex justify-content-center">
-          {/* <Form.Check
-            type="checkbox"
-            id="filterPsum"
-            label="Mostrar sólo los medicamentos con problemas de suministro"
-            checked=""
-            onChange=""
-          /> */}
-          <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning ps-2 pt-1"/>
-        <div className="mb-3">
-      </div>
-        
-      </div>
-      </div>
-       
+    <div className="main-container">  
         <div className="filters-container d-flex flex-column align-items-center mb-3">
           <span className="filter-text mb-2">Filtros:</span> 
           <div className="pills-menu-style d-flex justify-content-center">
             <Badge pill bg="" className="badge-soft-success-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('Disponible')} style={{ cursor: 'pointer' }}>Disponible</Badge>
-            <Badge pill bg="" className="badge-soft-danger-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('No Disponible')} style={{ cursor: 'pointer' }}>No Disponible</Badge>
-            <Badge pill bg="" className="badge-soft-secondary-avail filter-badge mx-2 p-2" onClick={() => setAvailabilityFilter('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
+            <Badge pill bg="" className="badge-soft-danger-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('No disponible')} style={{ cursor: 'pointer' }}>No disponible</Badge>
+            <Badge pill bg="" className="badge-soft-secondary-avail filter-badge mx-2 p-2" onClick={() => handleFilterClick('')} style={{ cursor: 'pointer' }}>Mostrar Todo</Badge>
           </div>
         </div>
    
@@ -120,7 +91,7 @@ export const Availability = () => {
           {/* 2. by mapping allMedicines we create a row for each medicine and we render the properties we want */}
           <tbody className="table-body">
             {allMedicines.map((medicine, index) => {
-               const key = `${medicine.id}-${index}`;
+               const key = `${medicine.medicine_id}-${index}`;
                return (
 
               <tr key={key}> 
@@ -131,9 +102,9 @@ export const Availability = () => {
                 <td className="table-cell body-row">{getStatusBadge(medicine.availability_status)}</td>
                 <td className="table-cell body-row">
                   {medicine.availability_status === 'Disponible' ? (
-                    <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable(medicine.id)}>Cambiar a No Disponible</Button>
+                    <Button variant="" className="btn-not-available btn-sm" onClick={() => handleNotAvailable(medicine.medicine_id)}>Cambiar a: No disponible</Button>
                   ) : (
-                    <Button variant="" className="btn-available btn-sm" onClick={() => handleAvailable(medicine.id)}>Cambiar a Disponible</Button>
+                    <Button variant="" className="btn-available btn-sm" onClick={() => handleAvailable(medicine.medicine_id)}>Cambiar a: Disponible</Button>
                   )}
                 </td>
               </tr>

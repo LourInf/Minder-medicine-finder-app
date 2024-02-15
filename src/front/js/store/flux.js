@@ -352,11 +352,16 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async () => {															//THIS ONE!!
+			getMedicinesAllDb: async (status) => {															//THIS ONE!!
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				if (userLogged != null && userLogged.pharmacy_id != undefined) {
 					const pharmacy_id = userLogged.pharmacy_id; 
-					const url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
+					let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
+
+					if (status) {
+						url += `?status=${encodeURIComponent(status)}`;  // we append status as a query parameter
+					}
+
 					const options = {
 						method: "GET",
 						headers: {
@@ -375,35 +380,34 @@ const getState = ({ getStore, getActions, setStore }) => {
 						} else {
 						console.error("Failed to fetch all medicines.");
 						}
-					
 				}
 			},
 
 				
-			getMedicineAvailabilityForPharmacy: async () => {
-				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`;
-				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
-				const options = {
-					method: "GET",
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${userLogged.token}`
-					},
-				};
-				const response = await fetch(url, options);
-				if (response.ok) {
-					const data = await response.json();
-					console.log(data)
-						setStore({
-							medicinesAvailability: data.availability, 
-						});
-					} else {
-						console.log("Medicamento no encontrado");
-						setStore({
-							medicinesPsum: [],
-						});
-					}
-				},
+			// getMedicineAvailabilityForPharmacy: async () => {
+			// 	const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`;
+			// 	const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
+			// 	const options = {
+			// 		method: "GET",
+			// 		headers: {
+			// 			'Content-Type': 'application/json',
+			// 			'Authorization': `Bearer ${userLogged.token}`
+			// 		},
+			// 	};
+			// 	const response = await fetch(url, options);
+			// 	if (response.ok) {
+			// 		const data = await response.json();
+			// 		console.log("Fetched availability:", data);
+			// 			setStore({
+			// 				medicinesAvailability: data.availability, 
+			// 			});
+			// 		} else {
+			// 			console.log("Error fetching availability:", response.statusText);
+			// 			setStore({
+			// 				medicinesAvailability: [],
+			// 			});
+			// 		}
+			// 	},
 				
 				updateMedicineAvailability: async (pharmacy_id, medicineId, availabilityStatus) => {
 					console.log(`Updating availability for medicine ${medicineId} to ${availabilityStatus}`);
