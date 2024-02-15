@@ -592,6 +592,8 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
 
     page = request.args.get('page', 1, type=int)  # Pagination current page
     limit = request.args.get('limit', 10, type=int)  # Pagination limit per page
+
+    search_term = request.args.get('search_term', type=str)
     
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
@@ -613,6 +615,9 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
     if has_psum is not None:
         has_psum = True if has_psum.lower() == 'true' else False
         query = query.filter(Medicines.has_psum == has_psum)
+
+    if search_term:
+        query = query.filter(Medicines.medicine_name.ilike(f"%{search_term}%"))
 
     # Apply pagination to the query
     paginated_results = query.paginate(page=page, per_page=limit, error_out=False)

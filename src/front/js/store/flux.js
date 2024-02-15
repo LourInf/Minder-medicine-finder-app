@@ -353,7 +353,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async (status, currentPage = 1, filterPsum = false) => {							//THIS ONE!!
+			getMedicinesAllDb: async (status, currentPage = 1, filterPsum = false, searchTerm = '') => {							//THIS ONE!!
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				if (userLogged != null && userLogged.pharmacy_id != undefined) {
 					const pharmacy_id = userLogged.pharmacy_id; 
@@ -370,10 +370,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 					  queryParams.push(`has_psum=true`);  // Only add has_psum to the URL if filterPsum is true
 					}
 					
-					// If there are any query parameters, append them with & instead of ?
-					if (queryParams.length) {
-					  url += `&${queryParams.join('&')}`;  // Join all query parameters with & and append to the URL
+					if (searchTerm) {
+            		  queryParams.push(`search_term=${encodeURIComponent(searchTerm)}`);
+        			}
+
+					// // If there are any query parameters, append them with & instead of ?
+					// if (queryParams.length) {
+					//   url += `&${queryParams.join('&')}`;  // Join all query parameters with & and append to the URL
+					// }
+					 // Better:
+					 if (queryParams.length) {
+						// Check if URL already contains a ?, append with & if true, otherwise with ?
+						const appendChar = url.includes('?') ? '&' : '?';
+						url += appendChar + queryParams.join('&');
 					}
+
 
 					console.log('URL being fetched:', url);
 
@@ -384,7 +395,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Authorization': `Bearer ${userLogged.token}`
 						},
 					};
-					
 						const response = await fetch(url, options);
 						if (response.ok) {
 						const data = await response.json();
