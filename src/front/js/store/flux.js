@@ -297,18 +297,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			clearMedicines: () => {
 				setStore({ medicines: [], selectedMedicine: "" });
 			},
-			
-			
-			// //CHANGE!!!! For now only use with Madrid example! ;)
-			// getSearchCities: (searchQuery) => {
-			// 	const mockCity = { id: 1, city_name: "Madrid" };
-			// 	// Check if the search query matches "Madrid" (case insensitive)
-			// 	if (mockCity.city_name.toLowerCase().includes(searchQuery.toLowerCase())) {
-			// 		setStore({ cities: [mockCity] }); // If it matches, set the store with the mock city
-			// 	} else {
-			// 		setStore({ cities: [] });
-			// 	}
-			// },
 
 			getPharmacyName: async (name) => {
 				const url_maps = `${process.env.BACKEND_URL}/api/pharmacies_names?pharmacy=${name}`;
@@ -364,37 +352,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async (pharmacy_id) => {
-				const url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
+			getMedicinesAllDb: async () => {															//THIS ONE!!
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
-				if(userLogged != null && userLogged != undefined){
-
+				if (userLogged != null && userLogged.pharmacy_id != undefined) {
+					const pharmacy_id = userLogged.pharmacy_id; 
+					const url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`;
 					const options = {
 						method: "GET",
 						headers: {
 						'Content-Type': 'application/json',
-						'Authorization': `Bearer ${userLogged?.token}`
+						'Authorization': `Bearer ${userLogged.token}`
 						},
 					};
-					try {
+					
 						const response = await fetch(url, options);
 						if (response.ok) {
 						const data = await response.json();
+						console.log("Fetched medicines:", data.results.medicines);
 						setStore({
-							medicinesAll: [data.results.medicines],
+							medicinesAll: data.results.medicines,
 						});
 						} else {
 						console.error("Failed to fetch all medicines.");
 						}
-					} catch (error) {
-					console.error("Error fetching all medicines:", error);
-					}
+					
 				}
 			},
 
 				
 			getMedicineAvailabilityForPharmacy: async () => {
-				// const medicinesPsumIds = store.medicinesPsum.map(medicine => medicine.id); // Extract IDs of medicines with distribution problems
 				const url = `${process.env.BACKEND_URL}/api/pharmacy/availability`;
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				const options = {
@@ -408,14 +394,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				if (response.ok) {
 					const data = await response.json();
 					console.log(data)
-				  
-						// const filteredAvailability = data.availability.filter(avail => medicinesPsumIds.includes(avail.medicine_id));
-						// setStore({ ...store, filteredMedicineAvailability: filteredAvailability });
-						// console.log("Filtered availability for medicines with distribution problems:", filteredAvailability);
-
-						
 						setStore({
-							medicinesAvailability: data.availability,
+							medicinesAvailability: data.availability, 
 						});
 					} else {
 						console.log("Medicamento no encontrado");
@@ -424,42 +404,51 @@ const getState = ({ getStore, getActions, setStore }) => {
 						});
 					}
 				},
-	
-
-			// updateMedicineAvailability : async (medicineId, availability) => {  // update availability after click on toggle
-			// 	const store = getStore();
-			// 	// Update local store
-			// 	const updatedMedicinesPsum = store.medicinesPsum.map(medicine => {  
-			// 		if (medicine.id === medicineId) {
-			// 			return { ...medicine, is_available: availability };
-			// 		}
-			// 		return medicine;
-			// 	});
-			// 	setStore({ medicinesPsum: updatedMedicinesPsum });
 				
-			// 	const url = `${process.env.BACKEND_URL}/api/pharmacies/<int:pharmacy_id>/medicines/${medicineId}`; 
-			// 	const token = localStorage.getItem('token');
-			// 	const options = {
-			// 		method: "PUT",
-			// 		headers: {
-			// 			'Content-Type': 'application/json',
-			// 			'Authorization': `Bearer ${token}`
-			// 		},
-			// 		body: JSON.stringify({ availability_status: availability })
-			// 	};
-			// 	const response = await fetch(url, options);
-			// 		if (response.ok) {
-			// 			const data = await response.json();
-			// 			console.log(data);
-			// 			 alert("La disponibilidad se ha modificado correctamente!");
-			// 		} else {
-			// 			const errorData = await response.json();
-			// 			const errorMessage = errorData.message || "Error al editar la disponibilidad del medicamento. Por favor, pruebe de nuevo";
-			// 			console.error(errorMessage);
-			// 			// Error notification
-			// 			alert(errorMessage);
-			// 		}
-			// 	},
+				updateMedicineAvailability: async (pharmacy_id, medicineId, availabilityStatus) => {
+					console.log(`Updating availability for medicine ${medicineId} to ${availabilityStatus}`);
+					let url = '';
+					switch(availabilityStatus) {
+						case 'AVAILABLE':
+							url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}/${medicineId}/available`;
+							break;
+						case 'NOT_AVAILABLE':
+							url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}/${medicineId}/not_available`;
+							break;
+						default:
+							console.error('Invalid availability status');
+							return;
+					}
+					const userLogged = JSON.parse(localStorage.getItem('userLogged'));
+					const options = {
+						method: "PUT",
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${userLogged.token}`,
+						},
+					};
+					console.log('Request options:', options);
+				
+					const response = await fetch(url, options);
+					if (response.ok) {
+						const data = await response.json();
+						// Assuming you have a way to update the local state after changing availability
+						setStore((prevState) => {
+							const updatedMedicines = prevState.medicinesAll.map(medicine => {
+								if (medicine.id === medicineId) {
+									return { ...medicine, availability_status: data.availability.availability_status };
+								}
+								return medicine;
+							});
+							return { ...prevState, medicinesAll: updatedMedicines };
+						});
+						return true;
+					} else {
+						// Handle error
+						return false;
+					}
+				},
+
 
 			createOrderReservation: async (medicineId) => {
 				const { selectedPharmacy } = getStore(); 

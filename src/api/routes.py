@@ -31,7 +31,6 @@ CORS(api)  # Allow CORS requests to this API
 # print("")
 # print("")
 
-
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
@@ -39,14 +38,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
 
-
-# print("")
-# print("")
-# print("")
-# print("Esto es app access_token_expires -> ",app.config["JWT_ACCESS_TOKEN_EXPIRES"])
-# print("")
-# print("")
-# print("")
 
 @app.after_request
 def refresh_token(response):
@@ -236,7 +227,7 @@ def refresh_medicines():
 #     response_body['message'] = "Todos los medicamentos han sido borrados de la base de datos."
 #     return jsonify(response_body), 200
 
-# Enpoint to get all medicines from our db  (=> Actions: getMedicinesAllDb)
+# Enpoint to get all medicines from our db  (=> Actions: used as well in getMedicinesAllDb??)
 @api.route('/medicines', methods=['GET'])
 def get_all_medicines():
     response_body = {}
@@ -427,7 +418,7 @@ def handle_specific_order(order_id):
     #         return ({'message': 'No se proporcionaron datos válidos para actualizar'}), 400
 
 
-@api.route('/orders/<int:order_id>/accept', methods=['PUT'])
+@api.route('/orders/<int:order_id>/accept', methods=['PUT'])    # (=> Actions: updateOrderStatus)
 def accept_order(order_id):
     response_body = {}
     order = db.session.query(Orders).filter(Orders.id == order_id).first()
@@ -469,18 +460,6 @@ def pickup_order(order_id):
 def protected():
     current_user_id = get_jwt_identity()
     return jsonify(logged_in_as=current_user_id), 200
-
-
-
-# @jwt_required()
-# def create_patient_order():
-#     current_user_id = get_jwt_identity()
-    
-#      # Find the patient associated with the current user
-#     patient = Patients.query.filter_by(users_id=current_user_id).first()
-#     if not patient:
-#         return jsonify({"error": "Patient not found"}), 404
-    
 
 # Endpoint to get all orders placed to a specific pharmacy, identified by the logged-in user (=> Actions: getPharmacyOrders)
 @api.route('/orders/pharmacy', methods=['GET'])
@@ -575,22 +554,6 @@ def get_pharmacies_available_medicine_city():
         return jsonify({"message": "No se han encontrado farmacias con disponibilidad de ese medicamento en esta ciudad"}), 404
 
 
-# # Endpoint to handle details on the availability status of a specific medicine in a specific pharmacy    (=> Actions: updateMedicineAvailability)
-# @api.route('/pharmacies/<int:pharmacy_id>/medicines/<int:medicine_id>', methods=['GET', 'PUT'])
-# def handle_specific_medicine_availability_per_pharmacy(pharmacy_id, medicine_id):
-#     if request.method == 'GET':
-#         response_body = {}
-#         results = {}
-# 		# Fetch the availability record for the specified pharmacy and medicine
-#         medicine_available = db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
-#         if not medicine_available:
-#             response_body['message'] = 'Esta disponibilidad no existe'
-#             return response_body, 404
-# 		# Serialize and return the retrieved medicine_available
-#         results['medicine_available'] = medicine_available.serialize()
-#         response_body['message'] = "Disponibilidad de esta medicina seleccionada"
-#         response_body['results'] = results
-#         return jsonify(response_body), 200
 
 # Endpoint get availability records for a specific pharmacy    (=> Actions: getMedicineAvailabilityForPharmacy)
 @api.route('/pharmacy/availability', methods=['GET'])
@@ -617,52 +580,106 @@ def get_pharmacy_specific_availability():
         return jsonify({"message": "No hay informacion sobre la disponibilidad para esta farmacia."
         }), 200
     
-# Enpoint to get all medicines from our db for a Pharmacy  (=> Actions: getMedicinesAllDbForPharmacy) 
+# Enpoint to get all medicines from our db for a Pharmacy  (=> Actions: getMedicinesAllDb --> ForPharmacy: /api/medicines/${pharmacy_id}`;) THIS ONE!!
 @api.route('/medicines/<int:pharmacy_id>', methods=['GET'])
 @jwt_required()
 def get_all_medicines_for_pharmacy(pharmacy_id):
-    user_id = get_jwt_identity()
-
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
+    
+    pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
+    if not pharmacy_id:
+            return jsonify({"message": "Pharmacy not found."}), 404
     # Perform an outer join, including medicines regardless of availability record,
     # but filter the availability by pharmacy_id when available.
     results = db.session.query(Medicines, Availability)\
         .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == pharmacy_id))\
         .all()
-
     if not results:
         return jsonify({"message": "No medicines found for the specified pharmacy."}), 404
-
     medicines_list = []
     for medicine, availability in results:
-        medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}
-        
-        # Serialize the Availability data if it exists, otherwise use an empty dictionary
+        medicine_data = medicine.serialize() if hasattr(medicine, 'serialize') else {}    
+        # Serialize
         availability_data = availability.serialize() if availability and hasattr(availability, 'serialize') else {}
         # Combine medicine data with availability data, if available
         combined_data = {**medicine_data, **availability_data}
         medicines_list.append(combined_data)
-
     return jsonify({"results": {"medicines": medicines_list}}), 200
- 
 
-@api.route('/pharmacy/availability', methods=['PUT'])           # IN PROGRESS - TO BE DEFINED
+
+@api.route('/medicines/<int:pharmacy_id>/<int:medicine_id>/available', methods=['PUT'])      # (=> Actions: updateMedicineAvailability)
 @jwt_required()
-def update_pharmacy_specific_availability():
-        response_body = {}
-        results = {}
-        # Update availability record for the specified pharmacy and medicine attributes with data from the request
-        data = request.json
-        availability= db.session.execute(db.select(Availability).where(and_(Availability.pharmacy_id == pharmacy_id,Availability.medicine_id == medicine_id))).scalars().first()
-        if not availability:
-            response_body['message'] = 'Disponibilidad inexistente'
-            return response_body, 404
-        # User can only modify this 1 attribute:
-        availability.availability_status = data.get('availability_status', availability.availability_status)
-        db.session.commit()
-        results['availability_status'] = availability.serialize()
-        response_body['message'] = "La disponibilidad de este medicamento se ha actualizado exitosamente"
-        response_body['results'] = results
-        return response_body, 200
+def update_availability_to_available(pharmacy_id, medicine_id):
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
+    
+    # Corrected to use a different variable for the pharmacy_id derived from the current user
+    user_pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
+    if not user_pharmacy_id:
+            return jsonify({"message": "Pharmacy not found."}), 404
+        
+    availability = db.session.query(Availability).filter_by(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id).first()
+    if availability:
+        availability.availability_status = 'AVAILABLE'
+    else:
+        # Creating new availability record if it does not exist
+        new_availability = Availability(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id, availability_status='AVAILABLE')
+        db.session.add(new_availability)
+    
+    # Committing the transaction outside the condition to ensure it applies to both cases
+    db.session.commit()
+
+    # Fetching the updated medicine information to return it
+    updated_medicine = db.session.query(Medicines).filter_by(id=medicine_id).first()
+    updated_availability = db.session.query(Availability).filter_by(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id).first()
+
+    if updated_medicine and updated_availability:
+        return jsonify({
+            "medicine": updated_medicine.serialize(),  # Assuming serialize method correctly includes all fields
+            "availability": updated_availability.serialize()  # Ensure this method exists and serializes the data as expected
+        }), 200
+    else:
+        return jsonify({"message": "Error updating availability."}), 500
+
+@api.route('/medicines/<int:pharmacy_id>/<int:medicine_id>/not_available', methods=['PUT'])    # (=> Actions: updateMedicineAvailability)
+@jwt_required()
+def update_availability_to_not_available(pharmacy_id, medicine_id):
+    current_user_id = get_jwt_identity()
+    if not current_user_id:
+        return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
+    
+    # Use a different variable for the pharmacy_id derived from the current user to avoid confusion
+    user_pharmacy_id = db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
+    if not user_pharmacy_id:
+        return jsonify({"message": "Pharmacy not found."}), 404
+    
+    # Correct the filter to use user_pharmacy_id for clarity
+    availability = db.session.query(Availability).filter_by(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id).first()
+    if availability:
+        availability.availability_status = 'NOT_AVAILABLE'
+    else:
+        # Creating a new availability record if it doesn't exist
+        new_availability = Availability(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id, availability_status='NOT_AVAILABLE')
+        db.session.add(new_availability)
+    
+    # Ensure changes are committed to the database regardless of the path taken
+    db.session.commit()
+
+    # Fetch the updated medicine and availability information to return it
+    updated_medicine = db.session.query(Medicines).filter_by(id=medicine_id).first()
+    updated_availability = db.session.query(Availability).filter_by(medicine_id=medicine_id, pharmacy_id=user_pharmacy_id).first()
+
+    if updated_medicine and updated_availability:
+        return jsonify({
+            "medicine": updated_medicine.serialize(),  # Assuming a serialize method exists
+            "availability": updated_availability.serialize()  # Ensure serialization method is implemented
+        }), 200
+    else:
+        return jsonify({"message": "Error updating availability."}), 500
+
 
     # if request.method == 'DELETE': NO
     # Instead of deleting, the pharmacy should change status to obsolete for example.
