@@ -17,7 +17,7 @@ export const Availability = () => {
 
   // Fetch all medicines based on the current filter status
   useEffect(() => {
-    console.log(`Fetching medicines with status: ${filterStatus}, page: ${currentPage}, psum: ${filterPsum}, search: ${searchTerm}`);
+    // console.log(`Fetching medicines with status: ${filterStatus}, page: ${currentPage}, psum: ${filterPsum}, search: ${searchTerm}`);
     actions.getMedicinesAllDb(filterStatus, currentPage, filterPsum, searchTerm);
   }, [filterStatus, currentPage, filterPsum, searchTerm]);
 
@@ -47,6 +47,7 @@ export const Availability = () => {
       console.log(`Status changed to "Disponible" for medicineId: ${medicineId}`);
       //Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb(filterStatus, currentPage);
+      actions.setNotification("El cambio a Disponible se ha realizado con éxito", "success");
     } else {
       console.error(`Failed to change status to "Disponible" for medicineId: ${medicineId}`);
     }
@@ -61,6 +62,7 @@ export const Availability = () => {
       console.log(`Status changed to "No disponible" for medicineId: ${medicineId}`);
       // Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb(filterStatus, currentPage);
+      actions.setNotification("El cambio a No disponible se ha realizado con éxito", "success");
     } else {
       console.error(`Failed to change status to "No disponible" for medicineId: ${medicineId}`);
     }

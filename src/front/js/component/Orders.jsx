@@ -9,7 +9,21 @@ export const Orders = () => {
 
   actions.removeUnnecessaryItems();
 
-  const pendienteCount = store.ordersToPharmacy.filter(order => order.order_status === 'Pendiente').length;
+  //we run it when log in once, and then again here, in case new orders or modifications are made while logged in
+  useEffect(() => {
+    actions.getUserOrders();
+  }, [actions.setNotification]);
+
+
+  useEffect(() => {
+    if (Array.isArray(store.orders) && store.orders.length === 0) {
+      actions.setNotification('Actualmente no tiene ninguna reserva pendiente. Para encontrar los medicamentos que necesita, diríjase a la página principal y comience su búsqueda. ¡Estamos aquí para ayudarle a encontrar lo que necesita rápidamente!', 'info');
+    }
+  }, [store.orders, actions.setNotification]);
+
+  const orders = Array.isArray(store.orders) ? store.orders : [];
+  //count Pendientes to show as badge
+  const pendienteCount = orders.filter(order => order.order_status === 'Pendiente').length;
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -25,19 +39,6 @@ export const Orders = () => {
         return <Badge pill bg="" className="badge-soft-secondary p-2">Desconocido</Badge>;
     }
   };
-
-
-  //we run it when log in once, and then again here, in case new orders or modifications are made while logged in
-  useEffect(() => {
-    actions.getUserOrders();
-  }, [actions.setNotification]);
-
-
-  useEffect(() => {
-    if (Array.isArray(store.orders) && store.orders.length === 0) {
-      actions.setNotification('Actualmente no tiene ninguna reserva pendiente. Para encontrar los medicamentos que necesita, diríjase a la página principal y comience su búsqueda. ¡Estamos aquí para ayudarle a encontrar lo que necesita rápidamente!', 'info');
-    }
-  }, [store.orders, actions.setNotification]);
 
 
   const handleCancelOrder = (orderId) => {

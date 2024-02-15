@@ -21,15 +21,15 @@ export const CustomPagination = ({ totalPages, currentPage, onPageChange }) => {
 
   const paginationItems = [];
 
-  // Always add the first page
-  paginationItems.push(
-    <Pagination.Item key="first" active={currentPage === firstPage} onClick={() => onPageChange(firstPage)}>
-      {firstPage}
-    </Pagination.Item>
-  );
+  // Add the first page only if it's not included in the main range
+  if (startPage > firstPage) {
+    paginationItems.push(
+      <Pagination.Item key="first" active={currentPage === firstPage} onClick={() => onPageChange(firstPage)}>
+        {firstPage}
+      </Pagination.Item>
+    );
 
-  // Ellipsis after the first page if necessary
-  if (startPage > firstPage + 1) {
+    // Ellipsis after the first page if necessary
     paginationItems.push(<Pagination.Ellipsis key="ellipsisStart" />);
   }
 
@@ -43,12 +43,10 @@ export const CustomPagination = ({ totalPages, currentPage, onPageChange }) => {
   }
 
   // Ellipsis before the last page if necessary
-  if (endPage < lastPage - 1) {
+  if (endPage < lastPage) {
     paginationItems.push(<Pagination.Ellipsis key="ellipsisEnd" />);
-  }
-
-  // Always add the last page
-  if (lastPage > firstPage) {
+    
+    // Add the last page only if it's not included in the main range
     paginationItems.push(
       <Pagination.Item key="last" active={currentPage === lastPage} onClick={() => onPageChange(lastPage)}>
         {lastPage}
@@ -56,5 +54,5 @@ export const CustomPagination = ({ totalPages, currentPage, onPageChange }) => {
     );
   }
 
-  return <Pagination className="justify-content-center mt-5">{paginationItems}</Pagination>;
+  return <Pagination className="justify-content-center">{paginationItems}</Pagination>;
 };

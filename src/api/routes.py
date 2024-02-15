@@ -14,7 +14,7 @@ from flask_cors import CORS
 import requests
 import os
 import math
-from sqlalchemy import select, or_, and_, func
+from sqlalchemy import select, or_, and_, func, desc
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt, jwt_required, JWTManager, set_access_cookies, unset_access_cookies
 from sqlalchemy.orm import joinedload, aliased
@@ -302,7 +302,7 @@ def get_user_orders():
         return jsonify({"error": "Patient not found"}), 404
     response_body = {}
     results = {}
-    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id).order_by(desc(Orders.requested_date))).scalars().all()
     orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == patient.id)
     orders = orders_query.all()
     if not orders:
