@@ -587,9 +587,12 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
     current_user_id = get_jwt_identity()
     # Get availability status filter and pagination parameters from query parameters
     availability_status = request.args.get('status', default=None, type=str)
+    # Get has_psum filter:
+    has_psum = request.args.get('has_psum', default=None, type=str) 
+
     page = request.args.get('page', 1, type=int)  # Pagination current page
     limit = request.args.get('limit', 10, type=int)  # Pagination limit per page
-
+    
     if not current_user_id:
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado como farmacia"}), 401
 
@@ -601,10 +604,15 @@ def get_all_medicines_for_pharmacy(pharmacy_id):
     # Start building the query
     query = db.session.query(Medicines, Availability)\
         .outerjoin(Availability, and_(Medicines.id == Availability.medicine_id, Availability.pharmacy_id == user_pharmacy_id))
-
+    
     # Apply filter when availability_status is provided
     if availability_status:
         query = query.filter(Availability.availability_status == availability_status)
+
+    # Apply filter when has_psum is provided
+    if has_psum is not None:
+        has_psum = True if has_psum.lower() == 'true' else False
+        query = query.filter(Medicines.has_psum == has_psum)
 
     # Apply pagination to the query
     paginated_results = query.paginate(page=page, per_page=limit, error_out=False)

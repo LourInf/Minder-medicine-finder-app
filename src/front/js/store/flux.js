@@ -353,16 +353,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 				},
 			
 			
-			getMedicinesAllDb: async (status, currentPage = 1, pageSize = 10) => {							//THIS ONE!!
+			getMedicinesAllDb: async (status, currentPage = 1, filterPsum = false) => {							//THIS ONE!!
 				const userLogged = JSON.parse(localStorage.getItem('userLogged')); 
 				if (userLogged != null && userLogged.pharmacy_id != undefined) {
 					const pharmacy_id = userLogged.pharmacy_id; 
+					let pageSize = 10;
 					// let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}`; //before pagination
 					let url = `${process.env.BACKEND_URL}/api/medicines/${pharmacy_id}?page=${currentPage}&pageSize=${pageSize}`;
+					
 
+					const queryParams = [];
 					if (status) {
-						url += `&status=${encodeURIComponent(status)}`;   // we append status as a query parameter ot the url
+					  queryParams.push(`status=${encodeURIComponent(status)}`); // we append status as a query parameter ot the url
 					}
+					if (filterPsum) {
+					  queryParams.push(`has_psum=true`);  // Only add has_psum to the URL if filterPsum is true
+					}
+					
+					// If there are any query parameters, append them with & instead of ?
+					if (queryParams.length) {
+					  url += `&${queryParams.join('&')}`;  // Join all query parameters with & and append to the URL
+					}
+
+					console.log('URL being fetched:', url);
 
 					const options = {
 						method: "GET",

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js";
-import { Table, Button, Badge, Pagination } from 'react-bootstrap';
+import { Table, Button, Badge, Form, Pagination } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { CustomPagination } from "./CustomPagination.jsx";
@@ -10,13 +10,15 @@ export const Availability = () => {
   const { store, actions } = useContext(Context);
   const [filterStatus, setFilterStatus] = useState('');
   const [currentPage, setCurrentPage] = useState(1); //for page state
+  const [filterPsum, setFilterPsum] = useState(false);
  
 	actions.removeUnnecessaryItems();
 
    // Fetch all medicines based on the current filter status
   useEffect(() => {
-    actions.getMedicinesAllDb(filterStatus); 
-  }, [filterStatus]);
+    console.log(`Fetching medicines with status: ${filterStatus}, page: ${currentPage}, psum: ${filterPsum}`);
+    actions.getMedicinesAllDb(filterStatus, currentPage, filterPsum); 
+  }, [filterStatus, currentPage, filterPsum]);
 
 
   //1. To bring from store all data available inside medicinesAll to my component to later access it to render it in the table using map. 
@@ -73,9 +75,30 @@ export const Availability = () => {
     setCurrentPage(pageNumber);
   };
 
+  const handlePsumChange = (e) => {
+    const checked = e.target.checked;
+    setFilterPsum(checked);
+    console.log('Checkbox for psum is now:', checked); // This should log true or false when you check/uncheck the checkbox
+  }
 
   return (
-    <div className="main-container">  
+    <div className="main-container">
+      <div className="filters-container d-flex flex-column align-items-center mb-3">
+        TEXT
+        <div className="pills-menu-style d-flex justify-content-center">
+        <Form.Check
+          type="checkbox"
+          id="filterPsum"
+          label="Mostrar sólo los medicamentos con problemas de suministro"
+          checked={filterPsum}
+          onChange={(e) => setFilterPsum(e.target.checked)}
+        />
+          <FontAwesomeIcon
+            icon={faExclamationTriangle}
+            className="text-warning ps-2 pt-1"
+          />
+          </div> 
+      </div>  
         <div className="filters-container d-flex flex-column align-items-center mb-3">
           <span className="filter-text mb-2">Filtros:</span> 
           <div className="pills-menu-style d-flex justify-content-center">
