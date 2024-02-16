@@ -55,7 +55,8 @@ export const Results = () => {
               {" en las farmacias asociadas."}
               <section className="text-center mt-5 p-3">
                 <Link to="/" className="return-btn">Intentar nueva búsqueda</Link>
-                <Link to="/maps" className="explore-more-btn">Explorar más farmacias</Link>
+                {/* <Link to="/maps" className="explore-more-btn">Explorar más farmacias</Link> */}
+                <button className="explore-more-btn" onClick={() => handleOnClick(item.cityName)}>Explorar más farmacias</button>
               </section>
             </div>
           )}

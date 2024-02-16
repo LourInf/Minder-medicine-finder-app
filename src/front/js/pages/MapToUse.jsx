@@ -3,7 +3,7 @@ import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/ap
 import { Context } from '../store/appContext.js';
 import { Link, useNavigate } from 'react-router-dom';
 import "../../styles/maptouse.css";
-
+import Nav from 'react-bootstrap/Nav';
 export const MapToUse = () => {
     const [map, setMap] = useState(null);
     const [center, setCenter] = useState({ lat: 40.463667, lng: -3.74922 }); // Coordenadas de España centro por defecto.
@@ -91,6 +91,10 @@ export const MapToUse = () => {
     
     return (
         <div className="container" style={{ height: '400px', width: '80%' }}>
+            <div className='d-flex'>
+            <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+            <Nav.Link as={Link} to="/maps">Lista de Farmacias</Nav.Link>
+            </div>
             <input
                 className="my-1"
                 type="text"

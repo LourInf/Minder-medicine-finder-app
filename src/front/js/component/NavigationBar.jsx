@@ -69,7 +69,7 @@ export const NavigationBar = () => {
 							<Nav.Link as={Link} to="/">Inicio</Nav.Link>
 							<Nav.Link as={Link} to="/pharmacy" style={{ paddingLeft: "30px", paddingRight: "30px" }}>Farmacias</Nav.Link>
 							<Nav.Link as={Link} to="/patient">Pacientes</Nav.Link>
-							<Nav.Link as={Link} to="/mapaciudad">Mapa</Nav.Link>
+							{/* <Nav.Link as={Link} to="/mapaciudad">Mapa</Nav.Link> */}
 						</Nav>
 					</Navbar.Collapse>
 				</div>

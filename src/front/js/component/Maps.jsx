@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import minderlogo from "../../img/minderlogoimage.png";
+import Nav from 'react-bootstrap/Nav';
 
 ///-------DONE---------
 export const Maps = () => {
@@ -84,6 +85,7 @@ export const Maps = () => {
 
   return (
     <div className="text-center">
+      <Nav.Link as={Link} to="/">Inicio</Nav.Link>
       <h1 className="form-range">Encuentra tu Farmacia más cercana</h1>
       <img src={minderlogo} alt="Map Icon" width={300} />
       {/* <p>¿Buscas tu Farmacia de confianza?</p>
