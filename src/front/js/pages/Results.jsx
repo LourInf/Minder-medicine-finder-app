@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import { CardResults } from "../component/CardResults.jsx";
 import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import "../../styles/results.css";
 
 export const Results = () => {
   const { store, actions } = useContext(Context);
   const { medicineId, cityName } = useParams();
+  const navigate = useNavigate();
+
 
 
 
@@ -29,6 +32,13 @@ export const Results = () => {
       actions.getPharmacies(cityName);
     }
   }, [cityName, actions.getPharmacies]);
+
+
+  const handleOnClick = (cityName) => {
+    actions.getPharmacies(cityName);
+    // Go to new component to see de pharmacy details (fields)
+    navigate(`/maps/`)
+  }
 
 
   return (
@@ -56,7 +66,7 @@ export const Results = () => {
               <section className="text-center mt-5 p-3">
                 <Link to="/" className="return-btn">Intentar nueva búsqueda</Link>
                 {/* <Link to="/maps" className="explore-more-btn">Explorar más farmacias</Link> */}
-                <button className="explore-more-btn" onClick={() => handleOnClick(item.cityName)}>Explorar más farmacias</button>
+                <button className="explore-more-btn" onClick={() => handleOnClick()}>Explorar más farmacias</button>
               </section>
             </div>
           )}

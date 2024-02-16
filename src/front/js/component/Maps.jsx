@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import minderlogo from "../../img/minderlogoimage.png";
 import Nav from 'react-bootstrap/Nav';
-
+import { MapToUse } from "../pages/MapToUse.jsx";
 ///-------DONE---------
 export const Maps = () => {
   const { store, actions } = useContext(Context);
@@ -18,18 +18,13 @@ export const Maps = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [checked, setChecked] = useState(false)
   const navigate = useNavigate();
-
-	actions.removeUnnecessaryItems();
-
+  actions.removeUnnecessaryItems();
   const handleCityChange = (e) => {
     const newCity = e.target.value;
     setCity(newCity); // Update local state to reflect input
     actions.setSelectedCityName(newCity); // Store the city name in the Flux store
   };
   ///-------DONE---------
-
-
-
   ///-------CHECKING---------
   const handlePharmacies = async () => {
     await actions.getPharmacies(city);
@@ -43,10 +38,6 @@ export const Maps = () => {
       actions.getPharmaciesDetails(pharmacy_fields, currentPage);
     }
     ///-------CHECKING---------
-
-
-
-
     ///-------where to put it???---------
   };
   // Activar botón "enter"
@@ -59,10 +50,6 @@ export const Maps = () => {
     }
   };
   ///-------where to put it???---------
-
-
-
-
   ///-------CHECKING---------
   // Call getPharmaciesDetails function sennding the place_id (parameter)
   const handleOnClick = (place_id) => {
@@ -70,10 +57,8 @@ export const Maps = () => {
     // Go to new component to see de pharmacy details (fields)
     navigate(`/pharmacies-details/${place_id}`)
   }
-
-
   // To Pagination
-  // Index last y first calculan los indices del primer y último resultado. 
+  // Index last y first calculan los indices del primer y último resultado.
   const indexLastResult = currentPage * resultsPerPage;
   const indexFirstResult = indexLastResult - resultsPerPage; // Current es la actual. resultsPerPage es la cantidad: useState(5);
   const currentResults = store.pharmacies.slice(indexFirstResult, indexLastResult);
@@ -82,26 +67,26 @@ export const Maps = () => {
     actions.getPharmaciesDetails(pharmacy_fields, pageNumber); // hace llamada con el nuevo nº de página
   };
   ///-------CHECKING---------
-
   return (
     <div className="text-center">
-      <Nav.Link as={Link} to="/">Inicio</Nav.Link>
+      {/* <Nav.Link as={Link} to="/">Inicio</Nav.Link> */}
       <h1 className="form-range">Encuentra tu Farmacia más cercana</h1>
-      <img src={minderlogo} alt="Map Icon" width={300} />
+      <MapToUse />
+      {/* <img src={minderlogo} alt="Map Icon" width={300} /> */}
       {/* <p>¿Buscas tu Farmacia de confianza?</p>
       <div>
       <span>Haz click </span><Link to="/findyourpharmacy">aquí</Link>
       </div> */}
       <div className="container justify-content-center d-flex">
         <div>
-          <input
+          {/* <input
             type="text"
             id="location"
             value={city}
             placeholder=" Ciudad o Código Postal "
             onChange={handleCityChange}
             onKeyPress={handleKeyPress}
-          />
+          /> */}
           <button className="m-1 py-1 btn transparent-button p-5 border-info" onClick={handlePharmacies}>
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
