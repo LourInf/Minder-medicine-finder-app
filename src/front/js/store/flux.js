@@ -635,30 +635,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				
 			},
-			sendOrderAcceptanceEmail: async (userEmail) => {
-				const url = `${process.env.BACKEND_URL}/api/send-email`;
-				const data = {
-				  user_email: userEmail
-				};
-			  
-				try {
-				  const response = await fetch(url, {
-					method: 'POST',
-					headers: {
-					  'Content-Type': 'application/json'
-					},
-					body: JSON.stringify(data)
-				  });
-				  if (!response.ok) {
-					throw new Error('Failed to send email');
-				  }
-				  const responseData = await response.json();
-				  console.log("Email sent successfully:", responseData);
-				} catch (error) {
-				  console.error("Error sending email:", error);
-  
-				}
-			  },
+			// sendOrderAcceptanceEmail: async () => {
+			// 	const url = `${process.env.BACKEND_URL}/api/send-email`;
+			// 	// const data = {
+			// 	//   email_receiver: userEmail, 
+			// 	//   subject: "Order Confirmation",
+			// 	//   body: "Your order has been confirmed." 
+			// 	// };
+			
+			// 	try {
+			// 	  const response = await fetch(url, {
+			// 		method: 'POST',
+			// 		headers: {
+			// 		  'Content-Type': 'application/json'
+			// 		},
+			// 		body: JSON.stringify({})
+			// 	  });
+			// 	  if (!response.ok) {
+			// 		throw new Error('Failed to send email');
+			// 	  }
+			// 	  const responseData = await response.json();
+			// 	  console.log("Email sent successfully:", responseData);
+			// 	} catch (error) {
+			// 	  console.error("Error sending email:", error);
+			// 	}
+			// },
 
 
 			getPatientId: async (user_id) => {

@@ -36,10 +36,10 @@ export const NavigationBar = () => {
 	}
 
 	const buttonStyle = {
-		background: hover ? 'linear-gradient(90deg, rgb(255, 157, 129) 24.3%, rgb(255, 78, 78) 78.3%)' : 'transparent',
+		background: "transparent",
 		borderColor: 'none',
 		borderRadius: '8px',
-		color: hover ? 'white' : '#E84545',
+		color: hover ? '#C75B12' : '#E84545',
 		fontWeight: 'bold',
 		padding: '8px 12px',
 		display: 'flex',

@@ -48,6 +48,7 @@ export const Availability = () => {
       //Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb(filterStatus, currentPage);
       actions.setNotification("El cambio a Disponible se ha realizado con éxito", "success");
+      window.scrollTo(0, 0);
     } else {
       console.error(`Failed to change status to "Disponible" for medicineId: ${medicineId}`);
     }
@@ -63,6 +64,7 @@ export const Availability = () => {
       // Re-fetch the medicines list to get the updated statuses
       actions.getMedicinesAllDb(filterStatus, currentPage);
       actions.setNotification("El cambio a No disponible se ha realizado con éxito", "success");
+      window.scrollTo(0, 0);
     } else {
       console.error(`Failed to change status to "No disponible" for medicineId: ${medicineId}`);
     }

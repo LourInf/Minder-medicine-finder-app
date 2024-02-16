@@ -21,6 +21,8 @@ from sqlalchemy.orm import joinedload, aliased
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.message import EmailMessage
+import ssl
 
 app = Flask(__name__)
 
@@ -58,38 +60,33 @@ def refresh_token(response):
 if __name__ == "__main__":
     app.run()
 
-@api.route('/send-email', methods=['POST'])
-def send_email():
-    # Extract user_email from the request's JSON body
-    data = request.get_json()
-    user_email = data.get('user_email')
-    
-    if not user_email:
-        return jsonify({'error': 'User email is required.'}), 400
 
-    # Environment variables or replace with your actual details
-    # sender_email = os.environ.get('SENDER_EMAIL')
-    # app_password = os.environ.get('APP_PASSWORD')  # App password generated from Google Account
-    sender_email = "mndrapp@gmail.com"
-    app_password = "wxeqdpjhmgwnsdae"
-    print(f"Email: {sender_email}, Password: {app_password}")
+# @app.route('/send-email', methods=['POST'])
+# def send_email():
+#     email_sender = os.environ.get('SENDER_EMAIL')
+#     email_password = os.environ.get('APP_PASSWORD')
+#     email_receiver = "lourdes.infante@gmail.com"
 
-    # Email content
-    subject = "Pedido aceptado"
-    body = "Tu pedido está aceptado. Tiene 24h para recoger el medicamento."
+#     subject = "order confirmation"
+#     body= """
+#     Your order has been confirmed.
+#     """
 
-    msg = MIMEText("LOL")
-    msg["Subject"] = subject
-    msg["To"] = user_email
-    msg["From"] = sender_email
+#     em = EmailMessage()
+#     em['From'] = email_sender
+#     em['To'] = email_receiver
+#     em['Subject'] = subject
+#     em.set_content(body)
 
-    # SMTP server configuration
-    smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-    smtp_server.login("mndrapp", "wxeqdpjhmgwnsdae")
-    smtp_server.sendmail(msg["From"], user_email, msg.as_string())
-    smtp_server.quit()
+#     context = ssl.create_default_context()
 
-    return jsonify({'message': 'Email sent successfully!'}), 200
+#     try:
+#         with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+#             smtp.login(email_sender, email_password)
+#             smtp.sendemail(email_sender, email_receiver, em.as_string())
+#         return jsonify({"message": "Email sent successfully."}), 200
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
    
 
 

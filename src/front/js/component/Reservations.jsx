@@ -52,14 +52,20 @@ export const Reservations = () => {
     }
   };
 
-  const handleAcceptOrder = (orderId) => {
+  const handleAcceptOrder = async (orderId) => {
     console.log("Accepting order with status: Aceptada");
-    actions.updateOrderStatus(orderId, "ACCEPTED");
+    await actions.updateOrderStatus(orderId, "ACCEPTED");
     actions.getPharmacyOrders()
     actions.setNotification('Ha aceptado la reserva con éxito', 'success');
     window.scrollTo(0, 0);
-    // actions.sendOrderAcceptanceEmail("mndrapp+user@gmail.com"); //not working
-  };
+  //   actions.sendOrderAcceptanceEmail("xxxx@gmail.com"); //I deleted the email for now
+  //   try {
+  //     await actions.sendOrderAcceptanceEmail("xxxxx@gmail.com"); // //I deleted the email for now
+  //     console.log("Email sent successfully");
+  // } catch (error) {
+  //     console.error("Error sending email:", error);
+  // }
+};
 
   const handleCancelOrder = (orderId) => {
     console.log("Cancelling order with status: Rechazada");
