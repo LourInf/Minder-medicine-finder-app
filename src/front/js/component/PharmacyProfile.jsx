@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Context } from "../store/appContext.js"
 import { useNavigate } from "react-router-dom";
-import { ModalModification } from "./ModifyPatient.jsx";
+import { ModalModification } from "./ModifyPharmacy.jsx";
 
 export const PharmacyProfile = () => {
   const { store, actions } = useContext(Context);
@@ -53,7 +53,7 @@ export const PharmacyProfile = () => {
   return (
     <div className="container p-2 m-2">
 
-      <h2>Patient information</h2>
+      <h2>Información de la Farmacia</h2>
       <button className="btn btn-info mb-3" onClick={displayModal}>Edit info</button>
       {store.user_id !== null && detailsPharma.pharmacy_name ? (
         <div>

@@ -824,6 +824,52 @@ def delete_patient(patient_id):
     return jsonify({"message": "User and Patient deleted successfully", "deleted": True}), 200
 
 
+@api.route("/update-pharmacy/<int:pharmacy_id>", methods=["PUT"])
+def update_pharmacy(pharmacy_id):
+    pharma = Pharmacies.query.get(pharmacy_id)
+    if pharma is None:
+        return jsonify({"ERROR": "Pharmacy not found", "updated": False}), 404
+    
+    data = request.json
+    
+
+    print("")
+    print("")
+    print("")
+    print("Esto es data cuando se actualiza un patient -> ",data)
+    print("")
+    print("")
+    print("")
+    
+            
+    if 'pharmacy_name' not in data or 'SOE_pharmacy_number' not in data or 'phone' not in data or 'working_hours' not in data:
+        pharma.pharmacy_name = data["pharmacy_name"]
+        pharma.SOE_pharmacy_number = data["SOE_pharmacy_number"]
+        pharma.phone = data["phone"]
+        pharma.working_hours = data["working_hours"]
+            
+        
+    db.session.commit()
+    
+    return jsonify({"message": "Pharmacy updated successfully", "updated": True}), 200
+
+
+
+@api.route("/delete-pharmacy-user/<int:pharmacy_id>", methods=["DELETE"])
+def delete_pharmacy(pharmacy_id):
+    pharma = Pharmacies.query.get(pharmacy_id)
+    if pharma is None:
+        return jsonify({"ERROR": "Pharmacy not found", "deleted": False})
+    
+    user = pharma.users
+    
+    db.session.delete(pharma)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return jsonify({"message": "User and Pharmacy deleted successfully", "deleted": True}), 200
+
+
 
 @api.route('/login', methods=['POST'])
 def login_user():

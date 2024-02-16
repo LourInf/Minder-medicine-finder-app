@@ -24,6 +24,7 @@ export const Register = () => {
 
     const [ suggestedPharma, setSuggestedPharma ] = useState([]);
     const [ pharmaDetails, setPharmaDetails ] = useState(null);
+    const [ suggestionSelected, setSuggestionSelected ] = useState(false);
 
 
     const navigate = useNavigate();
@@ -120,7 +121,7 @@ export const Register = () => {
                     msgAllDone.style.display = "block";
                     setTimeout(() => {
                         window.location.href = "/login"
-                    }, 1000)
+                    }, 500)
                 } else {
                     msg.style.display = "block";
                     setTimeout(() => {
@@ -202,6 +203,7 @@ export const Register = () => {
         await getPharmaDetails(placeId);
         setId(placeId);
         setAddress(city);
+        setSuggestionSelected(true);
     }
 
 
@@ -284,7 +286,7 @@ export const Register = () => {
                                 <input type="text" id="registerForm5" className="form-control"
                                     value={pharmacy_name} onChange={(e) => handleSuggestPharma(e.target.value)} required />
                                 <label className="form-label" htmlFor="registerForm5">Nombre de la Farmacia</label>
-                                {suggestedPharma.length > 0 && (
+                                {suggestedPharma.length > 0 &&  !suggestionSelected && (
                                     <ul>
                                         {suggestedPharma.map((suggestion, index) => (
                                             <li className="list-group-item list-group-item-action" key={index} onClick={() => handlePharmaSelect(suggestion.place_id, suggestion.terms[2].value)}>
@@ -313,7 +315,7 @@ export const Register = () => {
                             <div className="form-outline mb-4">
                                 <input type="checkbox" id="registerForm9" className="form-check-input"
                                     onChange={(e) => setIs24(e.target.checked)} checked={is24} />
-                                <label className="form-label" htmlFor="registerForm3">¿Servicio 24H?</label>
+                                <label className="form-label" htmlFor="registerForm9">¿Servicio 24H?</label>
                             </div>
                             <div className="form-outline mb-4">
                                 <input type="text" id="registerForm10" className="form-control"

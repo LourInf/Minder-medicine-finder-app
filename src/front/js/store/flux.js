@@ -751,6 +751,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}else{
 					console.log("Error deleting the user and patient");
 				}
+			},
+
+
+			updatePharmacy: async (pharmacy_id, newData) => {
+
+				const url = `${process.env.BACKEND_URL}/api/update-pharmacy/${pharmacy_id}`;
+				fetch(url, {
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(newData)
+				})
+				.then(response => {
+					if (response.ok) {
+						return response.json(); // Proceed with processing the response data
+					} else if (response.status === 204) {
+						// Preflight request successful, do nothing or handle as needed
+						console.log("Preflight request successful");
+						return null;
+					} else {
+						// Handle other errors
+						throw new Error("Network response was not ok");
+					}
+				})
+				.then(data => {
+					// const data = response.json();
+					// setStore({
+					// 	patient_name: data.name
+					// });
+					console.log("Pharmacy updated correctly");
+				})
+				.catch(error => {
+					console.log("This is the error -> ",error)
+				})
+
+			},
+
+
+			deletePharmacy_User: async (user_id) => {
+				const url = `${process.env.BACKEND_URL}/api/delete-pharmacy-user/${user_id}`;
+				const options = {
+					method: "DELETE",
+				};
+				const response = await fetch(url, options);
+		
+				if(response.ok){
+					const data = await response.json();
+					console.log("The user and pharmacy has been deleted");
+					return data;
+				}else{
+					console.log("Error deleting the user and patient");
+				}
 			}
 
 		}

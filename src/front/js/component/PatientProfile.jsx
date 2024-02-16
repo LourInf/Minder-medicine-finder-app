@@ -44,7 +44,7 @@ const displayModal = () => {
   return (
     <div className="container p-2 m-2">
 
-      <h2>Patient information</h2>
+      <h2>Información del paciente</h2>
       <button className="btn btn-info mb-3" onClick={displayModal}>Edit info</button>
       {store.user_id !== null ? (
         <div>
@@ -54,8 +54,8 @@ const displayModal = () => {
           <p><b>Email</b>: {store.email}</p>
         </div>
       ) : (
-        <p>Loading your info</p>
-      )}
+        <p>Cargando tu información</p>
+        )}
 
       {showModal && <ModalModification show={showModal} handleCloseModal={closeModal} patient_id={store.patient_id} />}
 
