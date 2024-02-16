@@ -1,7 +1,5 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import logoImage from "../../img/minderlogoimage.png";
 import fourgeek from "../../img/4geek.png";
 import "../../styles/footer.css";
 
@@ -13,7 +11,7 @@ export const Footer = () => {
 			<div className="p-1 m-1">
 				<div className="container-fluid text-center m-1">
 					<p>
-					Nuestra misión es facilitar a los usuarios la búsqueda rápida de medicamentos, especialmente aquellos con problemas de suministro, conectándolos con las farmacias que los tienen disponibles.
+						Nuestra misión es agilizar la búsqueda de medicamentos, especialmente los de difícil suministro, conectando usuarios con farmacias que los ofrecen.
 					</p>
 				</div>
 				<div className="d-flex justify-content-center align-items-center">
@@ -38,9 +36,9 @@ export const Footer = () => {
 					<Button variant="outline-light" className="btn-footer m-1" href="https://www.linkedin.com/in/andr%C3%A9s-abadia-heredia-686039b9/" role="button">
 						<i className="fab fa-linkedin-in text-linkedin"></i>
 					</Button>
-				<div>
-				<img className="p-1" src={fourgeek} alt="4geeklogo" width={75} />
-				</div>
+					<div>
+						<img className="p-1" src={fourgeek} alt="4geeklogo" width={75} />
+					</div>
 				</div>
 			</div>
 		</div>

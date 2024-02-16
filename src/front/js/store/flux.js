@@ -518,6 +518,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 								orders: updatedOrders // Adds the new order to the existing orders array
 							};
 						});
+						localStorage.setItem('orderConfirmationDetails', JSON.stringify(data.order));
+						
 						setStore({ orderConfirmationDetails: data.order });
 						return { success: true, order: data.order };
 					} else {
@@ -633,6 +635,31 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				
 			},
+			sendOrderAcceptanceEmail: async (userEmail) => {
+				const url = `${process.env.BACKEND_URL}/api/send-email`;
+				const data = {
+				  user_email: userEmail
+				};
+			  
+				try {
+				  const response = await fetch(url, {
+					method: 'POST',
+					headers: {
+					  'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(data)
+				  });
+				  if (!response.ok) {
+					throw new Error('Failed to send email');
+				  }
+				  const responseData = await response.json();
+				  console.log("Email sent successfully:", responseData);
+				} catch (error) {
+				  console.error("Error sending email:", error);
+  
+				}
+			  },
+
 
 			getPatientId: async (user_id) => {
 				const url = `${process.env.BACKEND_URL}/api/getPatientById/${user_id}`;

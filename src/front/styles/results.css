@@ -8,7 +8,7 @@
     width: 90%;
     text-align: center;
     margin:auto;
-    
+    margin-top:20px;
 }
 
 .medicine-text{
@@ -66,5 +66,9 @@
    font-weight: 500;
    background: var(--accent-secondary);
    
+  }
+
+  .results-wrapper{
+    margin-bottom: 250px;
   }
 

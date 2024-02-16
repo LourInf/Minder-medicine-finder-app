@@ -1,17 +1,17 @@
 .orders-container{
   border-radius: 15px;
   margin:auto;
+  margin-bottom: 250px;
 
 }
 .filters-container{
   color: var(--dark-secondary);
-  margin-top: 20px;
+  margin-top: 25px;
   padding: 15px; 
   background-color: var(--input); 
   border-radius: 15px; 
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
 
 .pills-menu-style{
   

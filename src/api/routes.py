@@ -14,10 +14,13 @@ from flask_cors import CORS
 import requests
 import os
 import math
-from sqlalchemy import select, or_, and_, func, desc
+from sqlalchemy import select, or_, and_, func, asc, desc
 from datetime import datetime, timedelta
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, get_jwt, jwt_required, JWTManager, set_access_cookies, unset_access_cookies
 from sqlalchemy.orm import joinedload, aliased
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
@@ -55,11 +58,40 @@ def refresh_token(response):
 if __name__ == "__main__":
     app.run()
 
+@api.route('/send-email', methods=['POST'])
+def send_email():
+    # Extract user_email from the request's JSON body
+    data = request.get_json()
+    user_email = data.get('user_email')
+    
+    if not user_email:
+        return jsonify({'error': 'User email is required.'}), 400
 
+    # Environment variables or replace with your actual details
+    # sender_email = os.environ.get('SENDER_EMAIL')
+    # app_password = os.environ.get('APP_PASSWORD')  # App password generated from Google Account
+    sender_email = "mndrapp@gmail.com"
+    app_password = "wxeqdpjhmgwnsdae"
+    print(f"Email: {sender_email}, Password: {app_password}")
 
-# # Activar geolocalización
-# @api.route('/geolocation', methods=['POST'])
-# def handle_geolocation():
+    # Email content
+    subject = "Pedido aceptado"
+    body = "Tu pedido está aceptado. Tiene 24h para recoger el medicamento."
+
+    msg = MIMEText("LOL")
+    msg["Subject"] = subject
+    msg["To"] = user_email
+    msg["From"] = sender_email
+
+    # SMTP server configuration
+    smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    smtp_server.login("mndrapp", "wxeqdpjhmgwnsdae")
+    smtp_server.sendmail(msg["From"], user_email, msg.as_string())
+    smtp_server.quit()
+
+    return jsonify({'message': 'Email sent successfully!'}), 200
+   
+
 
 # Necessary, DO NOT REMOVE!!!!!
 @api.route('/hello', methods=['GET'])
@@ -302,8 +334,8 @@ def get_user_orders():
         return jsonify({"error": "Patient not found"}), 404
     response_body = {}
     results = {}
-    orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id).order_by(desc(Orders.requested_date))).scalars().all()
-    orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == patient.id)
+    # orders = db.session.execute(select(Orders).where(Orders.patient_id == current_user_id)).scalars().all()
+    orders_query = db.session.query(Orders).options(joinedload(Orders.medicine), joinedload(Orders.pharmacy)).filter(Orders.patient_id == patient.id).order_by(desc(Orders.requested_date))
     orders = orders_query.all()
     if not orders:
         response_body['message'] = 'No tiene ninguna reserva'
@@ -471,7 +503,7 @@ def get_pharmacy_orders():
         return jsonify({"message": "Acceso denegado. Tiene que estar logeado"}), 401
     # Get all orders that are placed to this pharmacy
     current_user_pharmacy_id =  db.session.execute(select(Pharmacies).where(Pharmacies.users_id == current_user_id)).scalars().first().id
-    orders = db.session.query(Orders).join(Pharmacies, Orders.pharmacy_id == Pharmacies.id).filter(Pharmacies.id == current_user_pharmacy_id).all()
+    orders = db.session.query(Orders).join(Pharmacies, Orders.pharmacy_id == Pharmacies.id).filter(Pharmacies.id == current_user_pharmacy_id).order_by(Orders.requested_date.desc()).all()
     if not orders:
         response_body['message'] = 'No tiene pedidos'
         return response_body

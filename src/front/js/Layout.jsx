@@ -49,21 +49,21 @@ const Layout = () => {
                         <Route element={<MapToUse />} path="/mapaciudad" />
                         <Route element={<SearchNamePharmacy />} path="/findyourpharmacy" />
                         <Route element={<DetailsPharmacyMaps />} path="/pharmacies-details/:place_id" component={DetailsPharmacyMaps} />
-                         {/* React Router Outlet: 1.Define the parent route for the pharmacy dashboard */}
-                         <Route path="/pharmacy" element={<PharmacyDashboard />}> 
-                             {/* 2.Define the nested routes for the different sections within the pharmacy dashboard */}
-                            <Route index element={<Availability />} /> {/* 3. Set the default section to render with index route: Navigating to /pharmacy will by default render Availability component */}
-                            <Route path="availability" element={<Availability />} />
+                        {/* React Router Outlet: 1.Define the parent route for the pharmacy dashboard */}
+                        <Route path="/pharmacy" element={<PharmacyDashboard />}>
+                            {/* 2.Define the nested routes for the different sections within the pharmacy dashboard */}
+                            <Route index element={<Reservations />} /> {/* 3. Set the default section to render with index route: Navigating to /pharmacy will by default render Availability component */}
                             <Route path="reservations" element={<Reservations />} />
+                            <Route path="availability" element={<Availability />} />
                             <Route path="pharmacy-profile" element={<PharmacyProfile />} />
                         </Route>
-                         {/* React Router Outle for Patient dashboard */}
-                         <Route path="/patient" element={<PatientDashboard />}> 
+                        {/* React Router Outle for Patient dashboard */}
+                        <Route path="/patient" element={<PatientDashboard />}>
                             <Route index element={<Orders />} />
                             <Route path="orders" element={<Orders />} />
                             <Route path="patient-profile" element={<PatientProfile />} />
                         </Route>
-                        <Route element={<h1>Not found!</h1>} path="*"/>
+                        <Route element={<h1>Not found!</h1>} path="*" />
                     </Routes>
                     <Footer />
                 </ScrollToTop>

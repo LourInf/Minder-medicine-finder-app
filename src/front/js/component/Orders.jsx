@@ -6,20 +6,30 @@ import "../../styles/orders.css";
 export const Orders = () => {
   const { store, actions } = useContext(Context);
   const [filter, setFilter] = useState('');
+  const [isLoading, setIsLoading] = useState(true); 
 
   actions.removeUnnecessaryItems();
 
-  //we run it when log in once, and then again here, in case new orders or modifications are made while logged in
-  useEffect(() => {
-    actions.getUserOrders();
-  }, [actions.setNotification]);
-
 
   useEffect(() => {
-    if (Array.isArray(store.orders) && store.orders.length === 0) {
-      actions.setNotification('Actualmente no tiene ninguna reserva pendiente. Para encontrar los medicamentos que necesita, diríjase a la página principal y comience su búsqueda. ¡Estamos aquí para ayudarle a encontrar lo que necesita rápidamente!', 'info');
+    const fetchOrders = async () => {
+      setIsLoading(true); 
+      await actions.getUserOrders(); 
+      setIsLoading(false); 
+    };
+  
+    fetchOrders();
+  }, [actions.getUserOrders]);
+  
+  useEffect(() => {
+    if (!isLoading) { // Check conditions only after data has loaded
+      const hasPendienteOrders = store.orders.some(order => order.order_status === 'Pendiente');
+      if (!hasPendienteOrders) {
+        actions.setNotification('Actualmente no tiene ninguna reserva pendiente. Para encontrar los medicamentos que necesita, diríjase a la página principal y comience su búsqueda. ¡Estamos aquí para ayudarle a encontrar lo que necesita rápidamente!', 'info');
+      }
     }
-  }, [store.orders, actions.setNotification]);
+  }, [store.orders, isLoading, actions.setNotification]);
+  
 
   const orders = Array.isArray(store.orders) ? store.orders : [];
   //count Pendientes to show as badge
@@ -45,6 +55,8 @@ export const Orders = () => {
     console.log("Cancelling order with status: Rechazada");
     actions.updateOrderStatus(orderId, "REJECTED");
     actions.getUserOrders()
+    actions.setNotification('Ha cancelado su reserva con éxito', 'success');
+    window.scrollTo(0, 0);
   };
 
   const handleFilterClick = (status) => {

@@ -18,13 +18,13 @@ export const Notification = () => {
   const getVariantFromType = (type) => {
     switch (type) {
       case 'error':
-        return 'danger'; 
+        return 'danger';
       case 'info':
-        return 'warning'; 
+        return 'warning';
       case 'success':
-        return 'success'; 
+        return 'success';
       default:
-        return 'primary'; 
+        return 'primary';
     }
   };
 

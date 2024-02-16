@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useContext, useEffect } from "react";
+import { Link } from 'react-router-dom';
 import { Context } from "../store/appContext.js";
 import { CardResults } from "../component/CardResults.jsx";
 import { useParams } from 'react-router-dom';
@@ -7,13 +7,13 @@ import "../../styles/results.css";
 
 export const Results = () => {
   const { store, actions } = useContext(Context);
-  const { medicineId, address, cityName } = useParams();
-  const navigate = useNavigate();
+  const { medicineId, cityName } = useParams();
 
-  // actions.removeUnnecessaryItems();
+
 
   const selectedMedicine = localStorage.getItem('selectedMedicine');
   const selectedCityName = localStorage.getItem('selectedCityName');
+  
 
   // fetches the pharmacies from our DB
   useEffect(() => {
@@ -32,9 +32,9 @@ export const Results = () => {
 
 
   return (
-    <div>
+    <div className ="results-wrapper">
       <section className="container-main-text text-center mb-5">
-        <h1 className="heading-db-pharmacies pb-4">
+        <h1 className="heading-db-pharmacies pb-5">
           {selectedMedicine && selectedCityName && store.availablePharmacies && store.availablePharmacies.length > 0 ? (
             <>
               Farmacias con disponibilidad de <span className="medicine-text">{JSON.parse(selectedMedicine).medicine_name.slice(0, 30)}</span> en {JSON.parse(selectedCityName)}

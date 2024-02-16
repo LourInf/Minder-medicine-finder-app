@@ -80,15 +80,15 @@ export const Availability = () => {
 
   const availabilityText = filterPsum ? (
     <h4 className="m-3 text-center">Actualmente, <span className="text-danger fs-2 fw-bold">{store.totalMedicinesPsum}</span> medicamentos presentan problemas de suministro.</h4>
-    ) : (
-      <h3 className="m-3 text-center"></h3>
-    );
+  ) : (
+    <h3 className="m-3 text-center"></h3>
+  );
 
 
   return (
     <div className="main-container">
       <div className="filters-container d-flex flex-column align-items-center mb-3">
-      {availabilityText}
+        {availabilityText}
         <div className="pills-menu-style d-flex justify-content-center">
           <Form.Check
             type="checkbox"
@@ -137,7 +137,11 @@ export const Availability = () => {
 
                 <tr key={key}>
                   <td className="table-cell body-row cell-icon">
-                    {medicine.has_psum ? <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning" /> : ""}
+                    {medicine.has_psum ? (
+                      <FontAwesomeIcon icon={faExclamationTriangle} className="text-warning" />
+                    ) : (
+                      <span className="text-lightgrey">n/a</span>
+                    )}
                   </td>
                   <td className="table-cell body-row">{medicine.medicine_name}</td>
                   <td className="table-cell body-row">{getStatusBadge(medicine.availability_status)}</td>

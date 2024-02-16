@@ -5,7 +5,7 @@
 }
 .filters-container{
   color: var(--dark-secondary);
-  margin-top: 20px;
+  margin-top: 25px;
   padding: 15px; 
   background-color: var(--input); 
   border-radius: 15px; 
@@ -192,3 +192,40 @@
     padding: 0.25em 0.6em; /* Adjust padding to make sure the content fits */
     font-size: 75%; /* Smaller font size for the badge count */
   }
+
+  .btn-confirm{
+    background-color:var(--primary); 
+    border: var(--primary); 
+    color:var(--input);
+    padding-left: 5px;
+}
+
+  .btn-confirm:hover {
+    background-color:var(--minder-color); 
+    border: var(--minder-color);
+    color:var(--input);
+}
+
+  .body-modal-reserv, .header-modal, .footer-modal-reserv{
+  font-weight: 500;
+}
+
+.header-modal{
+  text-align: center;
+}
+
+.body-modal-reserv{
+  font-size: 20px;
+  text-align: center;
+  padding: 30px 15px;
+  color:var(--dark-minder);
+}
+
+
+.footer-modal-reserv{
+  align-items: center;
+}
+
+  .modal-backdrop.show {
+  opacity: 0.5; 
+}

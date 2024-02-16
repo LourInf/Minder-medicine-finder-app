@@ -45,7 +45,7 @@ export const CustomPagination = ({ totalPages, currentPage, onPageChange }) => {
   // Ellipsis before the last page if necessary
   if (endPage < lastPage) {
     paginationItems.push(<Pagination.Ellipsis key="ellipsisEnd" />);
-    
+
     // Add the last page only if it's not included in the main range
     paginationItems.push(
       <Pagination.Item key="last" active={currentPage === lastPage} onClick={() => onPageChange(lastPage)}>
@@ -54,5 +54,5 @@ export const CustomPagination = ({ totalPages, currentPage, onPageChange }) => {
     );
   }
 
-  return <Pagination className="justify-content-center">{paginationItems}</Pagination>;
+  return <Pagination className="justify-content-center mt-5">{paginationItems}</Pagination>;
 };

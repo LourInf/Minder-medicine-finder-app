@@ -43,9 +43,7 @@ font-face {
     font-family: 'MinderFont';
     src: ('.././src/front/styles/fonts/Chalet.ttf') format('truetype'); 
 }
-/* body, header, footer {
-   
-} */
+
 
 body {
     min-height: 100%;

@@ -1,6 +1,7 @@
 .main-container{
     border-radius: 15px;
     margin:auto;
+    margin-bottom: 250px;
 }
 
 .filters-container{
@@ -38,6 +39,10 @@
     
   }
   
+  .text-lightgrey{
+    color: var(--border-shadow);
+  }
+
   .table-cell.header{
     
     padding: 10px 20px 35px 20px;
