@@ -36,13 +36,14 @@ CORS(api)  # Allow CORS requests to this API
 # print("")
 # print("")
 
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('BACKEND_URL')
 app.config["JWT_COOKIE_SECURE"] = False
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_SECRET_KEY"] = os.environ["JWT_SECRET"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
 jwt = JWTManager(app)
-
+# db = SQLAlchemy(app)
 
 @app.after_request
 def refresh_token(response):
@@ -802,7 +803,7 @@ def getPharmacyById(user_id):
                 "pharmacy_address": pharmacy.address,
                 "pharmacy_phone": pharmacy.phone,
                 "pharmacy_24H": pharmacy.is_24h,
-                "pharmacy_working_hours": pharmacy.is_24h,
+                "pharmacy_working_hours": pharmacy.working_hours,
                 "pharmacy_orders": pharmacy.orders
                 
             }
@@ -821,7 +822,7 @@ def getPharmacyById(user_id):
 
     
     
-    
+# By user ID not by patient ID
 @api.route('/getPatientById/<int:user_id>', methods=['GET'])
 def getPatientById(user_id):
     try:
@@ -867,6 +868,94 @@ def getUser(email):
     except Exception as e:
         print(str(e))
         return jsonify({"message": "Error during the search of the User"}),500    
+    
+    
+    
+@api.route("/update-patient/<int:patient_id>", methods=["PUT"])
+def update_patient(patient_id):
+    patient = Patients.query.get(patient_id)
+    if patient is None:
+        return jsonify({"ERROR": "Patient not found", "updated": False}), 404
+    
+    data = request.json
+    
+    print("")
+    print("")
+    print("")
+    print("Esto es data cuando se actualiza un patient -> ",data)
+    print("")
+    print("")
+    print("")
+    
+    
+    if 'name' in data:
+        patient.name = data["name"]
+        
+    db.session.commit()
+    
+    return jsonify({"message": "Patient updated successfully", "updated": True, "name": data["name"]}), 200
+
+
+
+@api.route("/delete-patient-user/<int:patient_id>", methods=["DELETE"])
+def delete_patient(patient_id):
+    patient = Patients.query.get(patient_id)
+    if patient is None:
+        return jsonify({"ERROR": "Patient not found", "deleted": False})
+    
+    user = patient.users
+    
+    db.session.delete(patient)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return jsonify({"message": "User and Patient deleted successfully", "deleted": True}), 200
+
+
+@api.route("/update-pharmacy/<int:pharmacy_id>", methods=["PUT"])
+def update_pharmacy(pharmacy_id):
+    pharma = Pharmacies.query.get(pharmacy_id)
+    if pharma is None:
+        return jsonify({"ERROR": "Pharmacy not found", "updated": False}), 404
+    
+    data = request.json
+    
+
+    print("")
+    print("")
+    print("")
+    print("Esto es data cuando se actualiza un patient -> ",data)
+    print("")
+    print("")
+    print("")
+    
+            
+    if 'pharmacy_name' not in data or 'SOE_pharmacy_number' not in data or 'phone' not in data or 'working_hours' not in data:
+        pharma.pharmacy_name = data["pharmacy_name"]
+        pharma.SOE_pharmacy_number = data["SOE_pharmacy_number"]
+        pharma.phone = data["phone"]
+        pharma.working_hours = data["working_hours"]
+            
+        
+    db.session.commit()
+    
+    return jsonify({"message": "Pharmacy updated successfully", "updated": True}), 200
+
+
+
+@api.route("/delete-pharmacy-user/<int:pharmacy_id>", methods=["DELETE"])
+def delete_pharmacy(pharmacy_id):
+    pharma = Pharmacies.query.get(pharmacy_id)
+    if pharma is None:
+        return jsonify({"ERROR": "Pharmacy not found", "deleted": False})
+    
+    user = pharma.users
+    
+    db.session.delete(pharma)
+    db.session.delete(user)
+    db.session.commit()
+    
+    return jsonify({"message": "User and Pharmacy deleted successfully", "deleted": True}), 200
 
 
 
