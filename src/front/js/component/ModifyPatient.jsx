@@ -22,9 +22,15 @@ export const ModalModification = ({ show, handleCloseModal, patient_id }) => {
 
     const handleDeletePatient = async () => {
         // await actions.deletePatient_User(patient_id);
-        await actions.getPatientId(patient_id);
+        const deleted = await actions.deletePatient_User(patient_id);
         handleCloseModal();
-        navigate("/");
+        console.log("deleted -> ",deleted);
+        if(deleted.deleted){
+            actions.logout();
+            navigate("/");
+            return
+        }
+        alert("Error deleting the user, try again later");
 
     }
 

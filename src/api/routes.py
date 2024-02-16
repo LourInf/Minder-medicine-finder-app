@@ -809,7 +809,7 @@ def update_patient(patient_id):
 
 
 
-@api.route("delete-patient-user/<int:patient_id>", methods=["DELETE"])
+@api.route("/delete-patient-user/<int:patient_id>", methods=["DELETE"])
 def delete_patient(patient_id):
     patient = Patients.query.get(patient_id)
     if patient is None:

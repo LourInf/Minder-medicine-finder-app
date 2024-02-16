@@ -652,45 +652,91 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			updatePatient: async (patient_id, newData) => {
-				const url = `${process.env.BACKEND_URL}/update-patient/${patient_id}`;
-				console.log("La url -> ",url);
-				const options = {
+
+				const url = `${process.env.BACKEND_URL}/api/update-patient/${patient_id}`;
+				fetch(url, {
 					method: "PUT",
 					headers: {
-						"Content-Type": "application/json"
+						"Content-Type": "application/json",
 					},
 					body: JSON.stringify(newData)
-				};
-				console.log(`Esto son las options -> ${JSON.stringify(options)}`);
-				const response = await fetch(url, options);
-		
-				if(response.ok){
-					const data = await response.json();
+				})
+				.then(response => {
+					if (response.ok) {
+						return response.json(); // Proceed with processing the response data
+					} else if (response.status === 204) {
+						// Preflight request successful, do nothing or handle as needed
+						console.log("Preflight request successful");
+						return null;
+					} else {
+						// Handle other errors
+						throw new Error("Network response was not ok");
+					}
+				})
+				.then(data => {
+					// const data = response.json();
 					setStore({
 						patient_name: data.name
 					});
 					console.log("Patient updated correctly");
-				}else{
-					console.log("Error updating the patient");
-				}
+				})
+				.catch(error => {
+					console.log("This is the error -> ",error)
+				})
+
+
+
+
+				// const opt = {
+				// 	method: "PUT",
+				// 	headers: {
+				// 		"Content-Type": "application/json",
+				// 	},
+				// 	body: JSON.stringify(newData)
+				// }
+
+				// const response = await fetch(url, opt);
+
+				// console.log("Response -> ",response);
+				
+				
+				// if(!response.ok){
+					
+				// 	console.log("Error: ",response.status);
+				// 	return
+					
+				// }
+				
+				// const data = await response.json();
+				// console.log("Data -> ",data);
+				// setStore({
+				// 	patient_name: data.name
+				// });
+				// console.log("Patient updated correctly");
+
+
+				// return response.json(); // Proceed with processing the response data
+
+
 			},
 
 
 			deletePatient_User: async (user_id) => {
-				const url = `${process.env.BACKEND_URL}/delete-patient-user/${user_id}`;
+				const url = `${process.env.BACKEND_URL}/api/delete-patient-user/${user_id}`;
 				const options = {
 					method: "DELETE",
 				};
 				const response = await fetch(url, options);
 		
 				if(response.ok){
+					const data = await response.json();
 					console.log("The user and patient has been deleted");
-					this.logout();
+					return data;
 				}else{
 					console.log("Error deleting the user and patient");
 				}
 			}
-			
+
 		}
 	};
 };
