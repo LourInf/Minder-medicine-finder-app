@@ -715,7 +715,7 @@ def getPharmacyById(user_id):
                 "pharmacy_address": pharmacy.address,
                 "pharmacy_phone": pharmacy.phone,
                 "pharmacy_24H": pharmacy.is_24h,
-                "pharmacy_working_hours": pharmacy.is_24h,
+                "pharmacy_working_hours": pharmacy.working_hours,
                 "pharmacy_orders": pharmacy.orders
                 
             }

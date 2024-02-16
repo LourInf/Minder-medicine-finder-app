@@ -651,6 +651,22 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
+			getOurPharmacyDetails: async (user_id) => {
+				const url = `${process.env.BACKEND_URL}/api/getPharmacyById/${user_id}`;
+				const options = {
+					method: "GET",
+				};
+				const response = await fetch(url, options);
+		
+				if(response.ok){
+					const data = await response.json();
+					console.log("Los detalles de la farmacia -> ",data);
+					return data;
+				}else{
+					console.log("Error fetching the pharmacy ID");
+				}
+			},
+
 			updatePatient: async (patient_id, newData) => {
 
 				const url = `${process.env.BACKEND_URL}/api/update-patient/${patient_id}`;

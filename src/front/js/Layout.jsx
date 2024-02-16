@@ -54,7 +54,7 @@ const Layout = () => {
                             <Route index element={<Availability />} /> {/* 3. Set the default section to render with index route: Navigating to /pharmacy will by default render Availability component */}
                             <Route path="availability" element={<Availability />} />
                             <Route path="reservations" element={<Reservations />} />
-                            {/* <Route path="pharmacy-profile" element={<PharmacyProfile />} /> */}
+                            <Route path="pharmacy-profile" element={<PharmacyProfile />} />
                         </Route>
                          {/* React Router Outle for Patient dashboard */}
                          <Route path="/patient" element={<PatientDashboard />}> 
