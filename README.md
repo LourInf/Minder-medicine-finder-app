@@ -1,3 +1,9 @@
+<h1>Minder Medicine Finder</h1>
+
+
+![Screenshot _Minder](https://github.com/user-attachments/assets/6b674fc7-7d04-4593-a90d-0b6060270239)
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # WebApp boilerplate with React JS and Flask API
 
 Build web applications using React.js for the front end and python/flask for your backend API.
